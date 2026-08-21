@@ -34,7 +34,7 @@
   --blue-strong:#004ecc;
   --blue-deep:#00337f;
   --blue-abyss:#001634;
-  --blue-lift:#6aa8ff;
+  --blue-lift:#8bbaff;
   --blue-06:#eef4ff;
   --blue-12:#dbe9ff;
   --blue-24:#b3d0ff;
@@ -531,7 +531,7 @@ a:focus-visible, button:focus-visible{
   inset:0;
   background-image:radial-gradient(circle, rgba(255,255,255,.17) 1px, rgba(255,255,255,0) 1.5px);
   background-size:27px 27px;
-  animation:dotDrift 120s linear infinite;
+  animation:dotDrift 55s linear infinite;
   -webkit-mask-image:linear-gradient(to bottom, #000 4%, rgba(0,0,0,0) 66%);
   mask-image:linear-gradient(to bottom, #000 4%, rgba(0,0,0,0) 66%);
 }
@@ -542,17 +542,20 @@ a:focus-visible, button:focus-visible{
   inset:0;
   width:100%;
   height:100%;
-  animation:horizonDrift 34s ease-in-out infinite;
+  animation:horizonDrift 20s ease-in-out infinite;
 }
 /* Slow enough to register as atmosphere rather than as an event: a light that
    walks the curve once every half minute, and drifts measured in a few px. */
-.rim-streak{opacity:.62;}
+.rim-streak{opacity:.72;}
+/* Low enough to read as a sheen crossing the dome, not a flash, and low
+   enough that the accent keeps its margin when the sheen passes behind it. */
+.horizon-sheen{opacity:.24;}
 @keyframes horizonDrift{
   0%,100%{transform:translateY(0);}
-  50%{transform:translateY(-5px);}
+  50%{transform:translateY(-9px);}
 }
 @keyframes closingGlow{
-  0%,100%{opacity:.78;}
+  0%,100%{opacity:.6;}
   50%{opacity:1;}
 }
 @keyframes dotDrift{
@@ -567,7 +570,7 @@ a:focus-visible, button:focus-visible{
   aspect-ratio:1;
   background:radial-gradient(circle,
     rgba(0,100,255,.40) 0%, rgba(0,100,255,.15) 44%, rgba(0,100,255,0) 70%);
-  animation:closingGlow 22s ease-in-out infinite;
+  animation:closingGlow 13s ease-in-out infinite;
 }
 .closing-kicker{
   font-family:var(--display);
@@ -616,9 +619,11 @@ a:focus-visible, button:focus-visible{
   .lever{opacity:1;transform:none;transition:none;}
   .closing-horizon,
   .rim-streak,
+  .horizon-sheen,
   .closing-dots,
   .closing-bloom{animation:none;}
-  .rim-streak{opacity:0;}
+  .rim-streak,
+  .horizon-sheen{opacity:0;}
 }
 
 /* ============ FOOTER ============ */
@@ -850,17 +855,25 @@ footer{
       </linearGradient>
       <linearGradient id="horizonSweep" x1="0" y1="0" x2="0.3" y2="0">
         <stop offset="0%" stop-color="#dce9ff" stop-opacity="0"/>
-        <stop offset="50%" stop-color="#dce9ff" stop-opacity=".85"/>
+        <stop offset="50%" stop-color="#dce9ff" stop-opacity=".9"/>
         <stop offset="100%" stop-color="#dce9ff" stop-opacity="0"/>
         <animateTransform attributeName="gradientTransform" type="translate"
-                          from="-0.34 0" to="1.04 0" dur="30s" repeatCount="indefinite"/>
+                          from="-0.34 0" to="1.04 0" dur="11s" repeatCount="indefinite"/>
+      </linearGradient>
+      <linearGradient id="horizonSheen" x1="0" y1="0" x2="0.46" y2="0">
+        <stop offset="0%" stop-color="#8fbcff" stop-opacity="0"/>
+        <stop offset="50%" stop-color="#8fbcff" stop-opacity=".42"/>
+        <stop offset="100%" stop-color="#8fbcff" stop-opacity="0"/>
+        <animateTransform attributeName="gradientTransform" type="translate"
+                          from="-0.5 0" to="1.06 0" dur="11s" repeatCount="indefinite"/>
       </linearGradient>
     </defs>
     <path d="M0,27 Q50,-5 100,27 L100,100 L0,100 Z" fill="url(#horizonFill)"/>
     <path d="M0,27 Q50,-5 100,27" fill="none" stroke="url(#horizonRim)"
           stroke-width="1.4" vector-effect="non-scaling-stroke"/>
+    <path class="horizon-sheen" d="M0,27 Q50,-5 100,27 L100,100 L0,100 Z" fill="url(#horizonSheen)"/>
     <path class="rim-streak" d="M0,27 Q50,-5 100,27" fill="none" stroke="url(#horizonSweep)"
-          stroke-width="1.4" vector-effect="non-scaling-stroke"/>
+          stroke-width="1.6" vector-effect="non-scaling-stroke"/>
   </svg>
   <div class="wrap">
     <p class="closing-kicker"><span class="k-ink">AI is abundant. Outcomes aren&rsquo;t.</span><br><span class="k-blue">We engineer them.</span></p>
