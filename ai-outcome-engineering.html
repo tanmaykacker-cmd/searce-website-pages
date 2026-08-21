@@ -516,53 +516,40 @@ a:focus-visible, button:focus-visible{
   background:var(--blue-abyss);
   color:#fff;
 }
+/* A horizon rather than a ring field: the eye settles instead of tracking
+   something. Nothing here moves — the pulsing rings and pointer lean
+   read as distraction on a page whose last job is to be read and clicked. */
 .closing-bloom,
-.closing-rings{
+.closing-dots,
+.closing-horizon{
   position:absolute;
-  left:50%;
-  top:50%;
-  translate:-50% -50%;
-  aspect-ratio:1;
   z-index:-1;
   pointer-events:none;
 }
+/* A sparse dot field, fading out downward, carried over from the hero. */
+.closing-dots{
+  inset:0;
+  background-image:radial-gradient(circle, rgba(255,255,255,.17) 1px, rgba(255,255,255,0) 1.5px);
+  background-size:27px 27px;
+  -webkit-mask-image:linear-gradient(to bottom, #000 4%, rgba(0,0,0,0) 66%);
+  mask-image:linear-gradient(to bottom, #000 4%, rgba(0,0,0,0) 66%);
+}
+/* The horizon is drawn to the panel's own box rather than as a huge circle
+   pushed off-frame: a 2200px circle simply cannot show its crown inside a
+   377px band, so on phones the curve vanished entirely. This scales. */
+.closing-horizon{
+  inset:0;
+  width:100%;
+  height:100%;
+}
 .closing-bloom{
-  width:min(1120px,160%);
+  left:50%;
+  top:44%;
+  translate:-50% -50%;
+  width:min(1060px,150%);
+  aspect-ratio:1;
   background:radial-gradient(circle,
-    rgba(0,100,255,.46) 0%, rgba(0,100,255,.17) 44%, rgba(0,100,255,0) 72%);
-  transition:translate .25s ease-out;
-  animation:closingBloom 9s ease-in-out infinite;
-}
-.closing-rings{
-  width:min(940px,140%);
-  opacity:.6;
-  transition:translate .25s ease-out;
-  overflow:visible;
-}
-/* The dotted ring turns, three sonar rings travel outward on a stagger, and
-   the whole field leans toward the pointer. */
-.ring-dotted{
-  transform-box:fill-box;
-  transform-origin:center;
-  animation:ringSpin 72s linear infinite;
-}
-.sonar{
-  transform-box:fill-box;
-  transform-origin:center;
-  opacity:0;
-  animation:sonar 6.6s ease-out infinite;
-}
-.sonar-2{animation-delay:2.2s;}
-.sonar-3{animation-delay:4.4s;}
-@keyframes ringSpin{to{transform:rotate(360deg);}}
-@keyframes sonar{
-  0%{transform:scale(.42);opacity:0;}
-  14%{opacity:.5;}
-  100%{transform:scale(2.05);opacity:0;}
-}
-@keyframes closingBloom{
-  0%,100%{opacity:.9;}
-  50%{opacity:.55;}
+    rgba(0,100,255,.40) 0%, rgba(0,100,255,.15) 44%, rgba(0,100,255,0) 70%);
 }
 .closing-kicker{
   font-family:var(--display);
@@ -609,10 +596,6 @@ a:focus-visible, button:focus-visible{
 }
 @media (prefers-reduced-motion: reduce){
   .lever{opacity:1;transform:none;transition:none;}
-  .closing-bloom{animation:none;}
-  .ring-dotted,
-  .sonar{animation:none;}
-  .sonar{opacity:.28;}
 }
 
 /* ============ FOOTER ============ */
@@ -827,17 +810,25 @@ footer{
   </div>
 </section>
 
-<section class="closing-outcome" id="closingOutcome">
-  <span class="closing-bloom" id="closingBloom" aria-hidden="true"></span>
-  <svg class="closing-rings" id="closingRings" viewBox="0 0 400 400" aria-hidden="true">
-    <circle cx="200" cy="200" r="196" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="1"/>
-    <circle cx="200" cy="200" r="150" fill="none" stroke="rgba(255,255,255,.13)" stroke-width="1"/>
-    <circle cx="200" cy="200" r="104" fill="none" stroke="rgba(255,255,255,.10)" stroke-width="1"/>
-    <circle class="ring-dotted" cx="200" cy="200" r="173" fill="none" stroke="rgba(255,255,255,.5)"
-            stroke-width="2" stroke-linecap="round" stroke-dasharray="1 13"/>
-    <circle class="sonar sonar-1" cx="200" cy="200" r="96" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="1.3"/>
-    <circle class="sonar sonar-2" cx="200" cy="200" r="96" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="1.3"/>
-    <circle class="sonar sonar-3" cx="200" cy="200" r="96" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="1.3"/>
+<section class="closing-outcome">
+  <span class="closing-bloom" aria-hidden="true"></span>
+  <span class="closing-dots" aria-hidden="true"></span>
+  <svg class="closing-horizon" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="horizonFill" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="26%" stop-color="#0064ff" stop-opacity=".34"/>
+        <stop offset="58%" stop-color="#0064ff" stop-opacity=".12"/>
+        <stop offset="100%" stop-color="#0064ff" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="horizonRim" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#6aa8ff" stop-opacity=".12"/>
+        <stop offset="50%" stop-color="#6aa8ff" stop-opacity=".72"/>
+        <stop offset="100%" stop-color="#6aa8ff" stop-opacity=".12"/>
+      </linearGradient>
+    </defs>
+    <path d="M0,27 Q50,-5 100,27 L100,100 L0,100 Z" fill="url(#horizonFill)"/>
+    <path d="M0,27 Q50,-5 100,27" fill="none" stroke="url(#horizonRim)"
+          stroke-width="1.4" vector-effect="non-scaling-stroke"/>
   </svg>
   <div class="wrap">
     <p class="closing-kicker"><span class="k-ink">AI is abundant. Outcomes aren&rsquo;t.</span><br><span class="k-blue">We engineer them.</span></p>
@@ -1088,39 +1079,6 @@ footer{
   }
   container.addEventListener('pointermove', onMove);
   container.addEventListener('pointerleave', onLeave);
-})();
-
-/* ============ CLOSING — the ring field leans toward the pointer ============
-   Continuous motion keeps it alive; the lean makes it answer the reader.
-   Mirrors the hero's cursor glow so the page ends in the same language. */
-(function(){
-  const section = document.getElementById('closingOutcome');
-  const rings = document.getElementById('closingRings');
-  const bloom = document.getElementById('closingBloom');
-  if(!section || !rings || !bloom) return;
-  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-  let pending = false, dx = 0, dy = 0;
-
-  function apply(){
-    pending = false;
-    rings.style.translate = `calc(-50% + ${dx}px) calc(-50% + ${dy}px)`;
-    bloom.style.translate = `calc(-50% + ${dx * 1.9}px) calc(-50% + ${dy * 1.9}px)`;
-  }
-
-  function queue(){
-    if(!pending){ pending = true; requestAnimationFrame(apply); }
-  }
-
-  section.addEventListener('pointermove', e =>{
-    if(e.pointerType !== 'mouse') return;
-    const r = section.getBoundingClientRect();
-    dx = ((e.clientX - r.left) / r.width - 0.5) * 34;
-    dy = ((e.clientY - r.top) / r.height - 0.5) * 24;
-    queue();
-  });
-
-  section.addEventListener('pointerleave', ()=>{ dx = 0; dy = 0; queue(); });
 })();
 
 /* ============ WHAT IT CHANGES — staggered lever reveal ============
