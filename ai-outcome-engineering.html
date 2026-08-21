@@ -531,6 +531,7 @@ a:focus-visible, button:focus-visible{
   inset:0;
   background-image:radial-gradient(circle, rgba(255,255,255,.17) 1px, rgba(255,255,255,0) 1.5px);
   background-size:27px 27px;
+  animation:dotDrift 120s linear infinite;
   -webkit-mask-image:linear-gradient(to bottom, #000 4%, rgba(0,0,0,0) 66%);
   mask-image:linear-gradient(to bottom, #000 4%, rgba(0,0,0,0) 66%);
 }
@@ -541,6 +542,22 @@ a:focus-visible, button:focus-visible{
   inset:0;
   width:100%;
   height:100%;
+  animation:horizonDrift 34s ease-in-out infinite;
+}
+/* Slow enough to register as atmosphere rather than as an event: a light that
+   walks the curve once every half minute, and drifts measured in a few px. */
+.rim-streak{opacity:.62;}
+@keyframes horizonDrift{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-5px);}
+}
+@keyframes closingGlow{
+  0%,100%{opacity:.78;}
+  50%{opacity:1;}
+}
+@keyframes dotDrift{
+  from{background-position:0 0;}
+  to{background-position:27px 27px;}
 }
 .closing-bloom{
   left:50%;
@@ -550,6 +567,7 @@ a:focus-visible, button:focus-visible{
   aspect-ratio:1;
   background:radial-gradient(circle,
     rgba(0,100,255,.40) 0%, rgba(0,100,255,.15) 44%, rgba(0,100,255,0) 70%);
+  animation:closingGlow 22s ease-in-out infinite;
 }
 .closing-kicker{
   font-family:var(--display);
@@ -596,6 +614,11 @@ a:focus-visible, button:focus-visible{
 }
 @media (prefers-reduced-motion: reduce){
   .lever{opacity:1;transform:none;transition:none;}
+  .closing-horizon,
+  .rim-streak,
+  .closing-dots,
+  .closing-bloom{animation:none;}
+  .rim-streak{opacity:0;}
 }
 
 /* ============ FOOTER ============ */
@@ -825,9 +848,18 @@ footer{
         <stop offset="50%" stop-color="#6aa8ff" stop-opacity=".72"/>
         <stop offset="100%" stop-color="#6aa8ff" stop-opacity=".12"/>
       </linearGradient>
+      <linearGradient id="horizonSweep" x1="0" y1="0" x2="0.3" y2="0">
+        <stop offset="0%" stop-color="#dce9ff" stop-opacity="0"/>
+        <stop offset="50%" stop-color="#dce9ff" stop-opacity=".85"/>
+        <stop offset="100%" stop-color="#dce9ff" stop-opacity="0"/>
+        <animateTransform attributeName="gradientTransform" type="translate"
+                          from="-0.34 0" to="1.04 0" dur="30s" repeatCount="indefinite"/>
+      </linearGradient>
     </defs>
     <path d="M0,27 Q50,-5 100,27 L100,100 L0,100 Z" fill="url(#horizonFill)"/>
     <path d="M0,27 Q50,-5 100,27" fill="none" stroke="url(#horizonRim)"
+          stroke-width="1.4" vector-effect="non-scaling-stroke"/>
+    <path class="rim-streak" d="M0,27 Q50,-5 100,27" fill="none" stroke="url(#horizonSweep)"
           stroke-width="1.4" vector-effect="non-scaling-stroke"/>
   </svg>
   <div class="wrap">
