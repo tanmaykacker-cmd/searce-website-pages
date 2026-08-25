@@ -998,55 +998,54 @@ h1, h3, .opening-lead, .builds-punch, .accountability-punch, .evaluate-lead, .fl
   border-bottom:1px solid var(--paper-line);
 }
 .capacity .section-eyebrow{margin-bottom:40px;}
-/* One visualisation rather than three cards, a loose braid and a pill that
-   floated free of both. */
-.capacity-panel{
+.capacity-grid{
   display:grid;
-  grid-template-columns:minmax(0,1.7fr) minmax(70px,.5fr) minmax(0,.9fr);
-  align-items:center;
-  gap:0;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:clamp(16px,2vw,26px);
+}
+.capacity-card{
+  padding:clamp(24px,2.7vw,32px);
   border:1px solid var(--paper-line);
-  border-radius:20px;
-  padding:clamp(24px,2.8vw,36px);
+  border-radius:16px;
+  transition:background .22s ease, border-color .22s ease;
 }
-.capacity-sources{display:flex;flex-direction:column;}
-.capacity-row{
-  display:grid;
-  grid-template-columns:auto minmax(0,1fr);
-  gap:18px;
-  align-items:start;
-  padding:clamp(16px,1.8vw,22px) 0;
-}
-.capacity-row + .capacity-row{border-top:1px solid var(--paper-line);}
-.capacity-row svg{width:24px;height:24px;color:var(--blue);margin-top:2px;}
+.capacity-card:hover{background:var(--blue-06);border-color:var(--blue-12);}
+.capacity-card svg{width:24px;height:24px;color:var(--blue);margin-bottom:18px;}
 .capacity-title{
   font-family:var(--display);
   font-weight:600;
   font-size:clamp(16px,1.5vw,18.5px);
   letter-spacing:-0.01em;
   color:var(--ink);
-  margin:0 0 6px;
+  margin:0 0 9px;
 }
-.capacity-desc{font-size:15.5px;line-height:1.6;color:var(--ink);margin:0;text-wrap:pretty;}
-.capacity-join{display:block;width:100%;height:100%;min-height:190px;}
-.capacity-squad{
+.capacity-desc{font-size:15.5px;line-height:1.6;color:var(--ink);margin:0;}
+/* Three cards side by side read as three unrelated things. The braid shows
+   what the copy says: every squad draws on all three at once. */
+.capacity-braid{display:block;width:100%;height:auto;margin-top:-2px;}
+.capacity-sink{
   display:flex;
-  flex-direction:column;
-  align-items:center;
   justify-content:center;
-  gap:8px;
-  padding:clamp(22px,2.4vw,30px) clamp(14px,1.6vw,20px);
-  border-radius:16px;
+  margin-top:-4px;
+}
+.capacity-sink span{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:15px 30px;
+  border-radius:999px;
   background:var(--blue);
   color:#fff;
-  text-align:center;
-}
-.capacity-squad strong{
   font-family:var(--display);
   font-weight:600;
-  font-size:clamp(17px,1.6vw,20px);
+  font-size:16px;
 }
-.capacity-squad span{font-size:13.5px;color:rgba(255,255,255,.8);}
+.capacity-sink span::before{
+  content:"";
+  width:8px;height:8px;
+  border-radius:50%;
+  background:#fff;
+}
 
 /* ============ HOW SEARCE BUILDS ============
    Four generating steps on a rail, with the gates every one of them passes
@@ -1180,28 +1179,29 @@ h1, h3, .opening-lead, .builds-punch, .accountability-punch, .evaluate-lead, .fl
 .handover-track{
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:clamp(28px,3.4vw,56px);
   position:relative;
-  padding-top:52px;
+  padding-top:56px;
 }
 .handover-track::before{
   content:"";
   position:absolute;
-  top:20px;
-  left:calc(16.66% - 0px);
-  right:calc(16.66% - 0px);
+  top:24px;
+  left:16.66%;
+  right:16.66%;
   height:2px;
   border-radius:2px;
   background:linear-gradient(to right, var(--blue), var(--blue-24));
 }
 .handover-stop{
   position:relative;
-  padding:0 clamp(10px,1.6vw,22px);
+  padding:0;
   text-align:center;
 }
 .handover-stop::before{
   content:"";
   position:absolute;
-  top:-40px;left:50%;
+  top:-39px;left:50%;
   width:15px;height:15px;
   margin-left:-7.5px;
   border-radius:50%;
@@ -1217,7 +1217,7 @@ h1, h3, .opening-lead, .builds-punch, .accountability-punch, .evaluate-lead, .fl
   text-transform:uppercase;
   color:var(--blue);
   display:block;
-  margin-bottom:12px;
+  margin-bottom:16px;
 }
 .handover-title{
   font-family:var(--display);
@@ -1226,11 +1226,12 @@ h1, h3, .opening-lead, .builds-punch, .accountability-punch, .evaluate-lead, .fl
   line-height:1.3;
   letter-spacing:-0.01em;
   color:var(--ink);
-  margin:0 0 8px;
+  margin:0 0 12px;
 }
 .handover-desc{font-size:15.5px;line-height:1.6;color:var(--ink-60);margin:0;}
 
 .handover-note{
+  margin-top:clamp(44px,4.6vw,64px)!important;
   font-size:17.5px;
   line-height:1.7;
   color:var(--ink);
@@ -1239,10 +1240,19 @@ h1, h3, .opening-lead, .builds-punch, .accountability-punch, .evaluate-lead, .fl
 }
 .handover-note strong{font-weight:600;}
 
-/* ============ EVALUATING A SQUAD ============ */
+/* ============ EVALUATING A SQUAD ============
+   Three arrow-linked boxes described a process. What matters is what the
+   client actually gets to see first, so the section shows the two things
+   inside one frame labelled with the condition they happen under. */
 .evaluate{
   padding:clamp(92px,9.5vw,132px) 0;
   border-bottom:1px solid var(--paper-line);
+}
+.evaluate-grid{
+  display:grid;
+  grid-template-columns:minmax(0,.86fr) minmax(0,1.14fr);
+  gap:clamp(40px,5vw,84px);
+  align-items:center;
 }
 .evaluate-lead{
   font-family:var(--display);
@@ -1251,47 +1261,54 @@ h1, h3, .opening-lead, .builds-punch, .accountability-punch, .evaluate-lead, .fl
   line-height:1.35;
   letter-spacing:-0.015em;
   color:var(--ink);
-  max-width:26ch;
-  margin:0 0 clamp(34px,3.8vw,48px);
+  max-width:22ch;
+  margin:0 0 20px;
 }
-.evaluate-steps{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,.7fr);
-  align-items:stretch;
+.evaluate-note{font-size:16.5px;line-height:1.65;color:var(--ink);margin:0;}
+.preview{
   border:1px solid var(--paper-line);
-  border-radius:18px;
+  border-radius:20px;
   overflow:hidden;
 }
-.evaluate-step{
+.preview-bar{
   display:flex;
-  flex-direction:column;
-  justify-content:center;
   align-items:center;
-  text-align:center;
-  gap:12px;
-  padding:clamp(26px,2.9vw,36px) clamp(18px,2vw,26px);
+  gap:10px;
+  padding:15px 24px;
+  background:var(--blue-06);
+  border-bottom:1px solid var(--blue-12);
   font-family:var(--display);
-  font-weight:500;
-  font-size:clamp(16px,1.5vw,19px);
-  line-height:1.3;
-  color:var(--ink);
-}
-.evaluate-num{
-  font-size:12px;
-  letter-spacing:.12em;
   font-weight:600;
-  color:var(--blue);
+  font-size:11.5px;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+  color:var(--blue-strong);
 }
-.evaluate-arrow{
+.preview-bar::before{
+  content:"";
+  width:8px;height:8px;
+  border-radius:50%;
+  background:var(--blue);
+  flex:none;
+}
+.preview-row{
   display:grid;
-  place-items:center;
-  padding:0 clamp(10px,1.4vw,18px);
-  color:var(--blue);
+  grid-template-columns:auto minmax(0,1fr);
+  gap:24px;
+  align-items:center;
+  padding:clamp(24px,2.6vw,32px);
 }
-.evaluate-arrow svg{width:22px;height:22px;}
-.evaluate-decide{background:var(--blue);color:#fff;}
-.evaluate-decide .evaluate-num{color:rgba(255,255,255,.75);}
-.evaluate-note{font-size:16px;line-height:1.6;color:var(--ink-60);margin:26px 0 0;}
+.preview-row + .preview-row{border-top:1px solid var(--paper-line);}
+.preview-art{width:76px;height:60px;flex:none;}
+.preview-title{
+  font-family:var(--display);
+  font-weight:600;
+  font-size:clamp(16.5px,1.55vw,19px);
+  letter-spacing:-0.01em;
+  color:var(--ink);
+  margin:0 0 7px;
+}
+.preview-desc{font-size:15.5px;line-height:1.6;color:var(--ink);margin:0;}
 
 /* ============ QUESTIONS ============
    An accordion so the answer costs nothing until it is wanted. */
@@ -1337,20 +1354,18 @@ h1, h3, .opening-lead, .builds-punch, .accountability-punch, .evaluate-lead, .fl
   .who-grid{grid-template-columns:minmax(0,1fr);gap:44px;}
 }
 @media (max-width:820px){
-  .capacity-panel{grid-template-columns:minmax(0,1fr);}
-  .capacity-join{display:none;}
-  .capacity-squad{margin-top:22px;}
+  .capacity-grid{grid-template-columns:minmax(0,1fr);}
+  .capacity-braid{display:none;}
+  .capacity-sink{margin-top:22px;}
   .acct-flow{grid-template-columns:minmax(0,1fr);gap:18px;justify-items:center;}
   .acct-line{display:none;}
-  .evaluate-steps{grid-template-columns:minmax(0,1fr);}
+  .evaluate-grid{grid-template-columns:minmax(0,1fr);gap:40px;}
   .build-flow{grid-template-columns:minmax(0,1fr);}
   .flow-arrow svg{transform:rotate(90deg);}
   .handover-track{grid-template-columns:minmax(0,1fr);gap:34px;padding-top:0;}
   .handover-track::before{display:none;}
   .handover-stop{text-align:left;padding:0 0 0 26px;}
   .handover-stop::before{top:4px;left:0;margin-left:0;}
-  .evaluate-arrow{padding:8px 0;}
-  .evaluate-arrow svg{transform:rotate(90deg);}
 }
 @media (max-width:620px){
   .craft-split{grid-template-columns:minmax(0,1fr);gap:22px;}
@@ -1543,40 +1558,30 @@ h1, h3, .opening-lead, .builds-punch, .accountability-punch, .evaluate-lead, .fl
 <section class="capacity">
   <div class="wrap">
     <span class="section-eyebrow">three sources of capacity</span>
-    <div class="capacity-panel">
-      <div class="capacity-sources">
-        <div class="capacity-row">
+    <p class="capacity-lead">Every squad draws on all three at once.</p>
+    <div class="capacity-grid">
+        <div class="capacity-card">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20v-7l8-6 8 6v7"/><path d="M10 20v-5h4v5"/></svg>
-          <div>
-            <p class="capacity-title">Onsite solvers</p>
-            <p class="capacity-desc">Work inside the client&rsquo;s operation.</p>
-          </div>
+          <p class="capacity-title">Onsite solvers</p>
+          <p class="capacity-desc">Work inside the client&rsquo;s operation.</p>
         </div>
-        <div class="capacity-row">
+        <div class="capacity-card">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 3 2.6 15 0 18M12 3c-2.6 3-2.6 15 0 18"/></svg>
-          <div>
-            <p class="capacity-title">The engineering engine</p>
-            <p class="capacity-desc">Across eleven countries, building around the clock.</p>
-          </div>
+          <p class="capacity-title">The engineering engine</p>
+          <p class="capacity-desc">Across eleven countries, building around the clock.</p>
         </div>
-        <div class="capacity-row">
+        <div class="capacity-card">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 3v4M9 13h.01M15 13h.01"/></svg>
-          <div>
-            <p class="capacity-title">AI-native agent coworkers</p>
-            <p class="capacity-desc">Trained on Searce&rsquo;s pattern library, carrying capture, evaluation and monitoring.</p>
-          </div>
+          <p class="capacity-title">AI-native agent coworkers</p>
+          <p class="capacity-desc">Trained on Searce&rsquo;s pattern library, carrying capture, evaluation and monitoring.</p>
         </div>
-      </div>
-      <svg class="capacity-join" viewBox="0 0 100 300" preserveAspectRatio="none" aria-hidden="true">
-        <path d="M0 50 C55 50, 45 150, 100 150" fill="none" stroke="var(--blue-24)" stroke-width="1.4" vector-effect="non-scaling-stroke"/>
-        <path d="M0 150 H100" fill="none" stroke="var(--blue-24)" stroke-width="1.4" vector-effect="non-scaling-stroke"/>
-        <path d="M0 250 C55 250, 45 150, 100 150" fill="none" stroke="var(--blue-24)" stroke-width="1.4" vector-effect="non-scaling-stroke"/>
-      </svg>
-      <div class="capacity-squad">
-        <strong>One squad</strong>
-        <span>drawing on all three</span>
-      </div>
     </div>
+    <svg class="capacity-braid" viewBox="0 0 900 92" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M150 0 C150 52, 450 40, 450 92" fill="none" stroke="var(--blue-24)" stroke-width="1.6"/>
+      <path d="M450 0 L450 92" fill="none" stroke="var(--blue-24)" stroke-width="1.6"/>
+      <path d="M750 0 C750 52, 450 40, 450 92" fill="none" stroke="var(--blue-24)" stroke-width="1.6"/>
+    </svg>
+    <div class="capacity-sink"><span>One squad</span></div>
   </div>
 </section>
 
@@ -1665,19 +1670,42 @@ h1, h3, .opening-lead, .builds-punch, .accountability-punch, .evaluate-lead, .fl
 <section class="evaluate">
   <div class="wrap">
     <span class="section-eyebrow">evaluating a squad</span>
-    <p class="evaluate-lead">Before committing, the client meets the squad that would do the work and watches them solve a real problem.</p>
-    <div class="evaluate-steps">
-      <div class="evaluate-step"><span class="evaluate-num">01</span>Meet the squad that would do the work</div>
-      <div class="evaluate-arrow" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    <div class="evaluate-grid">
+      <div>
+        <p class="evaluate-lead">You meet the squad before you commit to it.</p>
+        <p class="evaluate-note">Searce shows the format during the pursuit.</p>
       </div>
-      <div class="evaluate-step"><span class="evaluate-num">02</span>Watch them solve a real problem</div>
-      <div class="evaluate-arrow" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      <div class="preview">
+        <div class="preview-bar">before committing</div>
+        <div class="preview-row">
+          <svg class="preview-art" viewBox="0 0 76 60" fill="none" aria-hidden="true">
+            <circle cx="38" cy="30" r="9" fill="var(--blue)"/>
+            <circle cx="14" cy="16" r="6" fill="none" stroke="var(--blue)" stroke-width="2"/>
+            <circle cx="62" cy="16" r="6" fill="none" stroke="var(--blue)" stroke-width="2"/>
+            <circle cx="14" cy="46" r="6" fill="none" stroke="var(--blue)" stroke-width="2"/>
+            <circle cx="62" cy="46" r="6" fill="none" stroke="var(--blue)" stroke-width="2"/>
+            <path d="M20 19 L30 26 M56 19 L46 26 M20 43 L30 34 M56 43 L46 34"
+                  stroke="var(--blue-24)" stroke-width="1.6"/>
+          </svg>
+          <div>
+            <p class="preview-title">The squad that would do the work</p>
+            <p class="preview-desc">Not a bench, not a proposal team &mdash; the people who would be on it.</p>
+          </div>
+        </div>
+        <div class="preview-row">
+          <svg class="preview-art" viewBox="0 0 76 60" fill="none" aria-hidden="true">
+            <rect x="6" y="9" width="64" height="42" rx="6" stroke="var(--blue-24)" stroke-width="2"/>
+            <path d="M16 38 L28 26 L38 33 L52 19" stroke="var(--blue)" stroke-width="2.4"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="52" cy="19" r="3.6" fill="var(--blue)"/>
+          </svg>
+          <div>
+            <p class="preview-title">A real problem, solved in front of you</p>
+            <p class="preview-desc">You watch them work it, not describe how they would.</p>
+          </div>
+        </div>
       </div>
-      <div class="evaluate-step evaluate-decide"><span class="evaluate-num">then</span>Commit</div>
     </div>
-    <p class="evaluate-note">Searce shows the format during the pursuit.</p>
   </div>
 </section>
 
@@ -1719,6 +1747,18 @@ h1, h3, .opening-lead, .builds-punch, .accountability-punch, .evaluate-lead, .fl
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
         </summary>
         <p><strong>No.</strong> Staff augmentation supplies individuals against roles. A squad is a formed team accountable for a named outcome, with its own lead and its own measurement.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Does the squad change during the engagement?
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <p>Composition flexes with the delivery lifecycle, but the squad stays consistent so knowledge compounds rather than walking out the door.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Where do squads work from?
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <p>Onsite where the problem lives, with follow-the-sun engineering across eleven countries.</p>
       </details>
     </div>
   </div>
