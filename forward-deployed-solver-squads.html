@@ -184,73 +184,103 @@ a:focus-visible, button:focus-visible{
 }
 .lang-toggle svg{width:9px;height:9px;}
 
-/* ============ HERO ============ */
+/* ============ HERO ============
+   The field is the page's thesis made literal: loose points that form a squad
+   around wherever the reader is looking, and fall apart again behind them. */
 .hero{
   position:relative;
   display:flex;
   align-items:center;
-  /* 88vh left the headline stranded in a tall empty field; the hero is now
-     sized by its content. */
-  padding:clamp(74px,8vw,112px) 0 clamp(88px,9vw,126px);
+  padding:clamp(88px,9.5vw,132px) 0 clamp(96px,10vw,140px);
   overflow:hidden;
   border-bottom:1px solid var(--paper-line);
   isolation:isolate;
 }
-.hero .wrap{
-  position:relative;
-  z-index:1;
-  display:grid;
-  grid-template-columns:minmax(0,1.18fr) minmax(0,.82fr);
-  gap:clamp(40px,5vw,84px);
-  align-items:center;
-}
-.hero-copy{min-width:0;}
-.hero-sub{
-  font-size:clamp(17px,1.55vw,20px);
-  line-height:1.6;
-  color:var(--ink-60);
-  max-width:30ch;
-  margin:26px 0 0;
-}
-/* The squad as one unit: three capabilities bound to a single outcome. */
-.squad-orbit{
-  display:block;
-  width:100%;
-  max-width:450px;
-  height:auto;
-  margin-inline:auto;
-}
-.orbit-spin{
-  transform-box:fill-box;
-  transform-origin:center;
-  animation:orbitSpin 48s linear infinite;
-}
-@keyframes orbitSpin{to{transform:rotate(360deg);}}
-.hero-particles{
+.hero-field{
   position:absolute;
   inset:0;
   z-index:0;
   pointer-events:none;
-  overflow:hidden;
-  /* Fourteen hand-placed dots read as scatter; a field reads as texture. */
-  background-image:radial-gradient(circle, var(--blue-24) 1.4px, rgba(0,0,0,0) 1.9px);
-  background-size:30px 30px;
-  -webkit-mask-image:radial-gradient(120% 90% at 50% 40%, #000 20%, rgba(0,0,0,0) 78%);
-  mask-image:radial-gradient(120% 90% at 50% 40%, #000 20%, rgba(0,0,0,0) 78%);
-  opacity:.5;
+  /* The squad forms anywhere, but the field recedes under the copy so the
+     links never fight the headline. */
+  -webkit-mask-image:linear-gradient(to right, rgba(0,0,0,.16) 0%, rgba(0,0,0,.3) 30%, #000 60%);
+  mask-image:linear-gradient(to right, rgba(0,0,0,.16) 0%, rgba(0,0,0,.3) 30%, #000 60%);
 }
+.hero-field svg{display:block;width:100%;height:100%;}
+.field-dot{
+  fill:var(--ink-40);
+  opacity:.28;
+  transition:fill .18s ease, opacity .18s ease, r .18s ease;
+}
+.field-dot.lit{fill:var(--blue);opacity:1;}
+.field-dot.core{fill:var(--blue);opacity:1;}
+.squad-link{
+  fill:none;
+  stroke:var(--blue);
+  stroke-width:1.4;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  opacity:0;
+  transition:opacity .22s ease;
+}
+.squad-link.on{opacity:.5;}
+.hero-glow{
+  position:absolute;
+  width:520px;
+  height:520px;
+  left:0;top:0;
+  z-index:0;
+  pointer-events:none;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(0,100,255,.13) 0%, rgba(0,100,255,.05) 42%, rgba(0,100,255,0) 70%);
+  opacity:0;
+  transition:opacity .3s ease;
+}
+.hero-glow.on{opacity:1;}
 .hero-fade{
   position:absolute;
   inset:0;
   z-index:0;
-  background:linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 55%, rgba(255,255,255,0.9) 100%);
+  background:linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 58%, rgba(255,255,255,.92) 100%);
   pointer-events:none;
 }
-.hero .wrap{
-  position:relative;
-  z-index:1;
-  width:100%;
+.hero .wrap{position:relative;z-index:1;}
+.hero-copy{max-width:min(100%,880px);}
+.hero h1{
+  font-family:var(--display);
+  font-weight:300;
+  /* Sized so Forward-Deployed holds one row inside the copy measure. */
+  font-size:clamp(34px, 5.8vw, 84px);
+  line-height:1.02;
+  letter-spacing:-0.022em;
+  margin:0;
 }
+.hero h1 .line-ink{display:block;color:var(--ink);white-space:nowrap;}
+.hero h1 .line-blue{display:block;color:var(--blue);white-space:nowrap;}
+.hero-sub{
+  font-size:clamp(17px,1.6vw,21px);
+  line-height:1.6;
+  color:var(--ink-60);
+  max-width:44ch;
+  margin:28px 0 0;
+}
+.hero-hint{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  margin:30px 0 0;
+  font-size:13px;
+  color:var(--ink-40);
+}
+.hero-hint span{
+  width:6px;height:6px;
+  border-radius:50%;
+  background:var(--blue);
+  flex:none;
+}
+@media (hover:none){.hero-hint{display:none;}}
+
+/* Restored with the hero rebuild: the chip rule lived in the block that was replaced. */
 .page-badge{
   display:inline-block;
   background:var(--blue-06);
@@ -265,18 +295,6 @@ a:focus-visible, button:focus-visible{
   border-radius:8px;
   margin-bottom:26px;
 }
-.hero h1{
-  font-family:var(--display);
-  font-weight:300;
-  /* Sized for the two-column hero: at 112px the hyphen in Forward-Deployed
-     became a line break. */
-  font-size:clamp(34px, 4.7vw, 68px);
-  line-height:1.0;
-  letter-spacing:-0.02em;
-  margin:0;
-}
-.hero h1 .line-ink{display:block;color:var(--ink);white-space:nowrap;}
-.hero h1 .line-blue{display:block;color:var(--blue);white-space:nowrap;}
 
 /* ============ SHARED SECTION UTILS ============ */
 .section-eyebrow{
@@ -426,50 +444,6 @@ a:focus-visible, button:focus-visible{
   text-align:center;
 }
 
-/* ============ HOW SOLVERS THINK ============
-   Two identical root sketches sat marooned at the far edges, reading as
-   accident. One larger system, centred under the statement, reads as intent. */
-.solvers-think{
-  padding:clamp(96px,10vw,138px) 0;
-  border-bottom:1px solid var(--paper-line);
-  text-align:center;
-}
-.solvers-think .section-eyebrow{margin-bottom:30px;}
-.solvers-statement{
-  font-family:var(--display);
-  font-weight:500;
-  font-size:clamp(25px,3vw,40px);
-  line-height:1.3;
-  letter-spacing:-0.015em;
-  color:var(--ink);
-  max-width:24ch;
-  margin:0 auto;
-}
-.solvers-statement .accent{color:var(--blue);}
-.root-system{
-  display:block;
-  width:100%;
-  max-width:660px;
-  height:auto;
-  margin:clamp(40px,4.5vw,64px) auto 0;
-}
-.root-symptom{
-  font-family:var(--display);
-  font-weight:600;
-  font-size:11.5px;
-  letter-spacing:.14em;
-  text-transform:uppercase;
-  fill:var(--ink-40);
-}
-.root-cause{
-  font-family:var(--display);
-  font-weight:600;
-  font-size:11.5px;
-  letter-spacing:.14em;
-  text-transform:uppercase;
-  fill:var(--blue);
-}
-
 /* ============ ACCOUNTABILITY ============
    Two small cards floated in the left half. They now share the full width
    under one owner node, and the punch line closes the section on a rule,
@@ -523,63 +497,6 @@ a:focus-visible, button:focus-visible{
   margin:clamp(48px,5vw,72px) 0 0;
   padding-top:clamp(30px,3.4vw,40px);
   border-top:1px solid var(--paper-line);
-}
-
-/* ============ HOW SQUADS ARE EVALUATED ============
-   Three separate small cards became one bordered grid with hairline seams,
-   the same construction as the lever grid on the sibling page. */
-.evaluated{
-  padding:clamp(92px,9.5vw,132px) 0;
-  border-bottom:1px solid var(--paper-line);
-}
-.evaluated .section-eyebrow{margin-bottom:44px;}
-.eval-grid{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:1px;
-  background:var(--paper-line);
-  border:1px solid var(--paper-line);
-  border-radius:20px;
-  overflow:hidden;
-}
-.eval-card{
-  background:var(--paper);
-  padding:clamp(28px,3vw,38px);
-  display:flex;
-  flex-direction:column;
-  gap:16px;
-  transition:background .25s ease;
-}
-.eval-card:hover{background:var(--blue-06);}
-.eval-top{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:14px;
-  margin-bottom:8px;
-}
-.eval-num{
-  font-family:var(--display);
-  font-weight:600;
-  font-size:12.5px;
-  letter-spacing:.12em;
-  color:var(--ink-60);
-}
-.eval-icon{width:21px;height:21px;color:var(--blue);flex:none;}
-.eval-title{
-  font-family:var(--display);
-  font-weight:600;
-  font-size:clamp(17px,1.6vw,20px);
-  line-height:1.28;
-  letter-spacing:-0.01em;
-  color:var(--ink);
-  margin:0;
-}
-.eval-desc{
-  font-size:15.5px;
-  line-height:1.6;
-  color:var(--ink);
-  margin:0;
 }
 
 /* ============ HOW SQUADS FLEX (signature element) ============ */
@@ -895,12 +812,324 @@ footer{
   color:rgba(255,255,255,0.35);
 }
 
+/* ============ WHO IS IN A SQUAD ============
+   The crafts are tiles rather than a sentence: five of them in prose is a list
+   the eye slides off. */
+.who{
+  padding:clamp(92px,9.5vw,132px) 0;
+  border-bottom:1px solid var(--paper-line);
+}
+.who-lead{
+  font-size:19px;
+  line-height:1.65;
+  color:var(--ink);
+  max-width:56ch;
+  margin:0 0 34px;
+}
+.crafts-grid{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:1px;
+  background:var(--paper-line);
+  border:1px solid var(--paper-line);
+  border-radius:18px;
+  overflow:hidden;
+}
+.craft{
+  background:var(--paper);
+  padding:clamp(24px,2.6vw,32px) clamp(18px,2vw,24px);
+  min-height:132px;
+  display:flex;
+  align-items:flex-end;
+  font-family:var(--display);
+  font-weight:500;
+  font-size:clamp(15px,1.35vw,17px);
+  line-height:1.3;
+  letter-spacing:-0.01em;
+  color:var(--ink);
+  transition:background .22s ease, color .22s ease;
+}
+.craft:hover{background:var(--blue);color:#fff;}
+.who-note{
+  font-size:17.5px;
+  line-height:1.7;
+  color:var(--ink);
+  max-width:62ch;
+  margin:34px 0 0;
+}
+.who-note strong{font-weight:600;}
+
+/* ============ THREE SOURCES OF CAPACITY ============ */
+.capacity{
+  padding:clamp(92px,9.5vw,132px) 0;
+  border-bottom:1px solid var(--paper-line);
+}
+.capacity .section-eyebrow{margin-bottom:40px;}
+.capacity-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:clamp(18px,2.2vw,28px);
+}
+.capacity-card{
+  padding:clamp(28px,3vw,38px);
+  border:1px solid var(--paper-line);
+  border-radius:18px;
+  transition:background .22s ease;
+}
+.capacity-card:hover{background:var(--blue-06);}
+.capacity-card svg{width:26px;height:26px;color:var(--blue);margin-bottom:22px;}
+.capacity-title{
+  font-family:var(--display);
+  font-weight:600;
+  font-size:clamp(17px,1.6vw,20px);
+  letter-spacing:-0.01em;
+  color:var(--ink);
+  margin:0 0 10px;
+}
+.capacity-desc{font-size:16px;line-height:1.6;color:var(--ink);margin:0;}
+
+/* ============ HOW SEARCE BUILDS ============
+   Four generating steps on a rail, with the gates every one of them passes
+   held underneath, so "at every gate" is shown rather than asserted. */
+.builds{
+  padding:clamp(92px,9.5vw,132px) 0;
+  border-bottom:1px solid var(--paper-line);
+}
+.builds-lead{
+  font-size:19px;
+  line-height:1.65;
+  color:var(--ink);
+  max-width:52ch;
+  margin:0 0 clamp(36px,4vw,52px);
+}
+.build-steps{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:clamp(12px,1.4vw,18px);
+}
+.build-step{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  padding:clamp(22px,2.4vw,28px);
+  border:1px solid var(--paper-line);
+  border-radius:15px;
+  background:var(--paper);
+  font-family:var(--display);
+  font-weight:500;
+  font-size:clamp(15px,1.35vw,17.5px);
+  line-height:1.3;
+  color:var(--ink);
+}
+.build-index{
+  font-size:12px;
+  letter-spacing:.12em;
+  font-weight:600;
+  color:var(--blue);
+}
+.build-rail{
+  height:2px;
+  border-radius:2px;
+  background:linear-gradient(to right, var(--blue-12), var(--blue), var(--blue-12));
+  margin:22px 0 0;
+}
+.build-gates{
+  display:flex;
+  align-items:center;
+  gap:clamp(14px,2vw,26px);
+  flex-wrap:wrap;
+  margin-top:20px;
+}
+.gates-label{
+  font-family:var(--display);
+  font-weight:600;
+  font-size:11.5px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--ink-40);
+  flex:none;
+}
+.gates-row{display:flex;gap:10px;flex-wrap:wrap;}
+.gate{
+  padding:9px 16px;
+  border-radius:999px;
+  background:var(--blue-06);
+  border:1px solid var(--blue-12);
+  font-size:14.5px;
+  color:var(--blue-strong);
+  white-space:nowrap;
+}
+.builds-punch{
+  font-family:var(--display);
+  font-weight:600;
+  font-size:clamp(21px,2.4vw,31px);
+  line-height:1.32;
+  letter-spacing:-0.015em;
+  color:var(--ink);
+  margin:clamp(46px,5vw,68px) 0 0;
+  padding-top:clamp(30px,3.4vw,40px);
+  border-top:1px solid var(--paper-line);
+  max-width:30ch;
+}
+.builds-punch .punch-muted{color:var(--ink-40);}
+
+/* ============ AFTER THE BUILD ============ */
+.handover{
+  padding:clamp(92px,9.5vw,132px) 0;
+  border-bottom:1px solid var(--paper-line);
+}
+.handover .section-eyebrow{margin-bottom:40px;}
+.handover-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:1px;
+  background:var(--paper-line);
+  border:1px solid var(--paper-line);
+  border-radius:18px;
+  overflow:hidden;
+}
+.handover-card{
+  background:var(--paper);
+  padding:clamp(26px,2.9vw,36px);
+  transition:background .22s ease;
+}
+.handover-card:hover{background:var(--blue-06);}
+.handover-title{
+  font-family:var(--display);
+  font-weight:600;
+  font-size:clamp(16.5px,1.5vw,19px);
+  line-height:1.3;
+  letter-spacing:-0.01em;
+  color:var(--ink);
+  margin:0 0 10px;
+}
+.handover-desc{font-size:15.5px;line-height:1.6;color:var(--ink-60);margin:0;}
+.handover-note{
+  font-size:17.5px;
+  line-height:1.7;
+  color:var(--ink);
+  max-width:64ch;
+  margin:34px 0 0;
+}
+.handover-note strong{font-weight:600;}
+
+/* ============ EVALUATING A SQUAD ============ */
+.evaluate{
+  padding:clamp(92px,9.5vw,132px) 0;
+  border-bottom:1px solid var(--paper-line);
+}
+.evaluate-lead{
+  font-family:var(--display);
+  font-weight:500;
+  font-size:clamp(22px,2.5vw,32px);
+  line-height:1.35;
+  letter-spacing:-0.015em;
+  color:var(--ink);
+  max-width:26ch;
+  margin:0 0 clamp(34px,3.8vw,48px);
+}
+.evaluate-steps{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+  align-items:stretch;
+  border:1px solid var(--paper-line);
+  border-radius:18px;
+  overflow:hidden;
+}
+.evaluate-step{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  padding:clamp(26px,2.9vw,36px);
+  font-family:var(--display);
+  font-weight:500;
+  font-size:clamp(16px,1.5vw,19px);
+  line-height:1.3;
+  color:var(--ink);
+}
+.evaluate-num{
+  font-size:12px;
+  letter-spacing:.12em;
+  font-weight:600;
+  color:var(--blue);
+}
+.evaluate-arrow{
+  display:grid;
+  place-items:center;
+  padding:0 clamp(14px,1.6vw,22px);
+  border-left:1px solid var(--paper-line);
+  border-right:1px solid var(--paper-line);
+  color:var(--blue);
+}
+.evaluate-arrow svg{width:22px;height:22px;}
+.evaluate-note{font-size:16px;line-height:1.6;color:var(--ink-60);margin:26px 0 0;}
+
+/* ============ QUESTIONS ============
+   An accordion so the answer costs nothing until it is wanted. */
+.faq{padding:clamp(92px,9.5vw,132px) 0;}
+.faq .section-eyebrow{margin-bottom:34px;}
+.faq-list{border-top:1px solid var(--paper-line);}
+.faq-item{border-bottom:1px solid var(--paper-line);}
+.faq-item summary{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  padding:26px 0;
+  cursor:pointer;
+  list-style:none;
+  font-family:var(--display);
+  font-weight:500;
+  font-size:clamp(18px,1.8vw,23px);
+  letter-spacing:-0.01em;
+  color:var(--ink);
+  transition:color .2s ease;
+}
+.faq-item summary::-webkit-details-marker{display:none;}
+.faq-item summary:hover{color:var(--blue);}
+.faq-item summary svg{
+  width:19px;height:19px;
+  flex:none;
+  color:var(--blue);
+  transition:transform .25s ease;
+}
+.faq-item[open] summary svg{transform:rotate(180deg);}
+.faq-item p{
+  margin:0;
+  padding:0 0 28px;
+  font-size:17.5px;
+  line-height:1.7;
+  color:var(--ink);
+  max-width:66ch;
+}
+.faq-item p strong{font-weight:600;}
+
+@media (max-width:1080px){
+  .crafts-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+  .build-steps{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+@media (max-width:820px){
+  .capacity-grid,
+  .handover-grid{grid-template-columns:minmax(0,1fr);}
+  .evaluate-steps{grid-template-columns:minmax(0,1fr);}
+  .evaluate-arrow{
+    border-left:0;border-right:0;
+    border-top:1px solid var(--paper-line);
+    border-bottom:1px solid var(--paper-line);
+    padding:12px 0;
+  }
+  .evaluate-arrow svg{transform:rotate(90deg);}
+}
+@media (max-width:620px){
+  .crafts-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .build-steps{grid-template-columns:minmax(0,1fr);}
+  .craft{min-height:0;}
+}
+
 /* ============ RESPONSIVE ============ */
 /* The grids added in this pass need their own collapse points; the block
    below predates them. */
 @media (max-width:900px){
-  .hero .wrap{grid-template-columns:minmax(0,1fr);gap:clamp(36px,5vw,52px);}
-  .squad-orbit{max-width:330px;}
   .hero-sub{max-width:none;}
   .squad-is-grid{grid-template-columns:minmax(0,1fr);gap:40px;}
 }
@@ -925,7 +1154,6 @@ footer{
   .wrap{padding:0 24px;}
   .nav-links{display:none;}
   .role-grid{grid-template-columns:1fr;gap:28px;}
-  .eval-grid{grid-template-columns:1fr;}
   .flex-layout{grid-template-columns:1fr;gap:36px;}
   .flex-visual{order:-1;}
 }
@@ -933,7 +1161,6 @@ footer{
   .hero{padding:64px 0 96px;min-height:auto;}
   .opening{padding:72px 0;}
   .squad-is{padding:72px 0;}
-  .solvers-think{padding:72px 0;}
   .accountability{padding:72px 0;}
   .evaluated{padding:80px 0;}
   .flex-section{padding:80px 0;}
@@ -993,7 +1220,8 @@ footer{
 </nav>
 
 <header class="hero" id="heroSection">
-  <div class="hero-particles" aria-hidden="true"></div>
+  <div class="hero-field" id="heroField" aria-hidden="true"></div>
+  <span class="hero-glow" id="heroGlow" aria-hidden="true"></span>
   <div class="hero-fade" aria-hidden="true"></div>
   <div class="wrap">
     <div class="hero-copy">
@@ -1002,22 +1230,9 @@ footer{
         <span class="line-ink">Forward-Deployed</span>
         <span class="line-blue">Solver Squads</span>
       </h1>
-      <p class="hero-sub">Cohesive teams inside your problem.</p>
+      <p class="hero-sub">A cohesive team built to solve one business problem as a unit &mdash; not staffed roles filled against a rate card.</p>
+      <p class="hero-hint"><span aria-hidden="true"></span>Move across the field to form a squad</p>
     </div>
-    <svg class="squad-orbit" viewBox="0 0 320 320" role="img"
-         aria-label="Three capabilities bound to a single accountable outcome.">
-      <circle cx="160" cy="160" r="118" fill="none" stroke="var(--paper-line)" stroke-width="1"/>
-      <g class="orbit-spin">
-        <circle cx="160" cy="160" r="146" fill="none" stroke="var(--blue-24)" stroke-width="2"
-                stroke-linecap="round" stroke-dasharray="1 13" opacity=".75"/>
-      </g>
-      <path d="M160 160 L160 42 M160 160 L262 219 M160 160 L58 219"
-            stroke="var(--blue-24)" stroke-width="1.5" fill="none"/>
-      <circle cx="160" cy="42" r="13" fill="var(--paper)" stroke="var(--blue)" stroke-width="2.5"/>
-      <circle cx="262" cy="219" r="13" fill="var(--paper)" stroke="var(--blue)" stroke-width="2.5"/>
-      <circle cx="58" cy="219" r="13" fill="var(--paper)" stroke="var(--blue)" stroke-width="2.5"/>
-      <circle cx="160" cy="160" r="30" fill="var(--blue)"/>
-    </svg>
   </div>
 </header>
 
@@ -1025,8 +1240,8 @@ footer{
   <div class="wrap">
     <span class="section-eyebrow">the old model</span>
     <p class="opening-lead">
-      <span class="lead-muted">The traditional model ships resumes and counts hours.</span>
-      <span class="lead-strong">We ship squads and count outcomes.</span>
+      <span class="lead-muted">The traditional professional services model ships resumes and counts hours.</span>
+      <span class="lead-strong">Searce ships squads and counts outcomes.</span>
     </p>
     <div class="compare">
       <div class="compare-side compare-old">
@@ -1051,8 +1266,8 @@ footer{
     <span class="section-eyebrow">what a squad is</span>
     <div class="squad-is-grid">
       <div>
-        <p class="squad-is-text">A solver squad is a cohesive team purpose-built to solve complex business and engineering problems as one unit, around a <strong>single accountable outcome</strong>.</p>
-        <p class="squad-is-note">Squads integrate into your operating model and work where the problem lives.</p>
+        <p class="squad-is-text">A cohesive team built to solve one business problem as a unit, around a <strong>single accountable outcome</strong>.</p>
+        <p class="squad-is-note">Squads are not staffed roles filled against a rate card. They are formed teams that integrate into the client&rsquo;s operating model and work where the problem lives.</p>
       </div>
       <div class="capability-stack">
         <div class="capability"><span aria-hidden="true"></span>Business understanding</div>
@@ -1067,31 +1282,47 @@ footer{
   </div>
 </section>
 
-<section class="solvers-think">
+<section class="who">
   <div class="wrap">
-    <span class="section-eyebrow">how solvers think</span>
-    <p class="solvers-statement">We solve from <span class="accent">the roots</span>: the causes beneath the symptoms, never the easiest first option.</p>
-    <svg class="root-system" viewBox="0 0 660 250" role="img"
-         aria-label="The visible symptom sits above a root system reaching down to the causes beneath it.">
-      <text class="root-symptom" x="330" y="16" text-anchor="middle">the symptom</text>
-      <line x1="330" y1="34" x2="330" y2="74" stroke="var(--ink-40)" stroke-width="1.5"/>
-      <line x1="70" y1="86" x2="590" y2="86" stroke="var(--paper-line)" stroke-width="1"/>
-      <path d="M330 86 C 300 132, 236 150, 150 206" fill="none" stroke="var(--blue-24)" stroke-width="2" stroke-linecap="round"/>
-      <path d="M330 86 C 330 140, 330 176, 330 214" fill="none" stroke="var(--blue-24)" stroke-width="2" stroke-linecap="round"/>
-      <path d="M330 86 C 360 132, 424 150, 510 206" fill="none" stroke="var(--blue-24)" stroke-width="2" stroke-linecap="round"/>
-      <path d="M256 130 C 232 150, 214 166, 206 190" fill="none" stroke="var(--blue-12)" stroke-width="1.5" stroke-linecap="round"/>
-      <path d="M404 130 C 428 150, 446 166, 454 190" fill="none" stroke="var(--blue-12)" stroke-width="1.5" stroke-linecap="round"/>
-      <circle cx="150" cy="206" r="6" fill="var(--blue)"/>
-      <circle cx="330" cy="214" r="6" fill="var(--blue)"/>
-      <circle cx="510" cy="206" r="6" fill="var(--blue)"/>
-      <text class="root-cause" x="330" y="243" text-anchor="middle">the causes</text>
-    </svg>
+    <span class="section-eyebrow">who is in a squad</span>
+    <p class="who-lead">Composition varies by practice. A Business Systems Engineering squad typically combines:</p>
+    <div class="crafts-grid">
+        <div class="craft">Product engineering managers</div>
+        <div class="craft">Software engineers</div>
+        <div class="craft">AI engineers</div>
+        <div class="craft">Business process engineers</div>
+        <div class="craft">Industrial engineers</div>
+    </div>
+    <p class="who-note">Rebuilding how work runs requires both the people who redesign the process and the people who build the system. <strong>Searce does not staff one craft without the other.</strong></p>
+  </div>
+</section>
+
+<section class="capacity">
+  <div class="wrap">
+    <span class="section-eyebrow">three sources of capacity</span>
+    <div class="capacity-grid">
+        <div class="capacity-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20v-7l8-6 8 6v7"/><path d="M10 20v-5h4v5"/></svg>
+          <p class="capacity-title">Onsite solvers</p>
+          <p class="capacity-desc">Work inside the client&rsquo;s operation.</p>
+        </div>
+        <div class="capacity-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 3 2.6 15 0 18M12 3c-2.6 3-2.6 15 0 18"/></svg>
+          <p class="capacity-title">The engineering engine</p>
+          <p class="capacity-desc">Across eleven countries, building around the clock.</p>
+        </div>
+        <div class="capacity-card">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 3v4M9 13h.01M15 13h.01"/></svg>
+          <p class="capacity-title">AI-native agent coworkers</p>
+          <p class="capacity-desc">Trained on Searce&rsquo;s pattern library, carrying capture, evaluation and monitoring.</p>
+        </div>
+    </div>
   </div>
 </section>
 
 <section class="accountability">
   <div class="wrap">
-    <span class="section-eyebrow">accountability</span>
+    <span class="section-eyebrow">who is accountable</span>
     <div class="accountability-diagram" aria-hidden="true">
       <svg viewBox="0 0 400 56" preserveAspectRatio="none">
         <circle cx="200" cy="8" r="5" fill="var(--blue)"/>
@@ -1106,42 +1337,71 @@ footer{
       </div>
       <div class="role-card">
         <p class="role-name">Client Success</p>
-        <p class="role-desc">Runs the engagement, measures what changed, and presents it with you.</p>
+        <p class="role-desc">Runs the engagement, measures what changed, and presents it alongside the client.</p>
       </div>
     </div>
-    <p class="accountability-punch">One initiative, one owner. No committees.</p>
+    <p class="accountability-punch">One initiative, one owner, no committees.</p>
   </div>
 </section>
 
-<section class="evaluated">
+<section class="builds">
   <div class="wrap">
-    <span class="section-eyebrow">how squads are evaluated — before you commit</span>
-    <div class="eval-grid">
-      <div class="eval-card">
-        <div class="eval-top">
-          <span class="eval-num">01</span>
-          <svg class="eval-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M9.5 12h5M9.5 15.5h5"/></svg>
-        </div>
-        <p class="eval-title">The squad résumé</p>
-        <p class="eval-desc">Collective capability and problems solved, not stapled individual CVs.</p>
+    <span class="section-eyebrow">how Searce builds</span>
+    <p class="builds-lead">Searce builds AI-native. Agents do the generating; every step passes a gate.</p>
+    <div class="build-flow">
+      <div class="build-steps">
+          <div class="build-step"><span class="build-index">01</span>Read the estate</div>
+          <div class="build-step"><span class="build-index">02</span>Generate migrations</div>
+          <div class="build-step"><span class="build-index">03</span>Draft code</div>
+          <div class="build-step"><span class="build-index">04</span>Write tests</div>
       </div>
-      <div class="eval-card">
-        <div class="eval-top">
-          <span class="eval-num">02</span>
-          <svg class="eval-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="9" r="2.6"/><circle cx="16" cy="9" r="2.6"/><path d="M3.5 19c.7-3 2.5-4.5 4.5-4.5s3.8 1.5 4.5 4.5M11.5 19c.7-3 2.5-4.5 4.5-4.5s3.8 1.5 4.5 4.5"/></svg>
+      <div class="build-rail" aria-hidden="true"></div>
+      <div class="build-gates">
+        <span class="gates-label">at every gate</span>
+        <div class="gates-row">
+          <span class="gate">Evaluation suites</span>
+          <span class="gate">Regression harnesses</span>
+          <span class="gate">Human review</span>
         </div>
-        <p class="eval-title">The squad interview</p>
-        <p class="eval-desc">Sixty minutes with the whole squad, solving in front of you.</p>
-      </div>
-      <div class="eval-card">
-        <div class="eval-top">
-          <span class="eval-num">03</span>
-          <svg class="eval-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg>
-        </div>
-        <p class="eval-title">The solve-a-thon</p>
-        <p class="eval-desc">Bring a real one-day problem. The squad works it live and presents the approach, the method, and the roadmap.</p>
       </div>
     </div>
+    <p class="builds-punch"><span class="punch-muted">Generation speed is a commodity now.</span> Verified replacement of systems the business depends on is the actual craft.</p>
+  </div>
+</section>
+
+<section class="handover">
+  <div class="wrap">
+    <span class="section-eyebrow">what happens after the build</span>
+    <div class="handover-grid">
+        <div class="handover-card">
+          <p class="handover-title">A named operating owner</p>
+          <p class="handover-desc">Every system ships with one.</p>
+        </div>
+        <div class="handover-card">
+          <p class="handover-title">Documented maintenance economics</p>
+          <p class="handover-desc">What it costs to run, written down.</p>
+        </div>
+        <div class="handover-card">
+          <p class="handover-title">A defined exit path</p>
+          <p class="handover-desc">How it ends, agreed at the start.</p>
+        </div>
+    </div>
+    <p class="handover-note"><strong>Searce does not leave systems without owners.</strong> Where the operating owner is Searce, that is a managed operations contract rather than an informal expectation.</p>
+  </div>
+</section>
+
+<section class="evaluate">
+  <div class="wrap">
+    <span class="section-eyebrow">evaluating a squad</span>
+    <p class="evaluate-lead">Before committing, the client meets the squad that would do the work and watches them solve a real problem.</p>
+    <div class="evaluate-steps">
+      <div class="evaluate-step"><span class="evaluate-num">01</span>Meet the squad that would do the work</div>
+      <div class="evaluate-arrow" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </div>
+      <div class="evaluate-step"><span class="evaluate-num">02</span>Watch them solve a real problem</div>
+    </div>
+    <p class="evaluate-note">Searce shows the format during the pursuit.</p>
   </div>
 </section>
 
@@ -1175,6 +1435,20 @@ footer{
     <p class="global-text">Squads draw on Searce's delivery presence across <strong>11 countries</strong>. <span class="accent">Onsite</span> where the problem lives, <span class="accent">follow-the-sun</span> where the build never sleeps.</p>
     <div class="global-map" aria-hidden="true">
       <svg id="mapSvg" viewBox="0 40 1000 320" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+  </div>
+</section>
+
+<section class="faq">
+  <div class="wrap">
+    <span class="section-eyebrow">questions</span>
+    <div class="faq-list" id="faqList">
+      <details class="faq-item">
+        <summary>Is a solver squad the same as staff augmentation?
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <p><strong>No.</strong> Staff augmentation supplies individuals against roles. A squad is a formed team accountable for a named outcome, with its own lead and its own measurement.</p>
+      </details>
     </div>
   </div>
 </section>
@@ -1217,8 +1491,8 @@ footer{
           stroke-width="1.6" vector-effect="non-scaling-stroke"/>
   </svg>
   <div class="wrap">
-    <span class="section-eyebrow">the forward-deployed solver</span>
-    <p class="closing-kicker"><span class="k-ink">Not just an engineer.</span><br><span class="k-blue">A modern problem solver fluent in business, AI and engineering.</span></p>
+    <span class="section-eyebrow">forward-deployed solver squads</span>
+    <p class="closing-kicker"><span class="k-ink">Ships squads.</span><br><span class="k-blue">Counts outcomes.</span></p>
     <a class="cta-button" href="#">
       bring us a problem
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
@@ -1246,6 +1520,118 @@ footer{
 </footer>
 
 <script>
+/* ============ HERO — a squad forms around the cursor ============
+   A field of loose points. Whatever the pointer is near is pulled into a
+   squad: the nearest few light up, link to each other, and take a core.
+   Everything else stays loose. Grid maths keeps the per-frame work to the
+   handful of points near the cursor rather than the whole field. */
+(function(){
+  const host = document.getElementById('heroField');
+  const glow = document.getElementById('heroGlow');
+  const hero = document.getElementById('heroSection');
+  if(!host || !hero) return;
+
+  const NS = 'http://www.w3.org/2000/svg';
+  const SPACING = 46;
+  const RADIUS = 132;
+  const SQUAD = 6;
+
+  let svg, dots = [], cols = 0, rows = 0, link = null, lit = [];
+
+  function build(){
+    const r = hero.getBoundingClientRect();
+    cols = Math.ceil(r.width / SPACING) + 1;
+    rows = Math.ceil(r.height / SPACING) + 1;
+    host.innerHTML = '';
+    svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('viewBox', `0 0 ${r.width} ${r.height}`);
+    svg.setAttribute('preserveAspectRatio', 'none');
+    link = document.createElementNS(NS, 'path');
+    link.setAttribute('class', 'squad-link');
+    svg.appendChild(link);
+    dots = [];
+    for(let y = 0; y < rows; y++){
+      for(let x = 0; x < cols; x++){
+        const cx = x * SPACING, cy = y * SPACING;
+        const c = document.createElementNS(NS, 'circle');
+        c.setAttribute('cx', cx);
+        c.setAttribute('cy', cy);
+        c.setAttribute('r', 2);
+        c.setAttribute('class', 'field-dot');
+        svg.appendChild(c);
+        dots.push({el:c, x:cx, y:cy});
+      }
+    }
+    host.appendChild(svg);
+  }
+
+  function clear(){
+    lit.forEach(d =>{ d.el.classList.remove('lit','core'); d.el.setAttribute('r', 2); });
+    lit = [];
+    if(link) link.classList.remove('on');
+  }
+
+  function formSquad(px, py){
+    clear();
+    // only the cells in the cursor's neighbourhood are candidates
+    const c0 = Math.max(0, Math.floor((px - RADIUS) / SPACING));
+    const c1 = Math.min(cols - 1, Math.ceil((px + RADIUS) / SPACING));
+    const r0 = Math.max(0, Math.floor((py - RADIUS) / SPACING));
+    const r1 = Math.min(rows - 1, Math.ceil((py + RADIUS) / SPACING));
+    const near = [];
+    for(let y = r0; y <= r1; y++){
+      for(let x = c0; x <= c1; x++){
+        const d = dots[y * cols + x];
+        if(!d) continue;
+        const dist = Math.hypot(d.x - px, d.y - py);
+        if(dist <= RADIUS) near.push({d, dist});
+      }
+    }
+    if(!near.length) return;
+    near.sort((a,b)=> a.dist - b.dist);
+    const squad = near.slice(0, SQUAD).map(n => n.d);
+
+    squad.forEach((d, i) =>{
+      d.el.classList.add(i === 0 ? 'core' : 'lit');
+      d.el.setAttribute('r', i === 0 ? 6 : 3.4);
+    });
+    lit = squad;
+
+    // link every member back to the core: one unit, one centre
+    const core = squad[0];
+    const path = squad.slice(1).map(d => `M${core.x} ${core.y} L${d.x} ${d.y}`).join(' ');
+    link.setAttribute('d', path);
+    link.classList.add('on');
+  }
+
+  let pending = false, mx = 0, my = 0;
+  function frame(){
+    pending = false;
+    formSquad(mx, my);
+    if(glow){
+      glow.style.transform = `translate(${mx - 260}px, ${my - 260}px)`;
+    }
+  }
+
+  hero.addEventListener('pointermove', e =>{
+    if(e.pointerType !== 'mouse') return;
+    const r = hero.getBoundingClientRect();
+    mx = e.clientX - r.left;
+    my = e.clientY - r.top;
+    if(glow) glow.classList.add('on');
+    if(!pending){ pending = true; requestAnimationFrame(frame); }
+  });
+
+  hero.addEventListener('pointerleave', ()=>{
+    clear();
+    if(glow) glow.classList.remove('on');
+  });
+
+  build();
+  let t;
+  window.addEventListener('resize', ()=>{ clearTimeout(t); t = setTimeout(build, 160); });
+})();
+
 /* ============ HOW SQUADS FLEX — toggle + autoplay ============
    Ten units represent the squad. "Launch" keeps all ten active and
    spread out; "Stabilization" keeps four active and pulls them tight —
