@@ -244,7 +244,9 @@ a:focus-visible, button:focus-visible{
   background:linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 58%, rgba(255,255,255,.92) 100%);
   pointer-events:none;
 }
-.hero .wrap{position:relative;z-index:1;}
+/* As a flex item the wrap shrank to its content and the auto margins then
+   centred it; the hero is a left-aligned composition. */
+.hero .wrap{position:relative;z-index:1;width:100%;}
 .hero-copy{max-width:min(100%,880px);}
 .hero h1{
   font-family:var(--display);
@@ -264,21 +266,6 @@ a:focus-visible, button:focus-visible{
   max-width:44ch;
   margin:28px 0 0;
 }
-.hero-hint{
-  display:inline-flex;
-  align-items:center;
-  gap:9px;
-  margin:30px 0 0;
-  font-size:13px;
-  color:var(--ink-40);
-}
-.hero-hint span{
-  width:6px;height:6px;
-  border-radius:50%;
-  background:var(--blue);
-  flex:none;
-}
-@media (hover:none){.hero-hint{display:none;}}
 
 /* Restored with the hero rebuild: the chip rule lived in the block that was replaced. */
 .page-badge{
@@ -324,7 +311,15 @@ a:focus-visible, button:focus-visible{
   margin:0 0 clamp(40px,4.4vw,60px);
   max-width:30ch;
 }
-.opening-lead .lead-muted{display:block;color:var(--ink-40);}
+/* Two lines at a lighter weight, so the old model reads as the setup and the
+   line beneath it as the answer. */
+.opening-lead .lead-muted{
+  display:block;
+  color:var(--ink-40);
+  font-weight:300;
+  max-width:22ch;
+  margin-bottom:6px;
+}
 .opening-lead .lead-strong{display:block;color:var(--ink);}
 .compare{
   display:grid;
@@ -358,15 +353,13 @@ a:focus-visible, button:focus-visible{
 }
 .compare-old{color:var(--ink-40);}
 .compare-old .compare-terms{color:var(--ink-60);}
-.compare-new{background:var(--blue-06);color:var(--blue-strong);}
+.compare-new{color:var(--blue-strong);}
 .compare-new .compare-terms{color:var(--ink);}
+/* One container: the rules either side of the arrow chopped it into three. */
 .compare-arrow{
   display:grid;
   place-items:center;
-  padding:0 clamp(14px,1.6vw,22px);
-  border-left:1px solid var(--paper-line);
-  border-right:1px solid var(--paper-line);
-  background:var(--paper);
+  padding:0 clamp(20px,3vw,44px);
   color:var(--blue);
 }
 .compare-arrow svg{width:22px;height:22px;}
@@ -376,10 +369,21 @@ a:focus-visible, button:focus-visible{
    statement and the three capabilities it names become their own column,
    bound to the outcome they answer to. */
 .squad-is{
-  background:var(--ink);
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  /* Deep blue rather than flat black: the band carries the same live field as
+     the hero, and black gave the dots nowhere to sit. */
+  background:var(--blue-abyss);
   color:#fff;
   padding:clamp(96px,10vw,140px) 0;
 }
+.squad-is .wrap{position:relative;z-index:1;}
+.on-dark .field-dot{fill:rgba(255,255,255,.34);opacity:.5;}
+.on-dark .field-dot.lit,
+.on-dark .field-dot.core{fill:var(--blue-lift);opacity:1;}
+.on-dark .squad-link{stroke:var(--blue-lift);}
+.on-dark .squad-link.on{opacity:.55;}
 .squad-is .section-eyebrow{color:var(--blue-24);}
 .squad-is-grid{
   display:grid;
@@ -452,11 +456,22 @@ a:focus-visible, button:focus-visible{
   padding:clamp(92px,9.5vw,132px) 0;
   border-bottom:1px solid var(--paper-line);
 }
+/* One live path to one owner, with the committee drawn faint and unattached
+   beside it, because "no committees" is the actual claim. */
 .accountability-diagram{
-  max-width:760px;
-  margin:6px auto 0;
+  max-width:900px;
+  margin:8px auto clamp(30px,3.4vw,44px);
 }
-.accountability-diagram svg{display:block;width:100%;height:58px;}
+.accountability-diagram svg{display:block;width:100%;height:auto;}
+.acct-label{
+  font-family:var(--display);
+  font-weight:600;
+  font-size:11px;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+}
+.acct-live{fill:var(--blue);}
+.acct-dim{fill:var(--ink-40);}
 .role-grid{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
@@ -819,6 +834,83 @@ footer{
   padding:clamp(92px,9.5vw,132px) 0;
   border-bottom:1px solid var(--paper-line);
 }
+.who-grid{
+  display:grid;
+  grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);
+  gap:clamp(44px,5vw,88px);
+  align-items:start;
+}
+/* Five flat tiles said nothing about how the crafts relate. The copy's own
+   argument is that process people and system people ship together, under one
+   lead, so that is the shape. */
+.craft-tree{min-width:0;}
+.craft-head{
+  padding:18px 22px;
+  border:1.5px solid var(--blue);
+  border-radius:13px;
+  background:var(--blue-06);
+  font-family:var(--display);
+  font-weight:600;
+  font-size:16px;
+  color:var(--blue-strong);
+  text-align:center;
+}
+.craft-stem{
+  height:26px;
+  width:1.5px;
+  background:var(--blue-24);
+  margin:0 auto;
+}
+.craft-split{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:clamp(16px,2vw,26px);
+  position:relative;
+  padding-top:26px;
+}
+.craft-split::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:25%;right:25%;
+  height:1.5px;
+  background:var(--blue-24);
+}
+.craft-branch{position:relative;}
+.craft-branch::before{
+  content:"";
+  position:absolute;
+  top:-26px;left:50%;
+  width:1.5px;height:26px;
+  background:var(--blue-24);
+}
+.craft-branch-label{
+  font-family:var(--display);
+  font-weight:600;
+  font-size:11.5px;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+  color:var(--ink-40);
+  text-align:center;
+  margin-bottom:12px;
+}
+.craft{
+  display:block;
+  background:var(--paper);
+  border:1px solid var(--paper-line);
+  border-radius:12px;
+  padding:16px 18px;
+  margin-bottom:10px;
+  font-family:var(--display);
+  font-weight:500;
+  font-size:15.5px;
+  line-height:1.3;
+  color:var(--ink);
+  text-align:center;
+  transition:background .22s ease, color .22s ease, border-color .22s ease;
+}
+.craft:last-child{margin-bottom:0;}
+.craft:hover{background:var(--blue);border-color:var(--blue);color:#fff;}
 .who-lead{
   font-size:19px;
   line-height:1.65;
@@ -826,30 +918,6 @@ footer{
   max-width:56ch;
   margin:0 0 34px;
 }
-.crafts-grid{
-  display:grid;
-  grid-template-columns:repeat(5,minmax(0,1fr));
-  gap:1px;
-  background:var(--paper-line);
-  border:1px solid var(--paper-line);
-  border-radius:18px;
-  overflow:hidden;
-}
-.craft{
-  background:var(--paper);
-  padding:clamp(24px,2.6vw,32px) clamp(18px,2vw,24px);
-  min-height:132px;
-  display:flex;
-  align-items:flex-end;
-  font-family:var(--display);
-  font-weight:500;
-  font-size:clamp(15px,1.35vw,17px);
-  line-height:1.3;
-  letter-spacing:-0.01em;
-  color:var(--ink);
-  transition:background .22s ease, color .22s ease;
-}
-.craft:hover{background:var(--blue);color:#fff;}
 .who-note{
   font-size:17.5px;
   line-height:1.7;
@@ -868,25 +936,51 @@ footer{
 .capacity-grid{
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:clamp(18px,2.2vw,28px);
+  gap:clamp(16px,2vw,26px);
 }
 .capacity-card{
-  padding:clamp(28px,3vw,38px);
+  padding:clamp(24px,2.7vw,32px);
   border:1px solid var(--paper-line);
-  border-radius:18px;
-  transition:background .22s ease;
+  border-radius:16px;
+  transition:background .22s ease, border-color .22s ease;
 }
-.capacity-card:hover{background:var(--blue-06);}
-.capacity-card svg{width:26px;height:26px;color:var(--blue);margin-bottom:22px;}
+.capacity-card:hover{background:var(--blue-06);border-color:var(--blue-12);}
+.capacity-card svg{width:24px;height:24px;color:var(--blue);margin-bottom:18px;}
 .capacity-title{
   font-family:var(--display);
   font-weight:600;
-  font-size:clamp(17px,1.6vw,20px);
+  font-size:clamp(16px,1.5vw,18.5px);
   letter-spacing:-0.01em;
   color:var(--ink);
-  margin:0 0 10px;
+  margin:0 0 9px;
 }
-.capacity-desc{font-size:16px;line-height:1.6;color:var(--ink);margin:0;}
+.capacity-desc{font-size:15.5px;line-height:1.6;color:var(--ink);margin:0;}
+/* Three cards side by side read as three unrelated things. The braid shows
+   what the copy says: every squad draws on all three at once. */
+.capacity-braid{display:block;width:100%;height:auto;margin-top:-2px;}
+.capacity-sink{
+  display:flex;
+  justify-content:center;
+  margin-top:-4px;
+}
+.capacity-sink span{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:15px 30px;
+  border-radius:999px;
+  background:var(--blue);
+  color:#fff;
+  font-family:var(--display);
+  font-weight:600;
+  font-size:16px;
+}
+.capacity-sink span::before{
+  content:"";
+  width:8px;height:8px;
+  border-radius:50%;
+  background:#fff;
+}
 
 /* ============ HOW SEARCE BUILDS ============
    Four generating steps on a rail, with the gates every one of them passes
@@ -896,69 +990,80 @@ footer{
   border-bottom:1px solid var(--paper-line);
 }
 .builds-lead{
-  font-size:19px;
+  font-size:clamp(16px,1.45vw,19px);
   line-height:1.65;
   color:var(--ink);
-  max-width:52ch;
+  max-width:none;
   margin:0 0 clamp(36px,4vw,52px);
 }
-.build-steps{
+.build-flow{
   display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:clamp(12px,1.4vw,18px);
+  grid-template-columns:minmax(0,1.15fr) auto minmax(0,1.5fr) auto minmax(0,.85fr);
+  align-items:stretch;
+  gap:clamp(10px,1.4vw,18px);
 }
-.build-step{
+.flow-node{
+  padding:clamp(20px,2.2vw,26px);
+  border:1px solid var(--paper-line);
+  border-radius:16px;
   display:flex;
   flex-direction:column;
-  gap:14px;
-  padding:clamp(22px,2.4vw,28px);
-  border:1px solid var(--paper-line);
-  border-radius:15px;
-  background:var(--paper);
-  font-family:var(--display);
-  font-weight:500;
-  font-size:clamp(15px,1.35vw,17.5px);
-  line-height:1.3;
-  color:var(--ink);
+  gap:12px;
 }
-.build-index{
-  font-size:12px;
-  letter-spacing:.12em;
-  font-weight:600;
-  color:var(--blue);
-}
-.build-rail{
-  height:2px;
-  border-radius:2px;
-  background:linear-gradient(to right, var(--blue-12), var(--blue), var(--blue-12));
-  margin:22px 0 0;
-}
-.build-gates{
-  display:flex;
-  align-items:center;
-  gap:clamp(14px,2vw,26px);
-  flex-wrap:wrap;
-  margin-top:20px;
-}
-.gates-label{
+.flow-label{
   font-family:var(--display);
   font-weight:600;
   font-size:11.5px;
-  letter-spacing:.14em;
+  letter-spacing:.13em;
   text-transform:uppercase;
   color:var(--ink-40);
-  flex:none;
 }
-.gates-row{display:flex;gap:10px;flex-wrap:wrap;}
-.gate{
-  padding:9px 16px;
-  border-radius:999px;
-  background:var(--blue-06);
-  border:1px solid var(--blue-12);
-  font-size:14.5px;
-  color:var(--blue-strong);
-  white-space:nowrap;
+.flow-item{
+  font-size:15px;
+  line-height:1.45;
+  color:var(--ink);
+  padding-left:15px;
+  position:relative;
 }
+.flow-item::before{
+  content:"";
+  position:absolute;
+  left:0;top:8px;
+  width:5px;height:5px;
+  border-radius:50%;
+  background:var(--blue-24);
+}
+.flow-gates{background:var(--blue-06);border-color:var(--blue-12);}
+.flow-gates .flow-label{color:var(--blue-strong);}
+.flow-gates .flow-item::before{
+  background:none;
+  border:1.5px solid var(--blue);
+  width:9px;height:9px;
+  top:6px;left:-1px;
+}
+.flow-gates .flow-item{padding-left:17px;}
+.flow-verified{
+  background:var(--blue);
+  border-color:var(--blue);
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+}
+.flow-verified .flow-label{color:rgba(255,255,255,.72);}
+.flow-verified strong{
+  font-family:var(--display);
+  font-weight:600;
+  font-size:clamp(16px,1.5vw,19px);
+  color:#fff;
+  line-height:1.25;
+}
+.flow-arrow{
+  display:grid;
+  place-items:center;
+  color:var(--blue-24);
+}
+.flow-arrow svg{width:20px;height:20px;}
+
 .builds-punch{
   font-family:var(--display);
   font-weight:600;
@@ -973,37 +1078,95 @@ footer{
 }
 .builds-punch .punch-muted{color:var(--ink-40);}
 
+
+/* These sat between rules, which read as an accidental band. A left mark and
+   air around them does the same job without boxing them in. */
+.accountability-punch,
+.builds-punch{
+  position:relative;
+  font-family:var(--display);
+  font-weight:600;
+  font-size:clamp(21px,2.4vw,31px);
+  line-height:1.32;
+  letter-spacing:-0.015em;
+  color:var(--ink);
+  text-align:left;
+  border-top:0;
+  padding:2px 0 2px 26px;
+  margin:clamp(52px,5.4vw,76px) 0 0;
+  max-width:32ch;
+}
+.accountability-punch::before,
+.builds-punch::before{
+  content:"";
+  position:absolute;
+  left:0;top:4px;bottom:4px;
+  width:3px;
+  border-radius:3px;
+  background:var(--blue);
+}
+
 /* ============ AFTER THE BUILD ============ */
 .handover{
   padding:clamp(92px,9.5vw,132px) 0;
   border-bottom:1px solid var(--paper-line);
 }
 .handover .section-eyebrow{margin-bottom:40px;}
-.handover-grid{
+/* A system's life after handover, rather than three equal boxes: it runs
+   under a named owner, at a written cost, and it ends somewhere. */
+.handover-track{
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:1px;
-  background:var(--paper-line);
-  border:1px solid var(--paper-line);
-  border-radius:18px;
-  overflow:hidden;
+  position:relative;
+  padding-top:52px;
 }
-.handover-card{
+.handover-track::before{
+  content:"";
+  position:absolute;
+  top:20px;
+  left:calc(16.66% - 0px);
+  right:calc(16.66% - 0px);
+  height:2px;
+  border-radius:2px;
+  background:linear-gradient(to right, var(--blue), var(--blue-24));
+}
+.handover-stop{
+  position:relative;
+  padding:0 clamp(10px,1.6vw,22px);
+  text-align:center;
+}
+.handover-stop::before{
+  content:"";
+  position:absolute;
+  top:-40px;left:50%;
+  width:15px;height:15px;
+  margin-left:-7.5px;
+  border-radius:50%;
   background:var(--paper);
-  padding:clamp(26px,2.9vw,36px);
-  transition:background .22s ease;
+  border:2.5px solid var(--blue);
 }
-.handover-card:hover{background:var(--blue-06);}
+.handover-stop:last-child::before{background:var(--blue);}
+.handover-when{
+  font-family:var(--display);
+  font-weight:600;
+  font-size:11.5px;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+  color:var(--blue);
+  display:block;
+  margin-bottom:12px;
+}
 .handover-title{
   font-family:var(--display);
   font-weight:600;
-  font-size:clamp(16.5px,1.5vw,19px);
+  font-size:clamp(16px,1.5vw,19px);
   line-height:1.3;
   letter-spacing:-0.01em;
   color:var(--ink);
-  margin:0 0 10px;
+  margin:0 0 8px;
 }
 .handover-desc{font-size:15.5px;line-height:1.6;color:var(--ink-60);margin:0;}
+
 .handover-note{
   font-size:17.5px;
   line-height:1.7;
@@ -1030,7 +1193,7 @@ footer{
 }
 .evaluate-steps{
   display:grid;
-  grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+  grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,.7fr);
   align-items:stretch;
   border:1px solid var(--paper-line);
   border-radius:18px;
@@ -1062,6 +1225,8 @@ footer{
   color:var(--blue);
 }
 .evaluate-arrow svg{width:22px;height:22px;}
+.evaluate-decide{background:var(--blue);color:#fff;}
+.evaluate-decide .evaluate-num{color:rgba(255,255,255,.75);}
 .evaluate-note{font-size:16px;line-height:1.6;color:var(--ink-60);margin:26px 0 0;}
 
 /* ============ QUESTIONS ============
@@ -1104,14 +1269,18 @@ footer{
 }
 .faq-item p strong{font-weight:600;}
 
-@media (max-width:1080px){
-  .crafts-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
-  .build-steps{grid-template-columns:repeat(2,minmax(0,1fr));}
+@media (max-width:900px){
+  .who-grid{grid-template-columns:minmax(0,1fr);gap:44px;}
 }
 @media (max-width:820px){
   .capacity-grid,
-  .handover-grid{grid-template-columns:minmax(0,1fr);}
   .evaluate-steps{grid-template-columns:minmax(0,1fr);}
+  .build-flow{grid-template-columns:minmax(0,1fr);}
+  .flow-arrow svg{transform:rotate(90deg);}
+  .handover-track{grid-template-columns:minmax(0,1fr);gap:34px;padding-top:0;}
+  .handover-track::before{display:none;}
+  .handover-stop{text-align:left;padding:0 0 0 26px;}
+  .handover-stop::before{top:4px;left:0;margin-left:0;}
   .evaluate-arrow{
     border-left:0;border-right:0;
     border-top:1px solid var(--paper-line);
@@ -1121,9 +1290,9 @@ footer{
   .evaluate-arrow svg{transform:rotate(90deg);}
 }
 @media (max-width:620px){
-  .crafts-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
-  .build-steps{grid-template-columns:minmax(0,1fr);}
-  .craft{min-height:0;}
+  .craft-split{grid-template-columns:minmax(0,1fr);gap:22px;}
+  .craft-split::before{display:none;}
+  .craft-branch::before{display:none;}
 }
 
 /* ============ RESPONSIVE ============ */
@@ -1135,13 +1304,7 @@ footer{
 }
 @media (max-width:680px){
   .compare{grid-template-columns:minmax(0,1fr);}
-  .compare-arrow{
-    border-left:0;
-    border-right:0;
-    border-top:1px solid var(--paper-line);
-    border-bottom:1px solid var(--paper-line);
-    padding:13px 0;
-  }
+  .compare-arrow{padding:6px 0;}
   .compare-arrow svg{transform:rotate(90deg);}
 }
 @media (max-width:480px){
@@ -1231,7 +1394,6 @@ footer{
         <span class="line-blue">Solver Squads</span>
       </h1>
       <p class="hero-sub">A cohesive team built to solve one business problem as a unit &mdash; not staffed roles filled against a rate card.</p>
-      <p class="hero-hint"><span aria-hidden="true"></span>Move across the field to form a squad</p>
     </div>
   </div>
 </header>
@@ -1262,6 +1424,7 @@ footer{
 </section>
 
 <section class="squad-is">
+  <div class="hero-field on-dark" id="squadField" aria-hidden="true"></div>
   <div class="wrap">
     <span class="section-eyebrow">what a squad is</span>
     <div class="squad-is-grid">
@@ -1285,21 +1448,35 @@ footer{
 <section class="who">
   <div class="wrap">
     <span class="section-eyebrow">who is in a squad</span>
-    <p class="who-lead">Composition varies by practice. A Business Systems Engineering squad typically combines:</p>
-    <div class="crafts-grid">
-        <div class="craft">Product engineering managers</div>
-        <div class="craft">Software engineers</div>
-        <div class="craft">AI engineers</div>
-        <div class="craft">Business process engineers</div>
-        <div class="craft">Industrial engineers</div>
+    <div class="who-grid">
+      <div>
+        <p class="who-lead">Composition varies by practice. A Business Systems Engineering squad typically combines the crafts on the right.</p>
+        <p class="who-note">Rebuilding how work runs requires both the people who redesign the process and the people who build the system. <strong>Searce does not staff one craft without the other.</strong></p>
+      </div>
+      <div class="craft-tree">
+        <div class="craft-head">Product engineering managers</div>
+        <div class="craft-stem" aria-hidden="true"></div>
+        <div class="craft-split">
+          <div class="craft-branch">
+            <p class="craft-branch-label">redesign the process</p>
+            <span class="craft">Business process engineers</span>
+            <span class="craft">Industrial engineers</span>
+          </div>
+          <div class="craft-branch">
+            <p class="craft-branch-label">build the system</p>
+            <span class="craft">Software engineers</span>
+            <span class="craft">AI engineers</span>
+          </div>
+        </div>
+      </div>
     </div>
-    <p class="who-note">Rebuilding how work runs requires both the people who redesign the process and the people who build the system. <strong>Searce does not staff one craft without the other.</strong></p>
   </div>
 </section>
 
 <section class="capacity">
   <div class="wrap">
     <span class="section-eyebrow">three sources of capacity</span>
+    <p class="capacity-lead">Every squad draws on all three at once.</p>
     <div class="capacity-grid">
         <div class="capacity-card">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20v-7l8-6 8 6v7"/><path d="M10 20v-5h4v5"/></svg>
@@ -1317,17 +1494,38 @@ footer{
           <p class="capacity-desc">Trained on Searce&rsquo;s pattern library, carrying capture, evaluation and monitoring.</p>
         </div>
     </div>
+    <svg class="capacity-braid" viewBox="0 0 900 92" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M150 0 C150 52, 450 40, 450 92" fill="none" stroke="var(--blue-24)" stroke-width="1.6"/>
+      <path d="M450 0 L450 92" fill="none" stroke="var(--blue-24)" stroke-width="1.6"/>
+      <path d="M750 0 C750 52, 450 40, 450 92" fill="none" stroke="var(--blue-24)" stroke-width="1.6"/>
+    </svg>
+    <div class="capacity-sink"><span>One squad</span></div>
   </div>
 </section>
 
 <section class="accountability">
   <div class="wrap">
     <span class="section-eyebrow">who is accountable</span>
-    <div class="accountability-diagram" aria-hidden="true">
-      <svg viewBox="0 0 400 56" preserveAspectRatio="none">
-        <circle cx="200" cy="8" r="5" fill="var(--blue)"/>
-        <path d="M200 13 L55 50" stroke="var(--blue-24)" stroke-width="1.6" fill="none"/>
-        <path d="M200 13 L345 50" stroke="var(--blue-24)" stroke-width="1.6" fill="none"/>
+    <div class="accountability-diagram">
+      <svg viewBox="0 0 900 190" role="img"
+           aria-label="One initiative runs through one owner to the outcome; a committee sits beside it, unattached.">
+        <text class="acct-label acct-live" x="60" y="20">one initiative</text>
+        <text class="acct-label acct-live" x="380" y="20">one owner</text>
+        <text class="acct-label acct-live" x="720" y="20">the outcome</text>
+        <path d="M96 52 L404 52" stroke="var(--blue)" stroke-width="2.5" fill="none"/>
+        <path d="M436 52 L744 52" stroke="var(--blue)" stroke-width="2.5" fill="none"/>
+        <circle cx="80" cy="52" r="9" fill="none" stroke="var(--blue)" stroke-width="2.5"/>
+        <circle cx="420" cy="52" r="17" fill="var(--blue)"/>
+        <circle cx="760" cy="52" r="9" fill="var(--blue)"/>
+        <text class="acct-label acct-dim" x="330" y="132">no committee in the path</text>
+        <g opacity=".34">
+          <circle cx="150" cy="150" r="7" fill="none" stroke="var(--ink-40)" stroke-width="1.6"/>
+          <circle cx="215" cy="168" r="7" fill="none" stroke="var(--ink-40)" stroke-width="1.6"/>
+          <circle cx="285" cy="146" r="7" fill="none" stroke="var(--ink-40)" stroke-width="1.6"/>
+          <circle cx="620" cy="152" r="7" fill="none" stroke="var(--ink-40)" stroke-width="1.6"/>
+          <circle cx="690" cy="170" r="7" fill="none" stroke="var(--ink-40)" stroke-width="1.6"/>
+          <circle cx="755" cy="148" r="7" fill="none" stroke="var(--ink-40)" stroke-width="1.6"/>
+        </g>
       </svg>
     </div>
     <div class="role-grid">
@@ -1349,20 +1547,28 @@ footer{
     <span class="section-eyebrow">how Searce builds</span>
     <p class="builds-lead">Searce builds AI-native. Agents do the generating; every step passes a gate.</p>
     <div class="build-flow">
-      <div class="build-steps">
-          <div class="build-step"><span class="build-index">01</span>Read the estate</div>
-          <div class="build-step"><span class="build-index">02</span>Generate migrations</div>
-          <div class="build-step"><span class="build-index">03</span>Draft code</div>
-          <div class="build-step"><span class="build-index">04</span>Write tests</div>
+      <div class="flow-node">
+        <span class="flow-label">agents generate</span>
+        <span class="flow-item">Read the estate</span>
+        <span class="flow-item">Generate migrations</span>
+        <span class="flow-item">Draft code</span>
+        <span class="flow-item">Write tests</span>
       </div>
-      <div class="build-rail" aria-hidden="true"></div>
-      <div class="build-gates">
-        <span class="gates-label">at every gate</span>
-        <div class="gates-row">
-          <span class="gate">Evaluation suites</span>
-          <span class="gate">Regression harnesses</span>
-          <span class="gate">Human review</span>
-        </div>
+      <div class="flow-arrow" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </div>
+      <div class="flow-node flow-gates">
+        <span class="flow-label">every step passes</span>
+        <span class="flow-item">Evaluation suites</span>
+        <span class="flow-item">Regression harnesses</span>
+        <span class="flow-item">Human review</span>
+      </div>
+      <div class="flow-arrow" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </div>
+      <div class="flow-node flow-verified">
+        <span class="flow-label">the craft</span>
+        <strong>Verified replacement</strong>
       </div>
     </div>
     <p class="builds-punch"><span class="punch-muted">Generation speed is a commodity now.</span> Verified replacement of systems the business depends on is the actual craft.</p>
@@ -1372,19 +1578,22 @@ footer{
 <section class="handover">
   <div class="wrap">
     <span class="section-eyebrow">what happens after the build</span>
-    <div class="handover-grid">
-        <div class="handover-card">
-          <p class="handover-title">A named operating owner</p>
-          <p class="handover-desc">Every system ships with one.</p>
-        </div>
-        <div class="handover-card">
-          <p class="handover-title">Documented maintenance economics</p>
-          <p class="handover-desc">What it costs to run, written down.</p>
-        </div>
-        <div class="handover-card">
-          <p class="handover-title">A defined exit path</p>
-          <p class="handover-desc">How it ends, agreed at the start.</p>
-        </div>
+    <div class="handover-track">
+      <div class="handover-stop">
+        <span class="handover-when">at handover</span>
+        <p class="handover-title">A named operating owner</p>
+        <p class="handover-desc">Every system ships with one.</p>
+      </div>
+      <div class="handover-stop">
+        <span class="handover-when">while it runs</span>
+        <p class="handover-title">Documented maintenance economics</p>
+        <p class="handover-desc">What it costs to run, written down.</p>
+      </div>
+      <div class="handover-stop">
+        <span class="handover-when">at the end</span>
+        <p class="handover-title">A defined exit path</p>
+        <p class="handover-desc">How it ends, agreed at the start.</p>
+      </div>
     </div>
     <p class="handover-note"><strong>Searce does not leave systems without owners.</strong> Where the operating owner is Searce, that is a managed operations contract rather than an informal expectation.</p>
   </div>
@@ -1400,6 +1609,10 @@ footer{
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </div>
       <div class="evaluate-step"><span class="evaluate-num">02</span>Watch them solve a real problem</div>
+      <div class="evaluate-arrow" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </div>
+      <div class="evaluate-step evaluate-decide"><span class="evaluate-num">then</span>Commit</div>
     </div>
     <p class="evaluate-note">Searce shows the format during the pursuit.</p>
   </div>
@@ -1525,11 +1738,8 @@ footer{
    squad: the nearest few light up, link to each other, and take a core.
    Everything else stays loose. Grid maths keeps the per-frame work to the
    handful of points near the cursor rather than the whole field. */
-(function(){
-  const host = document.getElementById('heroField');
-  const glow = document.getElementById('heroGlow');
-  const hero = document.getElementById('heroSection');
-  if(!host || !hero) return;
+function buildSquadField(host, section, glow){
+  if(!host || !section) return;
 
   const NS = 'http://www.w3.org/2000/svg';
   const SPACING = 46;
@@ -1539,7 +1749,7 @@ footer{
   let svg, dots = [], cols = 0, rows = 0, link = null, lit = [];
 
   function build(){
-    const r = hero.getBoundingClientRect();
+    const r = section.getBoundingClientRect();
     cols = Math.ceil(r.width / SPACING) + 1;
     rows = Math.ceil(r.height / SPACING) + 1;
     host.innerHTML = '';
@@ -1613,16 +1823,16 @@ footer{
     }
   }
 
-  hero.addEventListener('pointermove', e =>{
+  section.addEventListener('pointermove', e =>{
     if(e.pointerType !== 'mouse') return;
-    const r = hero.getBoundingClientRect();
+    const r = section.getBoundingClientRect();
     mx = e.clientX - r.left;
     my = e.clientY - r.top;
     if(glow) glow.classList.add('on');
     if(!pending){ pending = true; requestAnimationFrame(frame); }
   });
 
-  hero.addEventListener('pointerleave', ()=>{
+  section.addEventListener('pointerleave', ()=>{
     clear();
     if(glow) glow.classList.remove('on');
   });
@@ -1630,7 +1840,14 @@ footer{
   build();
   let t;
   window.addEventListener('resize', ()=>{ clearTimeout(t); t = setTimeout(build, 160); });
-})();
+}
+
+buildSquadField(document.getElementById('heroField'),
+                document.getElementById('heroSection'),
+                document.getElementById('heroGlow'));
+buildSquadField(document.getElementById('squadField'),
+                document.querySelector('.squad-is'),
+                null);
 
 /* ============ HOW SQUADS FLEX — toggle + autoplay ============
    Ten units represent the squad. "Launch" keeps all ten active and
@@ -1683,9 +1900,13 @@ footer{
     });
   }
 
+  // A click steers it, but it always goes back to running itself.
+  let resume;
   tabs.forEach(t => t.addEventListener('click', () => {
     autoplay = false;
     applyState(t.dataset.state);
+    clearTimeout(resume);
+    resume = setTimeout(()=>{ autoplay = true; }, 9000);
   }));
 
   applyState('launch');
@@ -1694,96 +1915,112 @@ footer{
     setInterval(() => {
       if(!autoplay) return;
       applyState(state === 'launch' ? 'stabilization' : 'launch');
-    }, 3200);
+    }, 3600);
   }
 })();
 
-/* ============ GLOBAL MAP — an original stylized dot-matrix world map ============
-   Not traced from any existing map dataset: landmasses are approximated
-   with a handful of ellipses, then a grid is tested point-by-point
-   against them to produce a dot cloud. Highlighted delivery countries
-   sit on top as glowing markers, connected by a slow west-to-east
-   "follow-the-sun" route. */
+/* ============ GLOBAL MAP — dot matrix over real coastlines ============
+   The previous version tested each point against a handful of ellipses, which
+   is why the continents came out as blobs. Land is now simplified coastline
+   polygons in lon/lat, rasterised by ray casting on an equirectangular
+   projection, so the shapes are the actual shapes. */
 (function(){
   const svg = document.getElementById('mapSvg');
   if(!svg) return;
-  const svgNS = 'http://www.w3.org/2000/svg';
+  const NS = 'http://www.w3.org/2000/svg';
 
-  const CONTINENTS = [
-    {cx:195, cy:145, rx:95,  ry:80},   // North America
-    {cx:230, cy:95,  rx:45,  ry:35},   // Canada / far north
-    {cx:275, cy:345, rx:48,  ry:105},  // South America
-    {cx:500, cy:115, rx:50,  ry:42},   // Europe
-    {cx:540, cy:265, rx:65,  ry:115},  // Africa
-    {cx:610, cy:175, rx:55,  ry:45},   // Middle East
-    {cx:730, cy:145, rx:165, ry:100},  // Asia
-    {cx:815, cy:225, rx:65,  ry:55},   // Southeast Asia
-    {cx:872, cy:305, rx:58,  ry:50},   // Australia
-  ];
+  const W = 1000, H = 460, LAT_TOP = 84, LAT_BOTTOM = -58;
+  const px = lon => (lon + 180) * (W / 360);
+  const py = lat => (LAT_TOP - lat) * (H / (LAT_TOP - LAT_BOTTOM));
 
-  function onLand(x, y){
-    return CONTINENTS.some(c => (((x-c.cx)/c.rx)**2 + ((y-c.cy)/c.ry)**2) <= 1);
+  const LAND = [
+    [[-168,65],[-165,60],[-153,58],[-140,60],[-133,55],[-128,50],[-124,44],[-124,40],[-120,34],[-114,30],[-110,24],[-105,20],[-97,16],[-92,15],[-88,16],[-87,21],[-90,25],[-94,29],[-97,28],[-98,26],[-93,30],[-89,29],[-84,30],[-81,25],[-80,32],[-76,35],[-70,42],[-67,45],[-60,47],[-55,52],[-57,55],[-64,60],[-78,62],[-95,60],[-95,68],[-85,70],[-70,73],[-80,76],[-100,74],[-125,72],[-140,70],[-156,71],[-168,66]],
+    [[-58,83],[-30,84],[-20,77],[-22,70],[-40,60],[-50,64],[-58,70],[-62,78]],
+    [[-81,8],[-76,10],[-71,12],[-62,11],[-52,5],[-50,0],[-44,-2],[-35,-6],[-39,-14],[-43,-23],[-48,-25],[-53,-34],[-58,-38],[-62,-40],[-65,-45],[-68,-50],[-71,-54],[-75,-52],[-74,-45],[-73,-37],[-71,-30],[-70,-23],[-71,-18],[-77,-8],[-81,-5],[-80,0],[-78,6]],
+    [[-17,21],[-16,14],[-13,9],[-8,5],[-2,5],[3,7],[9,4],[9,0],[12,-6],[12,-17],[15,-23],[18,-29],[20,-35],[26,-34],[32,-26],[35,-22],[40,-16],[40,-10],[43,-4],[51,2],[51,11],[45,11],[43,12],[38,17],[35,23],[34,28],[32,31],[25,32],[19,30],[10,34],[3,36],[-2,35],[-6,36],[-10,30],[-14,26]],
+    [[-9,43],[-9,38],[-6,36],[0,39],[3,42],[6,43],[9,44],[13,45],[16,42],[18,40],[23,38],[27,36],[30,37],[33,36],[36,36],[36,33],[35,31],[34,29],[38,22],[43,13],[48,13],[52,17],[56,20],[60,25],[62,25],[65,25],[68,24],[70,21],[73,20],[76,9],[78,8],[80,13],[83,18],[87,21],[89,22],[92,21],[94,16],[97,17],[98,14],[101,7],[104,2],[104,10],[107,11],[109,15],[108,19],[110,21],[113,22],[117,23],[121,25],[122,30],[121,38],[126,40],[129,43],[130,42],[135,45],[141,46],[143,53],[140,55],[143,59],[150,59],[155,57],[160,60],[163,62],[170,66],[180,66],[180,70],[170,72],[160,71],[140,74],[130,74],[115,77],[105,78],[90,76],[75,73],[60,72],[50,69],[40,68],[33,70],[28,71],[20,70],[14,68],[10,64],[5,61],[8,58],[10,55],[6,53],[4,52],[0,49],[-2,48],[-5,48],[-4,44]],
+    [[-6,50],[-3,51],[0,51],[2,53],[-1,56],[-3,58],[-5,58],[-6,55],[-5,52]],
+    [[-10,52],[-6,52],[-6,55],[-10,55]],
+    [[-24,65],[-14,66],[-13,64],[-22,63]],
+    [[130,31],[132,34],[136,35],[140,36],[142,40],[145,43],[144,45],[141,42],[138,37],[134,34],[131,33]],
+    [[95,6],[100,2],[104,-2],[106,-6],[112,-8],[116,-8],[120,-9],[125,-9],[131,-8],[141,-8],[141,-3],[134,-2],[128,0],[120,1],[117,4],[113,3],[109,2],[103,1],[98,3]],
+    [[120,18],[122,14],[124,11],[126,7],[123,6],[120,10],[119,14]],
+    [[114,-22],[113,-26],[115,-34],[118,-35],[123,-34],[129,-32],[134,-33],[138,-35],[141,-38],[146,-39],[150,-37],[153,-31],[153,-27],[151,-24],[146,-19],[142,-11],[136,-12],[132,-11],[129,-15],[125,-14],[122,-18],[117,-21]],
+    [[166,-46],[169,-47],[173,-43],[175,-40],[178,-38],[176,-37],[172,-41],[168,-44]],
+    [[43,-12],[48,-13],[50,-16],[48,-25],[45,-25],[43,-21]],
+    [[80,10],[82,8],[81,6],[79,7]],
+    [[-85,22],[-77,20],[-74,20],[-78,23]],
+  ].map(poly => poly.map(([lon, lat]) => [px(lon), py(lat)]));
+
+  function inPoly(x, y, poly){
+    let hit = false;
+    for(let i = 0, j = poly.length - 1; i < poly.length; j = i++){
+      const [xi, yi] = poly[i], [xj, yj] = poly[j];
+      if((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) hit = !hit;
+    }
+    return hit;
   }
+  const onLand = (x, y) => LAND.some(p => inPoly(x, y, p));
 
-  const landGroup = document.createElementNS(svgNS, 'g');
-  svg.appendChild(landGroup);
-  const STEP = 13;
-  for(let y = 40; y <= 360; y += STEP){
-    for(let x = 0; x <= 1000; x += STEP){
-      if(onLand(x, y)){
-        const d = document.createElementNS(svgNS, 'circle');
-        d.setAttribute('cx', x);
-        d.setAttribute('cy', y);
-        d.setAttribute('r', 2);
-        d.setAttribute('class', 'map-land');
-        landGroup.appendChild(d);
-      }
+  const STEP = 10;
+  const frag = document.createDocumentFragment();
+  let count = 0;
+  for(let y = STEP / 2; y < H; y += STEP){
+    for(let x = STEP / 2; x < W; x += STEP){
+      if(!onLand(x, y)) continue;
+      const c = document.createElementNS(NS, 'circle');
+      c.setAttribute('cx', x.toFixed(1));
+      c.setAttribute('cy', y.toFixed(1));
+      c.setAttribute('r', 2.1);
+      c.setAttribute('class', 'map-land');
+      frag.appendChild(c);
+      count++;
     }
   }
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.appendChild(frag);
 
-  const HIGHLIGHTS = [
-    {name:'Canada',       x:205.6, y:86.9,  dx:0,   dy:-12},
-    {name:'USA',          x:227.8, y:130.4, dx:0,   dy:-12},
-    {name:'UK',           x:494.4, y:92.0,  dx:10,  dy:-4},
-    {name:'Saudi Arabia', x:616,   y:168.7, dx:-10, dy:16},
-    {name:'UAE',          x:655,   y:170,   dx:14,  dy:4},
-    {name:'India',        x:716.7, y:176.3, dx:-12, dy:16},
-    {name:'Malaysia',     x:781,   y:219,   dx:-16, dy:-6},
-    {name:'Singapore',    x:793,   y:231,   dx:14,  dy:6},
-    {name:'Indonesia',    x:812,   y:238,   dx:0,   dy:18},
-    {name:'Philippines',  x:836.1, y:196.8, dx:12,  dy:-8},
-    {name:'Australia',    x:872.2, y:293.9, dx:0,   dy:20},
+  // the eleven countries the copy names
+  // dx/dy/anchor per place: the Gulf and the Malacca cluster sit too close for
+  // a single label position to work for all of them.
+  const PLACES = [
+    ['Canada', -106, 56, 0, -13, 'middle'],
+    ['USA', -98, 39, 0, -13, 'middle'],
+    ['UK', -2, 54, 0, -13, 'middle'],
+    ['Saudi Arabia', 45, 24, -13, 4, 'end'],
+    ['UAE', 54, 24, 13, 4, 'start'],
+    ['India', 78, 21, 0, -13, 'middle'],
+    ['Malaysia', 102, 4, -13, 0, 'end'],
+    ['Singapore', 104, 1.4, -13, 16, 'end'],
+    ['Indonesia', 118, -2, 13, 12, 'start'],
+    ['Philippines', 122, 12, 13, -6, 'start'],
+    ['Australia', 134, -25, 0, 26, 'middle'],
   ];
+  const order = ['USA','UK','Saudi Arabia','India','Singapore','Australia'];
+  const byName = Object.fromEntries(PLACES.map(p => [p[0], p]));
+  const route = order.map((n, i) =>
+    `${i ? 'L' : 'M'}${px(byName[n][1]).toFixed(1)} ${py(byName[n][2]).toFixed(1)}`).join(' ');
+  const rp = document.createElementNS(NS, 'path');
+  rp.setAttribute('d', route);
+  rp.setAttribute('class', 'map-route');
+  svg.appendChild(rp);
 
-  // a slow west-to-east relay connecting the hubs — "follow-the-sun"
-  const routeOrder = ['Canada','USA','UK','Saudi Arabia','UAE','India','Malaysia','Singapore','Indonesia','Philippines','Australia'];
-  const byName = Object.fromEntries(HIGHLIGHTS.map(h => [h.name, h]));
-  const routeD = routeOrder.map((name, i) => {
-    const p = byName[name];
-    return (i === 0 ? 'M' : 'L') + p.x + ',' + p.y;
-  }).join(' ');
-  const route = document.createElementNS(svgNS, 'path');
-  route.setAttribute('d', routeD);
-  route.setAttribute('class', 'map-route');
-  svg.appendChild(route);
-
-  HIGHLIGHTS.forEach(h => {
-    const ring = document.createElementNS(svgNS, 'circle');
-    ring.setAttribute('cx', h.x); ring.setAttribute('cy', h.y); ring.setAttribute('r', 4);
-    ring.setAttribute('class', 'map-dot-ring');
+  PLACES.forEach(([name, lon, lat, dx, dy, anchor]) =>{
+    const x = px(lon), y = py(lat);
+    const ring = document.createElementNS(NS, 'circle');
+    ring.setAttribute('cx', x); ring.setAttribute('cy', y);
+    ring.setAttribute('r', 7); ring.setAttribute('class', 'map-dot-ring');
     svg.appendChild(ring);
-
-    const dot = document.createElementNS(svgNS, 'circle');
-    dot.setAttribute('cx', h.x); dot.setAttribute('cy', h.y); dot.setAttribute('r', 3.4);
-    dot.setAttribute('class', 'map-dot');
+    const dot = document.createElementNS(NS, 'circle');
+    dot.setAttribute('cx', x); dot.setAttribute('cy', y);
+    dot.setAttribute('r', 3.4); dot.setAttribute('class', 'map-dot');
     svg.appendChild(dot);
-
-    const label = document.createElementNS(svgNS, 'text');
-    label.setAttribute('x', h.x + h.dx);
-    label.setAttribute('y', h.y + h.dy);
+    const label = document.createElementNS(NS, 'text');
+    label.setAttribute('x', x + dx);
+    label.setAttribute('y', y + dy);
+    label.setAttribute('text-anchor', anchor);
     label.setAttribute('class', 'map-label');
-    label.setAttribute('text-anchor', h.dx > 0 ? 'start' : (h.dx < 0 ? 'end' : 'middle'));
-    label.textContent = h.name;
+    label.textContent = name;
     svg.appendChild(label);
   });
 })();
