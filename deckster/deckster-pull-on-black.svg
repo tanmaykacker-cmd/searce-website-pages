@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Deckster — 01 Pull">
+  <title>Deckster — 01 Pull (on-black)</title>
+  <rect width="64" height="64" fill="#000000"/>
+  <rect x="11" y="8"  width="28" height="6" rx="3" fill="#004ecc"/>
+  <rect x="8"  y="17" width="34" height="8" rx="4" fill="#ffffff"/>
+  <rect x="8"  y="28" width="48" height="8" rx="4" fill="#0064ff"/>
+  <rect x="8"  y="39" width="34" height="8" rx="4" fill="#ffffff"/>
+  <rect x="11" y="50" width="28" height="6" rx="3" fill="#004ecc"/>
+</svg>
