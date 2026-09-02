@@ -646,46 +646,113 @@ a:focus-visible, button:focus-visible{
 }
 
 /* ============ WHAT IT CHANGES ============
-   The copy is eight bare nouns, so the section is set as a quiet index rather
-   than a component: two columns of four, each name on its own hairline, with
-   air around the block doing the work instead of type size. Full-bleed rules
-   are the one form the page does not use anywhere else, which is what keeps
-   the section from reading as a fifth card grid.
-   An earlier pass ran these at display size across the full width; it was too
-   loud for a list of single words. */
+   Two earlier passes set the eight names on their own hairlines. Eight
+   repeated horizontal rules read as a ruler — a measuring device, which is
+   the wrong idea and a lot of ink for no reason.
+   So the section is one object instead of eight: a single fan opening from
+   the verified reading out to the eight surfaces it touches. The curves
+   converge on one point, so they read as one gesture rather than a stack of
+   rules, and they carry the section's actual claim. */
 .movers{
   padding:130px 0;
   border-bottom:1px solid var(--paper-line);
 }
-.movers .section-eyebrow{margin-bottom:clamp(26px,3vw,40px);}
-.movers-list{
+.movers .section-eyebrow{margin-bottom:clamp(30px,3.4vw,48px);}
+.fan{
+  display:grid;
+  grid-template-columns:auto clamp(130px,20vw,290px) minmax(0,1fr);
+  align-items:stretch;
+}
+.fan-source{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  max-width:190px;
+  padding-right:2px;
+}
+.fan-source-text{
+  font-family:var(--display);
+  font-weight:500;
+  font-size:clamp(14.5px,1.25vw,17px);
+  line-height:1.35;
+  letter-spacing:-0.008em;
+  color:var(--ink);
+}
+.fan-source-text em{
+  display:block;
+  font-style:normal;
+  font-weight:600;
+  font-size:11.5px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--blue);
+  margin-bottom:4px;
+}
+.fan-origin{
+  flex:none;
+  width:11px;
+  height:11px;
+  border-radius:50%;
+  background:var(--blue);
+  /* Straddles the column boundary so the curves appear to leave the dot. */
+  margin-right:-6px;
+  box-shadow:0 0 0 6px rgba(0,100,255,.12);
+}
+/* The viewBox is 8 bands of 100, and the list is 8 equal rows, so a curve
+   ending at y=i*100+50 lands on row i's centre with nothing measured at
+   runtime. preserveAspectRatio is off, which would smear the stroke with the
+   box — non-scaling-stroke keeps every line a true hairline. */
+/* The cell is the grid item, not the svg. A 100x800 viewBox carries a 1:8
+   intrinsic ratio, so a self-sizing svg blew the row out to eight times its
+   own width and stretched the list to match; absolutely filling a cell that
+   has no height of its own lets the list set the height instead. */
+.fan-lines-cell{position:relative;}
+.fan-lines{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+  opacity:0;
+  transition:opacity .8s ease;
+}
+.fan-lines.show{opacity:1;}
+.fan-line{
+  fill:none;
+  /* Blue rather than the neutral rule colour: at this weight the curves read
+     as one deliberate gesture leaving the dot, not as stray hairlines. */
+  stroke:var(--blue-24);
+  stroke-width:1;
+  vector-effect:non-scaling-stroke;
+  transition:stroke .35s ease;
+}
+.fan-line.lit{stroke:var(--blue);}
+.fan-list{
   list-style:none;
   margin:0;
   padding:0;
   display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  /* Column-major, so reading down the left then down the right gives the
-     copy's own order. The default row-major flow interleaved them. */
-  grid-template-rows:repeat(4,auto);
-  grid-auto-flow:column;
-  column-gap:clamp(40px,6vw,96px);
+  grid-template-rows:repeat(8,minmax(62px,1fr));
 }
 .mover{
   display:flex;
   align-items:center;
-  gap:clamp(16px,2vw,28px);
-  padding:clamp(17px,1.7vw,23px) 2px;
-  border-top:1px solid var(--paper-line);
+  gap:14px;
+  padding-left:clamp(14px,1.6vw,22px);
   opacity:0;
   transform:translateY(8px);
   transition:opacity .45s ease, transform .45s ease;
 }
-/* The two columns are separate runs of four, so each needs its own closing
-   rule; :last-child alone would only close the second column. */
-.mover:nth-child(4n){border-bottom:1px solid var(--paper-line);}
 .mover.show{opacity:1;transform:none;}
+.mover-cap{
+  flex:none;
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:var(--ink-40);
+  transition:background .3s ease, box-shadow .3s ease;
+}
 .mover-name{
-  flex:0 1 auto;
   font-family:var(--display);
   font-weight:400;
   font-size:clamp(19px,1.75vw,25px);
@@ -694,37 +761,8 @@ a:focus-visible, button:focus-visible{
   color:var(--ink);
   transition:color .3s ease;
 }
-/* Runs from the end of the name to the end of the column. The blue is a child
-   rather than a background transition so it can wipe left to right. */
-.mover-rule{
-  position:relative;
-  flex:1 1 auto;
-  min-width:24px;
-  height:1px;
-  background:var(--paper-line);
-}
-.mover-rule::after{
-  content:"";
-  position:absolute;
-  left:0;top:0;bottom:0;
-  width:0;
-  background:var(--blue);
-  transition:width .55s cubic-bezier(.2,.7,.2,1);
-}
-.mover-cap{
-  flex:none;
-  width:7px;
-  height:7px;
-  border-radius:50%;
-  background:var(--paper);
-  border:1px solid var(--paper-line);
-  transition:background .3s ease, border-color .3s ease;
-}
-/* No row fill and no shift on hover — at this size the colour change and the
-   wipe are enough, and a moving tint across eight rows was the loud part. */
 .mover:hover .mover-name{color:var(--blue-strong);}
-.mover:hover .mover-rule::after{width:100%;}
-.mover:hover .mover-cap{background:var(--blue);border-color:var(--blue);}
+.mover:hover .mover-cap{background:var(--blue);box-shadow:0 0 0 5px rgba(0,100,255,.13);}
 
 /* ============ CLOSING ============
    Three white sections ran back to back into a black footer with no crescendo.
@@ -819,16 +857,16 @@ a:focus-visible, button:focus-visible{
 }
 .cta-button svg{width:14px;height:14px;}
 
-@media (max-width:980px){
-}
 @media (max-width:760px){
-  /* One run of eight, so the closing rule moves to the last row. */
-  .movers-list{grid-template-columns:minmax(0,1fr);grid-template-rows:none;grid-auto-flow:row;}
-  .mover:nth-child(4n){border-bottom:0;}
-  .mover:last-child{border-bottom:1px solid var(--paper-line);}
-}
-@media (max-width:560px){
-  .mover{gap:16px;padding:15px 2px;}
+  /* No room for the fan to open; the source becomes a caption above the list
+     and the eight stand on their own. */
+  .fan{grid-template-columns:minmax(0,1fr);}
+  .fan-source{max-width:none;margin-bottom:26px;}
+  /* Dot leads the caption once it is no longer feeding the curves. */
+  .fan-origin{margin-right:0;order:-1;}
+  .fan-lines-cell{display:none;}
+  .fan-list{grid-template-rows:none;gap:20px;}
+  .mover{padding-left:0;}
 }
 @media (prefers-reduced-motion: reduce){
   .mover{opacity:1;transform:none;transition:none;}
@@ -1233,16 +1271,35 @@ footer{
 <section class="movers">
   <div class="wrap">
     <span class="section-eyebrow">what changes</span>
-    <ul class="movers-list" id="moverMap">
-      <li class="mover"><span class="mover-name">Revenue</span><span class="mover-rule"></span><span class="mover-cap"></span></li>
-      <li class="mover"><span class="mover-name">Cost</span><span class="mover-rule"></span><span class="mover-cap"></span></li>
-      <li class="mover"><span class="mover-name">Speed</span><span class="mover-rule"></span><span class="mover-cap"></span></li>
-      <li class="mover"><span class="mover-name">Customer experience</span><span class="mover-rule"></span><span class="mover-cap"></span></li>
-      <li class="mover"><span class="mover-name">Employee productivity</span><span class="mover-rule"></span><span class="mover-cap"></span></li>
-      <li class="mover"><span class="mover-name">Risk</span><span class="mover-rule"></span><span class="mover-cap"></span></li>
-      <li class="mover"><span class="mover-name">Reliability</span><span class="mover-rule"></span><span class="mover-cap"></span></li>
-      <li class="mover"><span class="mover-name">How work gets done</span><span class="mover-rule"></span><span class="mover-cap"></span></li>
-    </ul>
+    <div class="fan">
+      <div class="fan-source">
+        <p class="fan-source-text"><em>one</em>verified reading</p>
+        <span class="fan-origin" aria-hidden="true"></span>
+      </div>
+      <div class="fan-lines-cell">
+      <svg class="fan-lines" id="fanLines" viewBox="0 0 100 800"
+           preserveAspectRatio="none" aria-hidden="true" focusable="false">
+          <path class="fan-line" d="M0 400 C 52 400 48 50 100 50"/>
+          <path class="fan-line" d="M0 400 C 52 400 48 150 100 150"/>
+          <path class="fan-line" d="M0 400 C 52 400 48 250 100 250"/>
+          <path class="fan-line" d="M0 400 C 52 400 48 350 100 350"/>
+          <path class="fan-line" d="M0 400 C 52 400 48 450 100 450"/>
+          <path class="fan-line" d="M0 400 C 52 400 48 550 100 550"/>
+          <path class="fan-line" d="M0 400 C 52 400 48 650 100 650"/>
+          <path class="fan-line" d="M0 400 C 52 400 48 750 100 750"/>
+      </svg>
+      </div>
+      <ul class="fan-list" id="moverMap">
+        <li class="mover"><span class="mover-cap"></span><span class="mover-name">Revenue</span></li>
+        <li class="mover"><span class="mover-cap"></span><span class="mover-name">Cost</span></li>
+        <li class="mover"><span class="mover-cap"></span><span class="mover-name">Speed</span></li>
+        <li class="mover"><span class="mover-cap"></span><span class="mover-name">Customer experience</span></li>
+        <li class="mover"><span class="mover-cap"></span><span class="mover-name">Employee productivity</span></li>
+        <li class="mover"><span class="mover-cap"></span><span class="mover-name">Risk</span></li>
+        <li class="mover"><span class="mover-cap"></span><span class="mover-name">Reliability</span></li>
+        <li class="mover"><span class="mover-cap"></span><span class="mover-name">How work gets done</span></li>
+      </ul>
+    </div>
   </div>
 </section>
 
@@ -1426,28 +1483,38 @@ buildHeroField(document.getElementById('heroField'),
                document.getElementById('heroSection'),
                document.getElementById('heroGlow'));
 
-/* ============ WHAT IT CHANGES — staggered reveal ============
-   The eight arrive one after another rather than all at once, so the diagram
-   reads as things feeding into the spine rather than as a static block. */
+/* ============ WHAT IT CHANGES — reveal, and the fan follows the pointer ===
+   The curve belonging to a name lights with it. The paths are siblings of the
+   list rather than children, so the pairing is made here by index instead of
+   in CSS. */
 (function(){
-  const grid = document.getElementById('moverMap');
-  if(!grid) return;
-  const levers = [...grid.querySelectorAll('.mover')];
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const list = document.getElementById('moverMap');
+  const svg  = document.getElementById('fanLines');
+  if(!list) return;
+  const rows  = [...list.querySelectorAll('.mover')];
+  const lines = svg ? [...svg.querySelectorAll('.fan-line')] : [];
 
-  if(reduceMotion){
-    levers.forEach(l => l.classList.add('show'));
-    return;
-  }
+  rows.forEach((row, i)=>{
+    const line = lines[i];
+    if(!line) return;
+    row.addEventListener('pointerenter', ()=> line.classList.add('lit'));
+    row.addEventListener('pointerleave', ()=> line.classList.remove('lit'));
+  });
 
-  const observer = new IntersectionObserver((entries, obs)=>{
-    entries.forEach(entry =>{
-      if(!entry.isIntersecting) return;
-      levers.forEach((lever, i)=> setTimeout(()=> lever.classList.add('show'), i * 90));
+  const reveal = ()=>{
+    if(svg) svg.classList.add('show');
+    rows.forEach(r => r.classList.add('show'));
+  };
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){ reveal(); return; }
+
+  new IntersectionObserver((entries, obs)=>{
+    entries.forEach(e =>{
+      if(!e.isIntersecting) return;
+      if(svg) svg.classList.add('show');
+      rows.forEach((r, i)=> setTimeout(()=> r.classList.add('show'), i * 70));
       obs.disconnect();
     });
-  }, {threshold:0.25});
-  observer.observe(grid);
+  }, {threshold:0.25}).observe(list);
 })();
 </script>
 
