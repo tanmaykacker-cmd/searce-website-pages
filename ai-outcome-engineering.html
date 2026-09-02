@@ -1436,7 +1436,7 @@ buildHeroField(document.getElementById('heroField'),
   const rows = [...list.querySelectorAll('.mover')];
   if(rows.length < 2) return;
   const CORNER = 16;
-  let total = 0, marks = [];
+  let total = 0, marks = [], tail = 0;
 
   function build(){
     const box = climb.getBoundingClientRect();
@@ -1467,44 +1467,89 @@ buildHeroField(document.getElementById('heroField'),
       prog.setAttribute('d', d);
       marks.push(prog.getTotalLength());
     }
+    // how far the terminus sits below the top of the chart, used to make sure
+    // the line never finishes drawing with that node up behind the masthead
+    tail = pts[pts.length - 1].y;
+
     track.setAttribute('d', d);
     prog.setAttribute('d', d);
     total = prog.getTotalLength();
     prog.style.strokeDasharray = total;
-    update();
+    update(true);
   }
 
   const still = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-  function update(){
-    if(!total) return;
-    let p;
-    if(still.matches){
-      p = 1;
-    }else{
-      const box = climb.getBoundingClientRect();
-      // starts once the top of the chart is well inside the viewport, and
-      // completes over four fifths of its own height of scrolling
-      const span = Math.max(1, box.height * 0.8);
-      p = (window.innerHeight * 0.82 - box.top) / span;
-      p = Math.max(0, Math.min(1, p));
-    }
-    prog.style.strokeDashoffset = total * (1 - p);
-    const drawn = total * p;
-    rows.forEach((r, i)=> r.classList.toggle('lit', p > 0 && marks[i] <= drawn + 0.5));
+  /* How much scrolling the chart takes to draw, as a multiple of its own
+     height. At 1 the whole thing lands inside a single viewport of scrolling,
+     which outruns anyone actually reading the eight; at 1.5 the reader sets
+     the pace and the line trails them down the page. */
+  const PACE = 1.5;
+  /* Fraction of the remaining distance closed per frame. The line eases
+     towards the scroll position rather than being pinned to it, so a wheel
+     notch — which arrives as one jump, not a sweep — draws as a glide. */
+  const EASE = 0.09;
+
+  let target = 0, current = 0, frame = null;
+
+  /* Clear space wanted below the viewport top for the terminus at the moment
+     the line completes: the masthead is 85px and wants air under it. */
+  const TERMINUS_CLEARANCE = 220;
+
+  function measure(){
+    if(still.matches) return 1;
+    const box = climb.getBoundingClientRect();
+    const head = window.innerHeight * 0.86;
+    /* PACE is what the pace should be; the second term is what it can be on a
+       short viewport. Without the clamp a 700px-tall window finished the draw
+       with the last node 71px down the page, behind the masthead. */
+    const span = Math.max(320, Math.min(box.height * PACE,
+                                        head + tail - TERMINUS_CLEARANCE));
+    return Math.max(0, Math.min(1, (head - box.top) / span));
   }
 
-  let ticking = false;
-  function onScroll(){
-    if(ticking) return;
-    ticking = true;
-    requestAnimationFrame(()=>{ ticking = false; update(); });
+  function paint(){
+    prog.style.strokeDashoffset = total * (1 - current);
+    const drawn = total * current;
+    /* Proportional to the path, not a flat half pixel. The serpentine is
+       ~9000 units long, so a fixed tolerance left the terminus hollow while
+       the line already looked finished — the last node only lit once current
+       was within 0.00006 of 1. A quarter of a percent is about 22 units, well
+       inside a corner radius, so no node lights visibly early. */
+    const tol = Math.max(0.5, total * 0.0025);
+    rows.forEach((r, i)=> r.classList.toggle('lit', current > 0 && marks[i] <= drawn + tol));
   }
-  window.addEventListener('scroll', onScroll, {passive:true});
+
+  function tick(){
+    const gap = target - current;
+    if(Math.abs(gap) < 0.0004){
+      current = target;
+      frame = null;
+      paint();
+      return;
+    }
+    current += gap * EASE;
+    paint();
+    frame = requestAnimationFrame(tick);
+  }
+
+  function update(snap){
+    if(!total) return;
+    target = measure();
+    if(snap || still.matches){
+      current = target;
+      if(frame){ cancelAnimationFrame(frame); frame = null; }
+      paint();
+      return;
+    }
+    if(!frame) frame = requestAnimationFrame(tick);
+  }
+
+  window.addEventListener('scroll', ()=> update(false), {passive:true});
 
   let t;
   window.addEventListener('resize', ()=>{ clearTimeout(t); t = setTimeout(build, 160); });
-  still.addEventListener?.('change', update);
+  still.addEventListener?.('change', ()=> update(true));
 
   build();
   // fonts land after first paint and change the node positions
