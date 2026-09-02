@@ -191,8 +191,10 @@ a:focus-visible, button:focus-visible{
   position:relative;
   display:flex;
   align-items:center;
-  /* Holds the fold: the hero is the landing view, not a band above one. */
-  min-height:82vh;
+  /* The hero is the landing view: it and the masthead fill the viewport. The
+     masthead height is measured at runtime, since padding and the border make
+     it taller than its nominal row and it changes with the breakpoint. */
+  min-height:calc(100vh - var(--nav-h, 85px));
   padding:clamp(72px,8vw,110px) 0 clamp(80px,8.5vw,120px);
   overflow:hidden;
   border-bottom:1px solid var(--paper-line);
@@ -619,7 +621,13 @@ a:focus-visible, button:focus-visible{
   margin:0 0 48px;
 }
 .flex-body strong{color:var(--ink);font-weight:600;}
-.flex-layout{display:flex;justify-content:center;}
+.flex-layout{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,.86fr);
+  gap:clamp(40px,5vw,86px);
+  align-items:center;
+}
+.flex-layout .section-head{margin-bottom:0;}
 .flex-heading{
   font-family:var(--display);
   font-weight:600;
@@ -774,7 +782,7 @@ a:focus-visible, button:focus-visible{
    read as distraction on a page whose last job is to be read and clicked. */
 .closing-bloom,
 .closing-dots,
-.closing-horizon{
+.closing-sweep{
   position:absolute;
   z-index:-1;
   pointer-events:none;
@@ -788,32 +796,20 @@ a:focus-visible, button:focus-visible{
   -webkit-mask-image:linear-gradient(to bottom, #000 4%, rgba(0,0,0,0) 66%);
   mask-image:linear-gradient(to bottom, #000 4%, rgba(0,0,0,0) 66%);
 }
-/* The horizon is drawn to the panel's own box rather than as a huge circle
-   pushed off-frame: a 2200px circle simply cannot show its crown inside a
-   377px band, so on phones the curve vanished entirely. This scales. */
-.closing-horizon{
+/* The dome is gone; the light it carried now crosses the rectangle itself, so
+   the panel keeps its movement without the circle. */
+.closing-sweep{
   inset:0;
-  width:100%;
-  height:100%;
-  animation:horizonDrift 20s ease-in-out infinite;
+  background:linear-gradient(105deg,
+    rgba(150,190,255,0) 38%,
+    rgba(150,190,255,.17) 50%,
+    rgba(150,190,255,0) 62%);
+  background-size:280% 100%;
+  animation:closingSweep 12s linear infinite;
 }
-/* Slow enough to register as atmosphere rather than as an event: a light that
-   walks the curve once every half minute, and drifts measured in a few px. */
-.rim-streak{opacity:.72;}
-/* Low enough to read as a sheen crossing the dome, not a flash, and low
-   enough that the accent keeps its margin when the sheen passes behind it. */
-.horizon-sheen{opacity:.24;}
-@keyframes horizonDrift{
-  0%,100%{transform:translateY(0);}
-  50%{transform:translateY(-9px);}
-}
-@keyframes closingGlow{
-  0%,100%{opacity:.6;}
-  50%{opacity:1;}
-}
-@keyframes dotDrift{
-  from{background-position:0 0;}
-  to{background-position:27px 27px;}
+@keyframes closingSweep{
+  from{background-position:190% 0;}
+  to{background-position:-90% 0;}
 }
 .closing-bloom{
   left:50%;
@@ -870,13 +866,10 @@ a:focus-visible, button:focus-visible{
 }
 @media (prefers-reduced-motion: reduce){
   .lever{opacity:1;transform:none;transition:none;}
-  .closing-horizon,
-  .rim-streak,
-  .horizon-sheen,
+  .closing-sweep,
   .closing-dots,
   .closing-bloom{animation:none;}
-  .rim-streak,
-  .horizon-sheen{opacity:0;}
+  .closing-sweep{opacity:0;}
 }
 
 /* This page's payoff line is longer than the sibling's, so it is held to a
@@ -936,8 +929,14 @@ footer{
   padding:clamp(92px,9.5vw,132px) 0;
   border-bottom:1px solid var(--paper-line);
 }
-.who-grid{display:flex;justify-content:center;}
-.craft-tree{width:min(100%,780px);}
+.who-grid{
+  display:grid;
+  grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);
+  gap:clamp(40px,5vw,86px);
+  align-items:center;
+}
+.who-grid .section-head{margin-bottom:0;}
+.craft-tree{width:100%;}
 /* Five flat tiles said nothing about how the crafts relate. The copy's own
    argument is that process people and system people ship together, under one
    lead, so that is the shape. */
@@ -1408,7 +1407,12 @@ h1, h3, .opening-lead, .builds-punch, .accountability-punch, .evaluate-lead, .fl
   max-width:9ch;
 }
 .faq-title span{color:var(--blue);}
-.faq-list{display:flex;flex-direction:column;gap:14px;}
+.faq-list{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  align-content:flex-start;
+}
 .faq-item{
   border:1px solid var(--paper-line);
   border-radius:18px;
@@ -1520,7 +1524,7 @@ h1, h3, .opening-lead, .builds-punch, .accountability-punch, .evaluate-lead, .fl
   .flex-visual{order:-1;}
 }
 @media (max-width:640px){
-  .hero{padding:64px 0 80px;min-height:80vh;}
+  .hero{padding:56px 0 72px;}
   .opening{padding:72px 0;}
   .squad-is{padding:72px 0;}
   .accountability{padding:72px 0;}
@@ -1643,12 +1647,12 @@ h1, h3, .opening-lead, .builds-punch, .accountability-punch, .evaluate-lead, .fl
 
 <section class="who">
   <div class="wrap">
-    <div class="section-head">
-      <span class="section-eyebrow">who is in a squad</span>
-      <h2 class="section-title">Composition varies by practice.</h2>
-      <p class="section-sub">Rebuilding how work runs requires both the people who redesign the process and the people who build the system. <strong>Searce does not staff one craft without the other.</strong></p>
-    </div>
     <div class="who-grid">
+      <div class="section-head">
+        <span class="section-eyebrow">who is in a squad</span>
+        <h2 class="section-title">Composition varies by practice.</h2>
+        <p class="section-sub">Rebuilding how work runs requires both the people who redesign the process and the people who build the system. <strong>Searce does not staff one craft without the other.</strong></p>
+      </div>
       <div class="craft-tree">
         <p class="craft-caption">a business systems engineering squad</p>
         <div class="craft-head">Product engineering managers</div>
@@ -1838,12 +1842,12 @@ h1, h3, .opening-lead, .builds-punch, .accountability-punch, .evaluate-lead, .fl
 
 <section class="flex-section">
   <div class="wrap">
-    <div class="section-head">
-      <span class="section-eyebrow">how squads flex</span>
-      <h2 class="section-title">The same squad, sized to the moment.</h2>
-      <p class="section-sub">Allocation adjusts quarterly to match your delivery lifecycle: <strong>scale up for launch, streamline for stabilization</strong>. The squad stays consistent; knowledge compounds instead of walking out the door.</p>
-    </div>
     <div class="flex-layout">
+      <div class="section-head">
+        <span class="section-eyebrow">how squads flex</span>
+        <h2 class="section-title">The same squad, sized to the moment.</h2>
+        <p class="section-sub">Allocation adjusts quarterly to match your delivery lifecycle: <strong>scale up for launch, streamline for stabilization</strong>. The squad stays consistent; knowledge compounds instead of walking out the door.</p>
+      </div>
       <div class="flex-visual" id="flexVisual">
         <div class="flex-toggle" id="flexToggle">
           <button class="flex-tab active" data-state="launch" type="button">Launch</button>
@@ -1875,19 +1879,19 @@ h1, h3, .opening-lead, .builds-punch, .accountability-punch, .evaluate-lead, .fl
       <h2 class="faq-title">Frequently Asked <span>Questions</span></h2>
     </div>
     <div class="faq-list" id="faqList">
-      <details class="faq-item">
+      <details class="faq-item" name="faq">
         <summary>Is a solver squad the same as staff augmentation?
           <span class="faq-toggle" aria-hidden="true"></span>
         </summary>
         <p><strong>No.</strong> Staff augmentation supplies individuals against roles. A squad is a formed team accountable for a named outcome, with its own lead and its own measurement.</p>
       </details>
-      <details class="faq-item">
+      <details class="faq-item" name="faq">
         <summary>Does the squad change during the engagement?
           <span class="faq-toggle" aria-hidden="true"></span>
         </summary>
         <p>Composition flexes with the delivery lifecycle, but the squad stays consistent so knowledge compounds rather than walking out the door.</p>
       </details>
-      <details class="faq-item">
+      <details class="faq-item" name="faq">
         <summary>Where do squads work from?
           <span class="faq-toggle" aria-hidden="true"></span>
         </summary>
@@ -1900,40 +1904,7 @@ h1, h3, .opening-lead, .builds-punch, .accountability-punch, .evaluate-lead, .fl
 <section class="closing-outcome">
   <span class="closing-bloom" aria-hidden="true"></span>
   <span class="closing-dots" aria-hidden="true"></span>
-  <svg class="closing-horizon" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-    <defs>
-      <linearGradient id="horizonFill" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="26%" stop-color="#0064ff" stop-opacity=".34"/>
-        <stop offset="58%" stop-color="#0064ff" stop-opacity=".12"/>
-        <stop offset="100%" stop-color="#0064ff" stop-opacity="0"/>
-      </linearGradient>
-      <linearGradient id="horizonRim" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stop-color="#6aa8ff" stop-opacity=".12"/>
-        <stop offset="50%" stop-color="#6aa8ff" stop-opacity=".72"/>
-        <stop offset="100%" stop-color="#6aa8ff" stop-opacity=".12"/>
-      </linearGradient>
-      <linearGradient id="horizonSweep" x1="0" y1="0" x2="0.3" y2="0">
-        <stop offset="0%" stop-color="#dce9ff" stop-opacity="0"/>
-        <stop offset="50%" stop-color="#dce9ff" stop-opacity=".9"/>
-        <stop offset="100%" stop-color="#dce9ff" stop-opacity="0"/>
-        <animateTransform attributeName="gradientTransform" type="translate"
-                          from="-0.34 0" to="1.04 0" dur="11s" repeatCount="indefinite"/>
-      </linearGradient>
-      <linearGradient id="horizonSheen" x1="0" y1="0" x2="0.46" y2="0">
-        <stop offset="0%" stop-color="#8fbcff" stop-opacity="0"/>
-        <stop offset="50%" stop-color="#8fbcff" stop-opacity=".42"/>
-        <stop offset="100%" stop-color="#8fbcff" stop-opacity="0"/>
-        <animateTransform attributeName="gradientTransform" type="translate"
-                          from="-0.5 0" to="1.06 0" dur="11s" repeatCount="indefinite"/>
-      </linearGradient>
-    </defs>
-    <path d="M0,27 Q50,-5 100,27 L100,100 L0,100 Z" fill="url(#horizonFill)"/>
-    <path d="M0,27 Q50,-5 100,27" fill="none" stroke="url(#horizonRim)"
-          stroke-width="1.4" vector-effect="non-scaling-stroke"/>
-    <path class="horizon-sheen" d="M0,27 Q50,-5 100,27 L100,100 L0,100 Z" fill="url(#horizonSheen)"/>
-    <path class="rim-streak" d="M0,27 Q50,-5 100,27" fill="none" stroke="url(#horizonSweep)"
-          stroke-width="1.6" vector-effect="non-scaling-stroke"/>
-  </svg>
+  <span class="closing-sweep" aria-hidden="true"></span>
   <div class="wrap">
     <span class="section-eyebrow">forward-deployed solver squads</span>
     <p class="closing-kicker"><span class="k-ink">Ships squads.</span><br><span class="k-blue">Counts outcomes.</span></p>
@@ -1964,6 +1935,54 @@ h1, h3, .opening-lead, .builds-punch, .accountability-punch, .evaluate-lead, .fl
 </footer>
 
 <script>
+/* ============ MASTHEAD HEIGHT ============
+   Published as a custom property so the hero can fill exactly what is left of
+   the viewport at any breakpoint. */
+(function(){
+  const nav = document.querySelector(".nav");
+  if(!nav) return;
+  function publish(){
+    document.documentElement.style.setProperty("--nav-h", Math.round(nav.getBoundingClientRect().height) + "px");
+  }
+  publish();
+  let t;
+  window.addEventListener("resize", ()=>{ clearTimeout(t); t = setTimeout(publish, 150); });
+})();
+
+/* ============ QUESTIONS — the list keeps its own height ============
+   Opening an answer used to push everything below it down the page. The list
+   reserves the height of its tallest open state, and only one answer is open
+   at a time, so the cards expand inside a box that never changes size. */
+(function(){
+  const list = document.getElementById('faqList');
+  if(!list) return;
+  const items = [...list.querySelectorAll('.faq-item')];
+
+  // name="details" gives exclusivity natively; this backs it up everywhere else
+  items.forEach(item => item.addEventListener('toggle', ()=>{
+    if(!item.open) return;
+    items.forEach(other =>{ if(other !== item) other.open = false; });
+  }));
+
+  function reserve(){
+    const wasOpen = items.filter(i => i.open);
+    list.style.minHeight = '';
+    items.forEach(i => i.open = false);
+    let tallest = list.getBoundingClientRect().height;
+    items.forEach(i =>{
+      i.open = true;
+      tallest = Math.max(tallest, list.getBoundingClientRect().height);
+      i.open = false;
+    });
+    wasOpen.forEach(i => i.open = true);
+    list.style.minHeight = Math.ceil(tallest) + 'px';
+  }
+
+  reserve();
+  let t;
+  window.addEventListener('resize', ()=>{ clearTimeout(t); t = setTimeout(reserve, 180); });
+})();
+
 /* ============ HERO — a squad forms around the cursor ============
    A field of loose points. Whatever the pointer is near is pulled into a
    squad: the nearest few light up, link to each other, and take a core.
