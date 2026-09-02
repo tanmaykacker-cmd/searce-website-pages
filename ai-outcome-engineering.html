@@ -646,79 +646,82 @@ a:focus-visible, button:focus-visible{
 }
 
 /* ============ WHAT IT CHANGES ============
-   The copy is eight bare nouns, so the section is set as a quiet index rather
-   than a component: two columns of four, with air around the block doing the
-   work instead of type size.
-   An earlier pass gave every row a rule top and bottom plus a connector
-   hairline running out to a marker — eighteen lines for eight words, which
-   read as a ruler. Only the separators between rows survive, six in total,
-   and the rows are told apart by the gaps as much as by the rules. */
+   A chart the reader draws by scrolling. The eight names step down and to the
+   right, one per row, and a line climbs the staircase between them as the
+   page moves, stopping on the last.
+   Every row is indented one step further than the one above, so the vertical
+   run leaves a node into empty space and the horizontal run arrives at the
+   next node from its left — the line never has to cross a name to reach the
+   one after it.
+   The steps are deliberately equal. There are no magnitudes in the copy, and
+   an uneven climb would invent them. */
 .movers{
-  padding:130px 0;
+  padding:130px 0 clamp(90px,10vw,140px);
   border-bottom:1px solid var(--paper-line);
 }
-.movers .section-eyebrow{margin-bottom:clamp(24px,2.6vw,34px);}
-.movers-list{
+.movers .section-eyebrow{margin-bottom:clamp(22px,2.4vw,32px);}
+.climb{position:relative;}
+.climb-line{
+  position:absolute;
+  left:0;top:0;
+  pointer-events:none;
+  overflow:visible;
+}
+/* The route ahead, so the shape reads as a chart before it is drawn. */
+.climb-track{
+  fill:none;
+  stroke:var(--blue-12);
+  stroke-width:1.5;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.climb-progress{
+  fill:none;
+  stroke:var(--blue);
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.climb-list{
   list-style:none;
   margin:0;
   padding:0;
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  /* Column-major, so reading down the left then down the right gives the
-     copy's own order. The default row-major flow interleaved them. */
-  grid-template-rows:repeat(4,auto);
-  grid-auto-flow:column;
-  column-gap:clamp(40px,6vw,96px);
+  position:relative;
+  z-index:1;
 }
 .mover{
   display:flex;
   align-items:center;
-  padding:clamp(19px,2vw,27px) 2px;
-  border-top:1px solid var(--paper-line);
-  opacity:0;
-  transform:translateY(8px);
-  transition:opacity .45s ease, transform .45s ease;
+  gap:clamp(14px,1.6vw,22px);
+  height:clamp(64px,6.6vw,88px);
+  margin-left:calc(var(--i) * clamp(13px,2.5vw,46px));
 }
-/* Separators only between rows: no rule above the first of either column and
-   none closing either column. Items 1 and 5 head the two runs of four. */
-.mover:nth-child(1),
-.mover:nth-child(5){border-top:0;}
-.mover.show{opacity:1;transform:none;}
+.node{
+  flex:none;
+  width:13px;
+  height:13px;
+  border-radius:50%;
+  background:var(--paper);
+  border:1.5px solid var(--blue-24);
+  transition:background .35s ease, border-color .35s ease, box-shadow .35s ease;
+}
+.mover.lit .node{background:var(--blue);border-color:var(--blue);}
+/* The line stops here, so the last node is the terminus and reads as one. */
+.mover:last-child .node{width:18px;height:18px;}
+.mover:last-child.lit .node{box-shadow:0 0 0 7px rgba(0,100,255,.13);}
 .mover-name{
   font-family:var(--display);
   font-weight:400;
   font-size:clamp(19px,1.75vw,25px);
   line-height:1.2;
   letter-spacing:-0.014em;
+  /* Names default to ink and are never dimmed: if the script does not run,
+     the section is still eight legible words. */
   color:var(--ink);
-  transition:color .3s ease;
+  transition:color .35s ease;
 }
+.mover:last-child.lit .mover-name{color:var(--blue-strong);}
 .mover:hover .mover-name{color:var(--blue-strong);}
-
-/* The trace. Rather than draw a path between the eight — which would have to
-   cross the names to get from one column to the other — each name is filled
-   with blue left to right in turn, so the word itself is what gets traced.
-   The gradient is twice the width of the text and holds blue in its left half
-   and ink in its right, so sliding it from 100% to 0% wipes the colour across
-   the glyphs. Guarded, because the fill is transparent and text clipped to a
-   background would be invisible without it. */
-@supports ((-webkit-background-clip:text) or (background-clip:text)){
-  .mover-name{
-    background-image:linear-gradient(90deg,var(--blue-strong) 0 50%,var(--ink) 50%);
-    background-size:200% 100%;
-    background-repeat:no-repeat;
-    background-position:100% 0;
-    -webkit-background-clip:text;
-    background-clip:text;
-    -webkit-text-fill-color:transparent;
-    transition:background-position .6s cubic-bezier(.33,.9,.35,1);
-  }
-  .mover.trace .mover-name,
-  .mover:hover .mover-name{background-position:0 0;}
-}
-@media (prefers-reduced-motion: reduce){
-  .mover-name{transition:none;}
-}
 
 /* ============ CLOSING ============
    Three white sections ran back to back into a black footer with no crescendo.
@@ -813,11 +816,6 @@ a:focus-visible, button:focus-visible{
 }
 .cta-button svg{width:14px;height:14px;}
 
-@media (max-width:760px){
-  /* One run of eight, so only the first row loses its rule. */
-  .movers-list{grid-template-columns:minmax(0,1fr);grid-template-rows:none;grid-auto-flow:row;}
-  .mover:nth-child(5){border-top:1px solid var(--paper-line);}
-}
 @media (prefers-reduced-motion: reduce){
   .mover{opacity:1;transform:none;transition:none;}
   .closing-sweep,
@@ -1221,16 +1219,22 @@ footer{
 <section class="movers">
   <div class="wrap">
     <span class="section-eyebrow">what changes</span>
-    <ul class="movers-list" id="moverMap">
-      <li class="mover"><span class="mover-name">Revenue</span></li>
-      <li class="mover"><span class="mover-name">Cost</span></li>
-      <li class="mover"><span class="mover-name">Speed</span></li>
-      <li class="mover"><span class="mover-name">Customer experience</span></li>
-      <li class="mover"><span class="mover-name">Employee productivity</span></li>
-      <li class="mover"><span class="mover-name">Risk</span></li>
-      <li class="mover"><span class="mover-name">Reliability</span></li>
-      <li class="mover"><span class="mover-name">How work gets done</span></li>
-    </ul>
+    <div class="climb" id="climb">
+      <svg class="climb-line" id="climbLine" aria-hidden="true" focusable="false">
+        <path class="climb-track" id="climbTrack"></path>
+        <path class="climb-progress" id="climbProgress"></path>
+      </svg>
+      <ul class="climb-list" id="moverMap">
+        <li class="mover" style="--i:0"><span class="node"></span><span class="mover-name">Revenue</span></li>
+        <li class="mover" style="--i:1"><span class="node"></span><span class="mover-name">Employee productivity</span></li>
+        <li class="mover" style="--i:2"><span class="node"></span><span class="mover-name">Cost</span></li>
+        <li class="mover" style="--i:3"><span class="node"></span><span class="mover-name">Risk</span></li>
+        <li class="mover" style="--i:4"><span class="node"></span><span class="mover-name">Speed</span></li>
+        <li class="mover" style="--i:5"><span class="node"></span><span class="mover-name">Reliability</span></li>
+        <li class="mover" style="--i:6"><span class="node"></span><span class="mover-name">Customer experience</span></li>
+        <li class="mover" style="--i:7"><span class="node"></span><span class="mover-name">How work gets done</span></li>
+      </ul>
+    </div>
   </div>
 </section>
 
@@ -1414,57 +1418,89 @@ buildHeroField(document.getElementById('heroField'),
                document.getElementById('heroSection'),
                document.getElementById('heroGlow'));
 
-/* ============ WHAT IT CHANGES — the trace ============
-   Plays once when the list comes into view and stops on the last name, which
-   keeps its fill. The order the client asked for runs across the two columns
-   rather than down them — Revenue, Employee productivity, Cost, Risk, and so
-   on — which in a column-major grid is just reading order row by row. Below
-   760px the grid is a single run of eight and that mapping no longer holds,
-   so the sequence falls back to DOM order. */
+/* ============ WHAT IT CHANGES — the line climbs as you scroll ============
+   The path is measured from the nodes rather than assumed, so the indent step
+   can stay a clamp() and the geometry still lands exactly on every node at
+   every width. Scroll position sets stroke-dashoffset, and each node lights
+   when the drawn length passes the distance recorded for it. */
 (function(){
-  const list = document.getElementById('moverMap');
-  if(!list) return;
+  const climb = document.getElementById('climb');
+  const svg   = document.getElementById('climbLine');
+  const track = document.getElementById('climbTrack');
+  const prog  = document.getElementById('climbProgress');
+  const list  = document.getElementById('moverMap');
+  if(!climb || !svg || !track || !prog || !list) return;
+
   const rows = [...list.querySelectorAll('.mover')];
-  const ZIGZAG = [0,4,1,5,2,6,3,7];
-  const STEP = 520, HOLD = 900;
+  if(rows.length < 2) return;
+  const CORNER = 16;
+  let total = 0, marks = [];
 
-  const sequence = ()=> window.matchMedia('(max-width:760px)').matches
-    ? rows.map((_, i) => i)
-    : ZIGZAG;
+  function build(){
+    const box = climb.getBoundingClientRect();
+    svg.setAttribute('width',  box.width);
+    svg.setAttribute('height', box.height);
+    svg.setAttribute('viewBox', `0 0 ${box.width} ${box.height}`);
 
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  function reveal(){
-    rows.forEach(r => r.classList.add('show'));
-  }
-
-  function play(){
-    const order = sequence();
-    order.forEach((idx, k)=>{
-      const row = rows[idx];
-      if(!row) return;
-      setTimeout(()=>{
-        row.classList.add('trace');
-        // every name but the last hands its fill back once the next is under way
-        if(k < order.length - 1) setTimeout(()=> row.classList.remove('trace'), HOLD);
-      }, k * STEP);
+    const pts = rows.map(r =>{
+      const n = r.querySelector('.node').getBoundingClientRect();
+      return {x: n.left - box.left + n.width / 2, y: n.top - box.top + n.height / 2};
     });
+
+    // Down out of one node, round the corner, across to the next.
+    let d = `M${pts[0].x} ${pts[0].y}`;
+    marks = [0];
+    for(let i = 1; i < pts.length; i++){
+      const a = pts[i - 1], b = pts[i];
+      const r = Math.max(0, Math.min(CORNER, Math.abs(b.x - a.x) / 2, Math.abs(b.y - a.y) / 2));
+      const dir = Math.sign(b.x - a.x);
+      d += ` L${a.x} ${b.y - r} Q${a.x} ${b.y} ${a.x + dir * r} ${b.y} L${b.x} ${b.y}`;
+      // measured on the live element: a detached path reports no length
+      prog.setAttribute('d', d);
+      marks.push(prog.getTotalLength());
+    }
+    track.setAttribute('d', d);
+    prog.setAttribute('d', d);
+    total = prog.getTotalLength();
+    prog.style.strokeDasharray = total;
+    update();
   }
 
-  if(reduce){
-    reveal();
-    rows[rows.length - 1].classList.add('trace');
-    return;
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  function update(){
+    if(!total) return;
+    let p;
+    if(still.matches){
+      p = 1;
+    }else{
+      const box = climb.getBoundingClientRect();
+      // starts once the top of the chart is well inside the viewport, and
+      // completes over four fifths of its own height of scrolling
+      const span = Math.max(1, box.height * 0.8);
+      p = (window.innerHeight * 0.82 - box.top) / span;
+      p = Math.max(0, Math.min(1, p));
+    }
+    prog.style.strokeDashoffset = total * (1 - p);
+    const drawn = total * p;
+    rows.forEach((r, i)=> r.classList.toggle('lit', p > 0 && marks[i] <= drawn + 0.5));
   }
 
-  new IntersectionObserver((entries, obs)=>{
-    entries.forEach(e =>{
-      if(!e.isIntersecting) return;
-      rows.forEach((r, i)=> setTimeout(()=> r.classList.add('show'), i * 70));
-      setTimeout(play, rows.length * 70 + 260);
-      obs.disconnect();
-    });
-  }, {threshold:0.35}).observe(list);
+  let ticking = false;
+  function onScroll(){
+    if(ticking) return;
+    ticking = true;
+    requestAnimationFrame(()=>{ ticking = false; update(); });
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+
+  let t;
+  window.addEventListener('resize', ()=>{ clearTimeout(t); t = setTimeout(build, 160); });
+  still.addEventListener?.('change', update);
+
+  build();
+  // fonts land after first paint and change the node positions
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(build);
 })();
 </script>
 
