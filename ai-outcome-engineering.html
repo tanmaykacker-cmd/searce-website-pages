@@ -646,20 +646,19 @@ a:focus-visible, button:focus-visible{
 }
 
 /* ============ WHAT IT CHANGES ============
-   A chart the reader draws by scrolling. The eight names step down and to the
-   right, one per row, and a line climbs the staircase between them as the
-   page moves, stopping on the last.
-   Every row is indented one step further than the one above, so the vertical
-   run leaves a node into empty space and the horizontal run arrives at the
-   next node from its left — the line never has to cross a name to reach the
-   one after it.
-   The steps are deliberately equal. There are no magnitudes in the copy, and
-   an uneven climb would invent them. */
+   A chart the reader draws by scrolling. The eight names alternate hard left
+   and hard right, and a line zigzags the full width between them as the page
+   moves, stopping on the last.
+   The traverse happens in the gap between two rows, not on a row, so the line
+   crosses the column of white between names rather than the names themselves.
+   That is the whole reason the alternation works at this width.
+   Steps are deliberately even. There are no magnitudes in the copy, and an
+   uneven chart would invent them. */
 .movers{
   padding:130px 0 clamp(90px,10vw,140px);
   border-bottom:1px solid var(--paper-line);
 }
-.movers .section-eyebrow{margin-bottom:clamp(22px,2.4vw,32px);}
+.movers .section-eyebrow{margin-bottom:clamp(26px,3vw,40px);}
 .climb{position:relative;}
 .climb-line{
   position:absolute;
@@ -692,10 +691,13 @@ a:focus-visible, button:focus-visible{
 .mover{
   display:flex;
   align-items:center;
-  gap:clamp(14px,1.6vw,22px);
-  height:clamp(64px,6.6vw,88px);
-  margin-left:calc(var(--i) * clamp(13px,2.5vw,46px));
+  gap:clamp(13px,1.5vw,20px);
+  height:clamp(76px,7.4vw,104px);
 }
+/* Even rows run the other way: row-reverse packs them against the right edge
+   and puts the node outermost, so both flanks read node-first from the line. */
+.mover:nth-child(even){flex-direction:row-reverse;}
+.mover:nth-child(even) .mover-name{text-align:right;}
 .node{
   flex:none;
   width:13px;
@@ -1225,14 +1227,14 @@ footer{
         <path class="climb-progress" id="climbProgress"></path>
       </svg>
       <ul class="climb-list" id="moverMap">
-        <li class="mover" style="--i:0"><span class="node"></span><span class="mover-name">Revenue</span></li>
-        <li class="mover" style="--i:1"><span class="node"></span><span class="mover-name">Employee productivity</span></li>
-        <li class="mover" style="--i:2"><span class="node"></span><span class="mover-name">Cost</span></li>
-        <li class="mover" style="--i:3"><span class="node"></span><span class="mover-name">Risk</span></li>
-        <li class="mover" style="--i:4"><span class="node"></span><span class="mover-name">Speed</span></li>
-        <li class="mover" style="--i:5"><span class="node"></span><span class="mover-name">Reliability</span></li>
-        <li class="mover" style="--i:6"><span class="node"></span><span class="mover-name">Customer experience</span></li>
-        <li class="mover" style="--i:7"><span class="node"></span><span class="mover-name">How work gets done</span></li>
+        <li class="mover"><span class="node"></span><span class="mover-name">Revenue</span></li>
+        <li class="mover"><span class="node"></span><span class="mover-name">Employee productivity</span></li>
+        <li class="mover"><span class="node"></span><span class="mover-name">Cost</span></li>
+        <li class="mover"><span class="node"></span><span class="mover-name">Risk</span></li>
+        <li class="mover"><span class="node"></span><span class="mover-name">Speed</span></li>
+        <li class="mover"><span class="node"></span><span class="mover-name">Reliability</span></li>
+        <li class="mover"><span class="node"></span><span class="mover-name">Customer experience</span></li>
+        <li class="mover"><span class="node"></span><span class="mover-name">How work gets done</span></li>
       </ul>
     </div>
   </div>
@@ -1447,14 +1449,20 @@ buildHeroField(document.getElementById('heroField'),
       return {x: n.left - box.left + n.width / 2, y: n.top - box.top + n.height / 2};
     });
 
-    // Down out of one node, round the corner, across to the next.
+    // Down out of a node, across the gutter between the two rows, then down
+    // into the next node. Turning in the gutter rather than on a row is what
+    // keeps the traverse clear of the names on both flanks.
     let d = `M${pts[0].x} ${pts[0].y}`;
     marks = [0];
     for(let i = 1; i < pts.length; i++){
       const a = pts[i - 1], b = pts[i];
-      const r = Math.max(0, Math.min(CORNER, Math.abs(b.x - a.x) / 2, Math.abs(b.y - a.y) / 2));
-      const dir = Math.sign(b.x - a.x);
-      d += ` L${a.x} ${b.y - r} Q${a.x} ${b.y} ${a.x + dir * r} ${b.y} L${b.x} ${b.y}`;
+      const mid = (a.y + b.y) / 2;
+      const dir = Math.sign(b.x - a.x) || 1;
+      const r = Math.max(0, Math.min(CORNER, Math.abs(b.x - a.x) / 2,
+                                     Math.abs(mid - a.y), Math.abs(b.y - mid)));
+      d += ` L${a.x} ${mid - r} Q${a.x} ${mid} ${a.x + dir * r} ${mid}`
+         + ` L${b.x - dir * r} ${mid} Q${b.x} ${mid} ${b.x} ${mid + r}`
+         + ` L${b.x} ${b.y}`;
       // measured on the live element: a detached path reports no length
       prog.setAttribute('d', d);
       marks.push(prog.getTotalLength());
