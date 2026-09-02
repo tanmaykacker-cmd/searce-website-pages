@@ -646,83 +646,85 @@ a:focus-visible, button:focus-visible{
 }
 
 /* ============ WHAT IT CHANGES ============
-   The copy for this section is eight bare nouns and nothing else, so the
-   section is set as a wall of type rather than a component: the eight ARE the
-   headline, which is why there is no h2 above them. Each sits on its own
-   full-width rule, and the rule fills blue from the left on hover — the one
-   graphic move, and the only place on the page that uses full-bleed rules
-   instead of cards in a grid. */
+   The copy is eight bare nouns, so the section is set as a quiet index rather
+   than a component: two columns of four, each name on its own hairline, with
+   air around the block doing the work instead of type size. Full-bleed rules
+   are the one form the page does not use anywhere else, which is what keeps
+   the section from reading as a fifth card grid.
+   An earlier pass ran these at display size across the full width; it was too
+   loud for a list of single words. */
 .movers{
   padding:130px 0;
   border-bottom:1px solid var(--paper-line);
 }
-.movers .section-eyebrow{margin-bottom:clamp(26px,3vw,42px);}
+.movers .section-eyebrow{margin-bottom:clamp(26px,3vw,40px);}
 .movers-list{
   list-style:none;
   margin:0;
   padding:0;
-  border-top:1px solid var(--paper-line);
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  /* Column-major, so reading down the left then down the right gives the
+     copy's own order. The default row-major flow interleaved them. */
+  grid-template-rows:repeat(4,auto);
+  grid-auto-flow:column;
+  column-gap:clamp(40px,6vw,96px);
 }
 .mover{
   display:flex;
   align-items:center;
-  gap:clamp(18px,3vw,44px);
-  padding:clamp(16px,2.2vw,28px) clamp(10px,1.6vw,24px);
-  border-bottom:1px solid var(--paper-line);
+  gap:clamp(16px,2vw,28px);
+  padding:clamp(17px,1.7vw,23px) 2px;
+  border-top:1px solid var(--paper-line);
   opacity:0;
-  transform:translateY(10px);
-  transition:opacity .5s ease, transform .5s ease, background .3s ease;
+  transform:translateY(8px);
+  transition:opacity .45s ease, transform .45s ease;
 }
+/* The two columns are separate runs of four, so each needs its own closing
+   rule; :last-child alone would only close the second column. */
+.mover:nth-child(4n){border-bottom:1px solid var(--paper-line);}
 .mover.show{opacity:1;transform:none;}
 .mover-name{
   flex:0 1 auto;
   font-family:var(--display);
-  font-weight:300;
-  font-size:clamp(29px,4.4vw,62px);
-  line-height:1.08;
-  letter-spacing:-0.024em;
+  font-weight:400;
+  font-size:clamp(19px,1.75vw,25px);
+  line-height:1.2;
+  letter-spacing:-0.014em;
   color:var(--ink);
-  transition:color .3s ease, transform .35s cubic-bezier(.2,.7,.2,1);
+  transition:color .3s ease;
 }
-/* Runs from the end of the word to the right margin. The blue overlay is a
-   child rather than a background transition so it can wipe left-to-right. */
+/* Runs from the end of the name to the end of the column. The blue is a child
+   rather than a background transition so it can wipe left to right. */
 .mover-rule{
   position:relative;
   flex:1 1 auto;
-  min-width:32px;
+  min-width:24px;
   height:1px;
   background:var(--paper-line);
 }
 .mover-rule::after{
   content:"";
   position:absolute;
-  left:0;
-  /* Heavier than the hairline it covers, or the wipe disappears against the
-     tint the row picks up at the same time. */
-  top:50%;
-  height:2px;
-  transform:translateY(-50%);
+  left:0;top:0;bottom:0;
   width:0;
   background:var(--blue);
-  transition:width .5s cubic-bezier(.2,.7,.2,1);
+  transition:width .55s cubic-bezier(.2,.7,.2,1);
 }
 .mover-cap{
   flex:none;
-  width:9px;
-  height:9px;
+  width:7px;
+  height:7px;
   border-radius:50%;
   background:var(--paper);
   border:1px solid var(--paper-line);
-  transition:background .3s ease, border-color .3s ease, box-shadow .3s ease;
+  transition:background .3s ease, border-color .3s ease;
 }
-.mover:hover{background:var(--blue-06);}
-.mover:hover .mover-name{color:var(--blue-strong);transform:translateX(8px);}
+/* No row fill and no shift on hover — at this size the colour change and the
+   wipe are enough, and a moving tint across eight rows was the loud part. */
+.mover:hover .mover-name{color:var(--blue-strong);}
 .mover:hover .mover-rule::after{width:100%;}
-.mover:hover .mover-cap{
-  background:var(--blue);
-  border-color:var(--blue);
-  box-shadow:0 0 0 5px rgba(0,100,255,.13);
-}
+.mover:hover .mover-cap{background:var(--blue);border-color:var(--blue);}
 
 /* ============ CLOSING ============
    Three white sections ran back to back into a black footer with no crescendo.
@@ -819,13 +821,14 @@ a:focus-visible, button:focus-visible{
 
 @media (max-width:980px){
 }
+@media (max-width:760px){
+  /* One run of eight, so the closing rule moves to the last row. */
+  .movers-list{grid-template-columns:minmax(0,1fr);grid-template-rows:none;grid-auto-flow:row;}
+  .mover:nth-child(4n){border-bottom:0;}
+  .mover:last-child{border-bottom:1px solid var(--paper-line);}
+}
 @media (max-width:560px){
-  /* The longest two labels wrap at this size; the rule has no room left once
-     they do, so the row falls back to the word and its marker. */
-  .mover{gap:16px;padding:15px 4px;}
-  .mover-rule{display:none;}
-  .mover-name{flex:1 1 auto;}
-  .mover:hover .mover-name{transform:none;}
+  .mover{gap:16px;padding:15px 2px;}
 }
 @media (prefers-reduced-motion: reduce){
   .mover{opacity:1;transform:none;transition:none;}
