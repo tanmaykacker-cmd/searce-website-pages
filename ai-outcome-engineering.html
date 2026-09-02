@@ -1480,32 +1480,37 @@ buildHeroField(document.getElementById('heroField'),
 
   const still = window.matchMedia('(prefers-reduced-motion: reduce)');
 
-  /* How much scrolling the chart takes to draw, as a multiple of its own
-     height. At 1 the whole thing lands inside a single viewport of scrolling,
-     which outruns anyone actually reading the eight; at 1.5 the reader sets
-     the pace and the line trails them down the page. */
-  const PACE = 1.5;
+  /* Where in the chart's trip across the viewport the line should finish.
+     The trip is the whole journey from the chart's top edge entering at the
+     bottom of the window to its bottom edge leaving at the top, so its length
+     is one viewport plus the chart. Finishing at three quarters of that means
+     the reader arrives at How work gets done with the last stretch of the
+     chart still on screen, rather than having already scrolled past it.
+     Expressing it this way rather than as a multiple of the chart's height is
+     what makes the finish line predictable on any window: a short window has
+     a shorter trip, so the draw shortens with it. */
+  const START_AT    = 0.88;   /* chart top, as a fraction of the window, at 0% */
+  const COMPLETE_AT = 0.75;   /* fraction of the trip elapsed at 100% */
   /* Fraction of the remaining distance closed per frame. The line eases
      towards the scroll position rather than being pinned to it, so a wheel
      notch — which arrives as one jump, not a sweep — draws as a glide. */
   const EASE = 0.09;
+  /* Floor under the terminus at completion, in case an unusual window shape
+     makes the rule above land it too near the 85px masthead. */
+  const TERMINUS_CLEARANCE = 200;
 
   let target = 0, current = 0, frame = null;
-
-  /* Clear space wanted below the viewport top for the terminus at the moment
-     the line completes: the masthead is 85px and wants air under it. */
-  const TERMINUS_CLEARANCE = 220;
 
   function measure(){
     if(still.matches) return 1;
     const box = climb.getBoundingClientRect();
-    const head = window.innerHeight * 0.86;
-    /* PACE is what the pace should be; the second term is what it can be on a
-       short viewport. Without the clamp a 700px-tall window finished the draw
-       with the last node 71px down the page, behind the masthead. */
-    const span = Math.max(320, Math.min(box.height * PACE,
-                                        head + tail - TERMINUS_CLEARANCE));
-    return Math.max(0, Math.min(1, (head - box.top) / span));
+    const view = window.innerHeight;
+    const trip = view + box.height;
+    const from = view * START_AT;                    /* box.top at 0% */
+    const to   = view - trip * COMPLETE_AT;          /* box.top at 100% */
+    const span = Math.max(280, Math.min(from - to,
+                                        from + tail - TERMINUS_CLEARANCE));
+    return Math.max(0, Math.min(1, (from - box.top) / span));
   }
 
   function paint(){
