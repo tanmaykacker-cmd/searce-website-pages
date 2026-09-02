@@ -184,85 +184,144 @@ a:focus-visible, button:focus-visible{
 }
 .lang-toggle svg{width:9px;height:9px;}
 
-/* ============ HERO ============ */
+/* ============ HERO ============
+   The field is the page's thesis made literal: loose points that form a squad
+   around wherever the reader is looking, and fall apart again behind them. */
 .hero{
   position:relative;
-  min-height:88vh;
   display:flex;
   align-items:center;
-  padding:96px 0;
+  /* The hero is the landing view: it and the masthead fill the viewport. The
+     masthead height is measured at runtime, since padding and the border make
+     it taller than its nominal row and it changes with the breakpoint. */
+  min-height:calc(100vh - var(--nav-h, 85px));
+  padding:clamp(72px,8vw,110px) 0 clamp(80px,8.5vw,120px);
   overflow:hidden;
   border-bottom:1px solid var(--paper-line);
   isolation:isolate;
 }
-.hero-dot-texture{
+.hero-field{
   position:absolute;
   inset:0;
   z-index:0;
   pointer-events:none;
-  background-image:radial-gradient(circle, rgba(0,100,255,0.22) 1px, transparent 1.6px);
-  background-size:26px 26px;
+  /* The squad forms anywhere, but the field recedes under the copy so the
+     links never fight the headline. */
+  -webkit-mask-image:linear-gradient(to right, rgba(0,0,0,.16) 0%, rgba(0,0,0,.3) 30%, #000 60%);
+  mask-image:linear-gradient(to right, rgba(0,0,0,.16) 0%, rgba(0,0,0,.3) 30%, #000 60%);
 }
-.hero-cursor-glow{
-  position:absolute;
-  top:0;
-  left:0;
-  width:560px;
-  height:560px;
-  margin-left:-280px;
-  margin-top:-280px;
-  border-radius:50%;
-  background:radial-gradient(circle, var(--blue-12) 0%, transparent 70%);
-  filter:blur(30px);
+.hero-field svg{display:block;width:100%;height:100%;}
+.field-dot{
+  fill:var(--ink-40);
+  opacity:.28;
+  transition:fill .18s ease, opacity .18s ease, r .18s ease;
+}
+.field-dot.lit{fill:var(--blue);opacity:1;}
+.field-dot.core{fill:var(--blue);opacity:1;}
+.squad-link{
+  fill:none;
+  stroke:var(--blue);
+  stroke-width:1.4;
+  stroke-linecap:round;
+  stroke-linejoin:round;
   opacity:0;
+  transition:opacity .22s ease;
+}
+.squad-link.on{opacity:.5;}
+.hero-glow{
+  position:absolute;
+  width:520px;
+  height:520px;
+  left:0;top:0;
   z-index:0;
   pointer-events:none;
-  transition:opacity .4s ease, transform .15s ease-out;
-  will-change:transform, opacity;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(0,100,255,.13) 0%, rgba(0,100,255,.05) 42%, rgba(0,100,255,0) 70%);
+  opacity:0;
+  transition:opacity .3s ease;
 }
+.hero-glow.on{opacity:1;}
 .hero-fade{
   position:absolute;
   inset:0;
   z-index:0;
-  background:linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 55%, rgba(255,255,255,0.9) 100%);
+  background:linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 58%, rgba(255,255,255,.92) 100%);
   pointer-events:none;
 }
-.hero .wrap{
-  position:relative;
-  z-index:1;
-  width:100%;
-}
-.page-badge{
-  display:inline-block;
-  background:var(--blue-06);
-  border:1px solid var(--blue-12);
-  color:var(--blue-strong);
-  font-family:var(--display);
-  font-weight:600;
-  font-size:12.5px;
-  letter-spacing:.1em;
-  text-transform:uppercase;
-  padding:9px 20px;
-  border-radius:8px;
-  margin-bottom:26px;
-}
+/* As a flex item the wrap shrank to its content and the auto margins then
+   centred it; the hero is a left-aligned composition. */
+.hero .wrap{position:relative;z-index:1;width:100%;}
+.hero-copy{max-width:min(100%,880px);}
 .hero h1{
   font-family:var(--display);
   font-weight:300;
-  font-size:clamp(52px, 9.2vw, 132px);
-  line-height:0.98;
-  letter-spacing:-0.02em;
-  margin:0 0 clamp(28px, 3.4vw, 46px);
-}
-.hero h1 .line-ink{display:block;color:var(--ink);}
-.hero h1 .line-blue{display:block;color:var(--blue);}
-.hero-sub{
-  font-size:clamp(18px, 1.7vw, 24px);
-  line-height:1.5;
-  color:var(--ink-60);
-  max-width:44ch;
+  /* Sized so Forward-Deployed holds one row inside the copy measure. */
+  font-size:clamp(34px, 5.8vw, 84px);
+  line-height:1.02;
+  letter-spacing:-0.022em;
   margin:0;
 }
+.hero h1 .line-ink{display:block;color:var(--ink);white-space:nowrap;}
+.hero h1 .line-blue{display:block;color:var(--blue);white-space:nowrap;}
+.hero-sub{
+  font-size:clamp(17px,1.6vw,21px);
+  line-height:1.6;
+  color:var(--ink-60);
+  max-width:44ch;
+  margin:28px 0 0;
+}
+
+/* ============ SHARED SECTION UTILS ============
+   Every section opens the same way: a small eyebrow, then one very large
+   light-weight statement, then a single component. The statement is drawn
+   from the section's own copy rather than written for the slot. */
+.section-head{margin-bottom:clamp(42px,4.8vw,68px);}
+.section-title{
+  font-family:var(--display);
+  font-weight:300;
+  font-size:clamp(30px,4.2vw,60px);
+  line-height:1.14;
+  letter-spacing:-0.022em;
+  color:var(--ink);
+  margin:16px 0 0;
+  max-width:19ch;
+  text-wrap:balance;
+}
+.section-title-wide{max-width:26ch;}
+.section-title .dim{color:var(--ink-40);}
+.section-title .hi{color:var(--blue);}
+.section-sub{
+  font-size:clamp(16.5px,1.5vw,19px);
+  line-height:1.68;
+  color:var(--ink);
+  max-width:58ch;
+  margin:24px 0 0;
+  text-wrap:pretty;
+}
+
+/* A dark band with the blue bloom behind it, used to break the run of light
+   sections into chapters. */
+.band-dark{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  background:#03102a;
+  color:#fff;
+}
+.band-dark::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background:radial-gradient(54% 62% at 26% 40%, rgba(0,100,255,.32), rgba(0,100,255,0) 72%);
+}
+.band-dark .section-eyebrow{color:var(--blue-24);}
+.band-dark .section-title{color:#fff;}
+.band-dark .section-title .dim{color:rgba(255,255,255,.42);}
+.band-dark .section-title .hi{color:var(--blue-lift);}
+.band-dark .section-sub{color:rgba(255,255,255,.74);}
+.band-dark .wrap{position:relative;z-index:1;}
+.band-dark{border-bottom-color:rgba(255,255,255,.08);}
 
 /* ============ SHARED SECTION UTILS ============ */
 .section-eyebrow{
@@ -275,92 +334,359 @@ a:focus-visible, button:focus-visible{
   color:var(--blue);
   margin-bottom:22px;
 }
-
-/* ============ OPENING ============ */
-.opening{
-  padding:110px 0;
-  border-bottom:1px solid var(--paper-line);
+/* Outlined rounded-square tile holding the glyph, and one card in the group
+   carrying the accent, both taken from the reference. */
+.icon-tile{
+  display:grid;
+  place-items:center;
+  width:46px;height:46px;
+  border-radius:13px;
+  border:1.5px solid var(--blue-24);
+  color:var(--blue);
+  margin-bottom:22px;
 }
-.opening-lead{
+.icon-tile svg{width:22px;height:22px;}
+.capacity-card{border-radius:18px;}
+.capacity-card--active{
+  border-color:var(--blue);
+  box-shadow:0 14px 40px rgba(0,100,255,.13);
+}
+.capacity-card--active .icon-tile{
+  background:var(--blue);
+  border-color:var(--blue);
+  color:#fff;
+}
+.capacity-title{
+  font-family:var(--display);
+  font-weight:600;
+  font-size:clamp(16px,1.5vw,18.5px);
+  letter-spacing:-0.01em;
+  color:var(--ink);
+  margin:0 0 9px;
+}
+.capacity-desc{font-size:15.5px;line-height:1.6;color:var(--ink);margin:0;}
+/* Three cards side by side read as three unrelated things. The braid shows
+   what the copy says: every squad draws on all three at once. */
+.capacity-braid{display:block;width:100%;height:auto;margin-top:-2px;}
+.capacity-sink{
+  display:flex;
+  justify-content:center;
+  margin-top:-4px;
+}
+.capacity-sink span{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:15px 30px;
+  border-radius:999px;
+  background:var(--blue);
+  color:#fff;
+  font-family:var(--display);
+  font-weight:600;
+  font-size:16px;
+}
+.capacity-sink span::before{
+  content:"";
+  width:8px;height:8px;
+  border-radius:50%;
+  background:#fff;
+}
+
+
+/* ============ WHAT IT IS ============ */
+.whatitis,
+.involves,
+.changes,
+.faq{padding:clamp(92px,9.5vw,132px) 0;}
+.whatitis,
+.involves,
+.changes{border-bottom:1px solid var(--paper-line);}
+.unsolved,
+.ladder-section{padding:clamp(100px,10vw,144px) 0;}
+
+.versus{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:clamp(16px,2vw,26px);
+}
+.versus-card{
+  padding:clamp(26px,2.8vw,34px);
+  border:1px solid var(--paper-line);
+  border-radius:18px;
+  transition:background .22s ease, border-color .22s ease;
+}
+.versus-card:hover{background:var(--blue-06);}
+/* The third is what the page is about, so it carries the accent. */
+.versus-card--active{
+  border-color:var(--blue);
+  box-shadow:0 14px 40px rgba(0,100,255,.13);
+}
+.versus-card--active .icon-tile{background:var(--blue);border-color:var(--blue);color:#fff;}
+.versus-name{
+  font-family:var(--display);
+  font-weight:600;
+  font-size:clamp(17px,1.6vw,20px);
+  letter-spacing:-0.01em;
+  color:var(--ink);
+  margin:0 0 10px;
+}
+.versus-out{font-size:15.5px;line-height:1.62;color:var(--ink);margin:0;text-wrap:pretty;}
+
+/* ============ WHY IT REMAINS UNSOLVED ============
+   The five problems sit in the gap itself rather than in a list, because the
+   copy's point is that they arrive together and none resolves alone. */
+.gap-panel{
+  display:grid;
+  grid-template-columns:minmax(0,.85fr) minmax(0,1.3fr) minmax(0,.85fr);
+  gap:clamp(14px,1.8vw,24px);
+  align-items:stretch;
+}
+.gap-end{
+  padding:clamp(24px,2.6vw,32px);
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:18px;
+  background:rgba(255,255,255,.04);
+}
+.gap-end-goal{border-color:rgba(106,168,255,.42);background:rgba(0,100,255,.15);}
+.gap-label{
+  display:block;
+  font-family:var(--display);
+  font-weight:600;
+  font-size:11.5px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--blue-lift);
+  margin-bottom:14px;
+}
+.gap-note{margin:0;font-size:15.5px;line-height:1.62;color:rgba(255,255,255,.82);}
+.gap-middle{
+  padding:clamp(24px,2.6vw,32px);
+  border-radius:18px;
+  border:1px dashed rgba(255,255,255,.24);
+  text-align:center;
+}
+.gap-middle-label{
+  display:block;
+  font-family:var(--display);
+  font-weight:600;
+  font-size:11.5px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.5);
+}
+.blockers{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  justify-content:center;
+  margin:18px 0 16px;
+}
+.blocker{
+  padding:9px 16px;
+  border-radius:999px;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.17);
+  font-size:14px;
+  color:#fff;
+  white-space:nowrap;
+}
+.gap-caption{margin:0;font-size:13.5px;line-height:1.55;color:rgba(255,255,255,.55);}
+.baseline-note{
+  margin-top:clamp(26px,3vw,40px);
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  gap:clamp(18px,2.2vw,28px);
+  align-items:start;
+  padding:clamp(22px,2.4vw,30px);
+  border-radius:18px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.14);
+}
+.baseline-tag{
+  font-family:var(--display);
+  font-weight:600;
+  font-size:11.5px;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+  color:var(--blue-lift);
+  white-space:nowrap;
+  padding-top:5px;
+}
+.baseline-note p{margin:0;font-size:16.5px;line-height:1.7;color:rgba(255,255,255,.85);text-wrap:pretty;}
+.baseline-note strong{color:#fff;font-weight:600;}
+
+/* ============ WHAT IT INVOLVES ============
+   A numbered accordion: six moves, one open at a time. */
+.steps-list{display:flex;flex-direction:column;gap:12px;}
+.step{
+  border:1px solid var(--paper-line);
+  border-radius:16px;
+  background:var(--paper);
+  transition:background .22s ease, border-color .22s ease, box-shadow .22s ease;
+}
+.step[open]{
+  background:var(--blue-06);
+  border-color:var(--blue);
+  box-shadow:0 14px 40px rgba(0,100,255,.11);
+}
+.step summary{
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  gap:clamp(14px,1.8vw,24px);
+  align-items:center;
+  padding:20px clamp(18px,2.2vw,26px);
+  cursor:pointer;
+  list-style:none;
+}
+.step summary::-webkit-details-marker{display:none;}
+.step-index{
+  font-family:var(--display);
+  font-weight:600;
+  font-size:12.5px;
+  letter-spacing:.1em;
+  color:var(--blue);
+  white-space:nowrap;
+}
+.step-index::after{content:" \2192";}
+.step-name{
   font-family:var(--display);
   font-weight:500;
-  font-size:clamp(26px, 3vw, 38px);
-  line-height:1.35;
+  font-size:clamp(16.5px,1.6vw,21px);
+  line-height:1.3;
   letter-spacing:-0.01em;
-  max-width:22ch;
-  margin:0 0 36px;
   color:var(--ink);
 }
-.opening-body{
-  font-size:19px;
-  line-height:1.65;
-  color:var(--ink-60);
-  max-width:62ch;
+.step[open] .step-name{color:var(--blue-strong);font-weight:600;}
+.step-toggle{
+  position:relative;
+  width:34px;height:34px;
+  border-radius:50%;
+  background:var(--paper-dim);
+  flex:none;
+  transition:background .22s ease;
+}
+.step-toggle::before{
+  content:"";
+  position:absolute;
+  left:50%;top:50%;
+  width:8px;height:8px;
+  border-right:2px solid var(--ink);
+  border-bottom:2px solid var(--ink);
+  transform:translate(-50%,-70%) rotate(45deg);
+  transition:transform .25s ease, border-color .22s ease;
+}
+.step[open] .step-toggle{background:var(--blue);}
+.step[open] .step-toggle::before{
+  border-color:#fff;
+  transform:translate(-50%,-30%) rotate(225deg);
+}
+.step p{
   margin:0;
+  padding:0 clamp(18px,2.2vw,26px) 24px calc(clamp(18px,2.2vw,26px) + 44px);
+  font-size:16.5px;
+  line-height:1.72;
+  color:var(--ink);
+  max-width:74ch;
+  text-wrap:pretty;
 }
 
-/* ============ DEFINITION ============ */
-.definition{
-  background:var(--ink);
-  color:#fff;
-  padding:130px 0;
-  overflow:hidden;
+/* ============ THE METRIC LADDER ============
+   Five gaps across one rail. The engineered ones are filled; the commercial
+   one is dashed, because it is negotiated rather than built. */
+.ladder{
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:22px;
+  padding:clamp(24px,3vw,38px);
+  background:rgba(255,255,255,.03);
 }
-.definition .section-eyebrow{color:var(--blue-24);}
-.definition-grid{
-  display:grid;
-  grid-template-columns:minmax(0,0.85fr) minmax(0,1fr);
-  gap:80px;
-  align-items:center;
+.ladder-head{
+  display:flex;
+  align-items:baseline;
+  gap:14px;
+  flex-wrap:wrap;
+  padding-bottom:22px;
+  border-bottom:1px solid rgba(255,255,255,.12);
+  margin-bottom:26px;
 }
-.definition-visual{
-  position:relative;
-  max-width:420px;
-}
-.definition-visual svg{width:100%;height:auto;overflow:visible;display:block;}
-.web-edge{
-  stroke:rgba(255,255,255,0.16);
-  stroke-width:1;
-  opacity:0;
-  transition:opacity .8s ease, stroke .3s ease, stroke-width .3s ease;
-}
-.web-edge.near{stroke:var(--blue);stroke-width:1.6;}
-.definition-visual.in-view .web-edge{opacity:1;}
-.web-node{
-  fill:rgba(255,255,255,0.4);
-  opacity:0;
-  transition:opacity .6s ease, fill .3s ease, r .3s ease;
-}
-.web-node.near{fill:var(--blue);}
-.definition-visual.in-view .web-node{opacity:1;}
-.web-center-ring{
-  fill:none;
-  stroke:var(--blue-24);
-  stroke-width:1.2;
-  opacity:0.6;
-}
-.web-center-dot{fill:var(--blue);}
-@keyframes centerPulse{
-  0%,100%{ transform:scale(1); opacity:0.55; }
-  50%{ transform:scale(1.5); opacity:0; }
-}
-.web-center-pulse{
-  fill:none;
-  stroke:var(--blue);
-  stroke-width:1;
-  transform-origin:220px 220px;
-  animation:centerPulse 2.8s ease-out infinite;
-}
-.def-text{
+.ladder-metric{
   font-family:var(--display);
-  font-weight:400;
-  font-size:clamp(24px, 2.7vw, 34px);
-  line-height:1.45;
-  letter-spacing:-0.01em;
+  font-weight:600;
+  font-size:clamp(20px,2vw,27px);
+  letter-spacing:-0.015em;
   color:#fff;
-  margin:0;
 }
-.def-text strong{font-weight:600;color:var(--blue-24);}
+.ladder-sum{
+  font-family:var(--display);
+  font-weight:600;
+  font-size:11.5px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.45);
+}
+.ladder-rungs{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:clamp(10px,1.2vw,14px);
+}
+.rung{
+  padding:clamp(18px,2vw,22px) clamp(14px,1.6vw,18px);
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.16);
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.rung-engineered{background:rgba(0,100,255,.19);border-color:rgba(106,168,255,.4);}
+.rung-commercial{background:rgba(255,255,255,.05);border-style:dashed;}
+.rung-index{
+  font-family:var(--display);
+  font-weight:600;
+  font-size:11.5px;
+  letter-spacing:.12em;
+  color:rgba(255,255,255,.5);
+}
+.rung-name{
+  font-family:var(--display);
+  font-weight:500;
+  font-size:clamp(14.5px,1.35vw,16.5px);
+  line-height:1.3;
+  color:#fff;
+}
+.rung-kind{
+  font-family:var(--display);
+  font-weight:600;
+  font-size:10.5px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  margin-top:auto;
+}
+.rung-engineered .rung-kind{color:var(--blue-lift);}
+.rung-commercial .rung-kind{color:rgba(255,255,255,.5);}
+.ladder-key{
+  display:flex;
+  gap:clamp(16px,2.4vw,30px);
+  flex-wrap:wrap;
+  margin-top:26px;
+  font-size:13.5px;
+  color:rgba(255,255,255,.62);
+}
+.key{display:inline-flex;align-items:center;gap:9px;}
+.key::before{content:"";width:13px;height:13px;border-radius:4px;flex:none;}
+.key-engineered::before{background:rgba(0,100,255,.45);border:1px solid rgba(106,168,255,.6);}
+.key-commercial::before{background:rgba(255,255,255,.06);border:1px dashed rgba(255,255,255,.45);}
+
+@media (max-width:980px){
+  .versus{grid-template-columns:minmax(0,1fr);}
+  .gap-panel{grid-template-columns:minmax(0,1fr);}
+  .ladder-rungs{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .baseline-note{grid-template-columns:minmax(0,1fr);gap:12px;}
+  .baseline-tag{padding-top:0;}
+}
+@media (max-width:620px){
+  .ladder-rungs{grid-template-columns:minmax(0,1fr);}
+  .step summary{grid-template-columns:auto minmax(0,1fr) auto;gap:12px;}
+  .step p{padding-left:clamp(18px,2.2vw,26px);}
+}
 
 /* ============ WHAT IT CHANGES ============
    Eight levers, all of them visible. The old treatment showed one word at a
@@ -421,86 +747,6 @@ a:focus-visible, button:focus-visible{
 .lever-final:hover{background:var(--blue-deep);}
 .lever-final:hover .lever-index{color:#fff;}
 
-/* ============ HOW IT DIFFERS ============
-   The negation was buried mid-paragraph; it leads now, and the three things
-   that follow it become beats on a spine instead of one long sentence. */
-.differs{
-  padding:120px 0;
-  border-bottom:1px solid var(--paper-line);
-}
-.differs-grid{
-  display:grid;
-  grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);
-  gap:clamp(44px,6vw,100px);
-  align-items:start;
-}
-.differs-negation{
-  font-family:var(--display);
-  font-weight:500;
-  font-size:clamp(26px,3vw,40px);
-  line-height:1.24;
-  letter-spacing:-0.015em;
-  color:var(--ink);
-  max-width:15ch;
-  margin:0;
-}
-/* Emphasis is carried by weight, not a lighter grey. */
-.differs-negation em{font-style:normal;color:inherit;}
-.beats{list-style:none;margin:0;padding:0;}
-.beat{
-  position:relative;
-  display:grid;
-  grid-template-columns:auto minmax(0,1fr);
-  gap:24px;
-  padding-bottom:36px;
-}
-.beat:last-child{padding-bottom:0;}
-/* The spine sits behind the nodes and stops at the last one. */
-.beat:not(:last-child)::before{
-  content:"";
-  position:absolute;
-  left:18px;
-  top:38px;
-  bottom:2px;
-  width:1px;
-  background:var(--paper-line);
-}
-.beat-node{
-  position:relative;
-  z-index:1;
-  width:37px;
-  height:37px;
-  border-radius:50%;
-  border:1.5px solid var(--blue-24);
-  background:var(--paper);
-  color:var(--blue);
-  display:grid;
-  place-items:center;
-  font-family:var(--display);
-  font-weight:600;
-  font-size:13px;
-}
-.beat-text{
-  margin:0;
-  padding-top:6px;
-  font-size:18px;
-  line-height:1.6;
-  color:var(--ink);
-}
-.beat-text strong{color:var(--ink);font-weight:600;}
-.differs-punch{
-  font-family:var(--display);
-  font-weight:600;
-  font-size:clamp(22px,2.5vw,33px);
-  line-height:1.3;
-  letter-spacing:-0.015em;
-  color:var(--ink);
-  margin:clamp(52px,5vw,76px) 0 0;
-  padding-top:36px;
-  border-top:1px solid var(--paper-line);
-}
-.differs-punch .p-blue{color:var(--blue);}
-
 /* ============ CLOSING ============
    Three white sections ran back to back into a black footer with no crescendo.
    This one lands on the deep step so the page arrives somewhere, and stays
@@ -521,7 +767,7 @@ a:focus-visible, button:focus-visible{
    read as distraction on a page whose last job is to be read and clicked. */
 .closing-bloom,
 .closing-dots,
-.closing-horizon{
+.closing-sweep{
   position:absolute;
   z-index:-1;
   pointer-events:none;
@@ -535,32 +781,20 @@ a:focus-visible, button:focus-visible{
   -webkit-mask-image:linear-gradient(to bottom, #000 4%, rgba(0,0,0,0) 66%);
   mask-image:linear-gradient(to bottom, #000 4%, rgba(0,0,0,0) 66%);
 }
-/* The horizon is drawn to the panel's own box rather than as a huge circle
-   pushed off-frame: a 2200px circle simply cannot show its crown inside a
-   377px band, so on phones the curve vanished entirely. This scales. */
-.closing-horizon{
+/* The dome is gone; the light it carried now crosses the rectangle itself, so
+   the panel keeps its movement without the circle. */
+.closing-sweep{
   inset:0;
-  width:100%;
-  height:100%;
-  animation:horizonDrift 20s ease-in-out infinite;
+  background:linear-gradient(105deg,
+    rgba(150,190,255,0) 38%,
+    rgba(150,190,255,.17) 50%,
+    rgba(150,190,255,0) 62%);
+  background-size:280% 100%;
+  animation:closingSweep 12s linear infinite;
 }
-/* Slow enough to register as atmosphere rather than as an event: a light that
-   walks the curve once every half minute, and drifts measured in a few px. */
-.rim-streak{opacity:.72;}
-/* Low enough to read as a sheen crossing the dome, not a flash, and low
-   enough that the accent keeps its margin when the sheen passes behind it. */
-.horizon-sheen{opacity:.24;}
-@keyframes horizonDrift{
-  0%,100%{transform:translateY(0);}
-  50%{transform:translateY(-9px);}
-}
-@keyframes closingGlow{
-  0%,100%{opacity:.6;}
-  50%{opacity:1;}
-}
-@keyframes dotDrift{
-  from{background-position:0 0;}
-  to{background-position:27px 27px;}
+@keyframes closingSweep{
+  from{background-position:190% 0;}
+  to{background-position:-90% 0;}
 }
 .closing-bloom{
   left:50%;
@@ -608,8 +842,6 @@ a:focus-visible, button:focus-visible{
 
 @media (max-width:980px){
   .lever-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
-  .differs-grid{grid-template-columns:minmax(0,1fr);gap:44px;}
-  .differs-negation{max-width:none;}
 }
 @media (max-width:560px){
   .lever-grid{grid-template-columns:minmax(0,1fr);}
@@ -617,13 +849,106 @@ a:focus-visible, button:focus-visible{
 }
 @media (prefers-reduced-motion: reduce){
   .lever{opacity:1;transform:none;transition:none;}
-  .closing-horizon,
-  .rim-streak,
-  .horizon-sheen,
+  .closing-sweep,
   .closing-dots,
   .closing-bloom{animation:none;}
-  .rim-streak,
-  .horizon-sheen{opacity:0;}
+  .closing-sweep{opacity:0;}
+}
+
+/* This page's payoff line is longer than the sibling's, so it is held to a
+   measure rather than running the full panel width. */
+.closing-outcome .section-eyebrow{color:var(--blue-lift);margin-bottom:26px;}
+.closing-kicker{max-width:26ch;margin-inline:auto;}
+
+/* ============ QUESTIONS ============
+   Split like the reference: the title holds the left column and the answers
+   stack on the right as cards, closed ones plain and the open one accented. */
+.faq{padding:clamp(92px,9.5vw,132px) 0;}
+.faq-grid{
+  display:grid;
+  grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);
+  gap:clamp(40px,5vw,92px);
+  align-items:start;
+}
+.faq-title{
+  font-family:var(--display);
+  font-weight:300;
+  font-size:clamp(34px,4.4vw,60px);
+  line-height:1.08;
+  letter-spacing:-0.022em;
+  color:var(--ink);
+  margin:16px 0 0;
+  max-width:9ch;
+}
+.faq-title span{color:var(--blue);}
+.faq-list{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  align-content:flex-start;
+}
+.faq-item{
+  border:1px solid var(--paper-line);
+  border-radius:18px;
+  background:var(--paper);
+  transition:background .22s ease, border-color .22s ease, box-shadow .22s ease;
+}
+.faq-item[open]{
+  background:var(--blue-06);
+  border-color:var(--blue);
+  box-shadow:0 14px 40px rgba(0,100,255,.12);
+}
+.faq-item summary{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:22px;
+  padding:22px clamp(20px,2.2vw,28px);
+  cursor:pointer;
+  list-style:none;
+  font-family:var(--display);
+  font-weight:500;
+  font-size:clamp(16.5px,1.55vw,20px);
+  line-height:1.32;
+  letter-spacing:-0.01em;
+  color:var(--ink);
+}
+.faq-item summary::-webkit-details-marker{display:none;}
+.faq-item[open] summary{color:var(--blue-strong);font-weight:600;}
+.faq-toggle{
+  position:relative;
+  width:36px;height:36px;
+  border-radius:50%;
+  background:var(--paper-dim);
+  flex:none;
+  transition:background .22s ease;
+}
+.faq-toggle::before,
+.faq-toggle::after{
+  content:"";
+  position:absolute;
+  left:50%;top:50%;
+  background:var(--ink);
+  border-radius:2px;
+  transition:opacity .2s ease, background .22s ease;
+}
+.faq-toggle::before{width:13px;height:2px;transform:translate(-50%,-50%);}
+.faq-toggle::after{width:2px;height:13px;transform:translate(-50%,-50%);}
+.faq-item[open] .faq-toggle{background:var(--blue);}
+.faq-item[open] .faq-toggle::before{background:#fff;}
+.faq-item[open] .faq-toggle::after{opacity:0;}
+.faq-item p{
+  margin:0;
+  padding:0 clamp(20px,2.2vw,28px) 26px;
+  font-size:16.5px;
+  line-height:1.72;
+  color:var(--ink);
+  max-width:62ch;
+}
+.faq-item p strong{font-weight:600;}
+@media (max-width:900px){
+  .faq-grid{grid-template-columns:minmax(0,1fr);gap:36px;}
+  .faq-title{max-width:none;}
 }
 
 /* ============ FOOTER ============ */
@@ -675,16 +1000,10 @@ footer{
 @media (max-width:960px){
   .wrap{padding:0 24px;}
   .nav-links{display:none;}
-  .differs-grid{grid-template-columns:1fr;gap:28px;}
-  .definition-grid{grid-template-columns:1fr;gap:48px;}
-  .definition-visual{max-width:320px;margin:0 auto;}
 }
 @media (max-width:640px){
-  .hero{padding:80px 0;min-height:auto;}
-  .opening{padding:72px 0;}
-  .definition{padding:72px 0;}
+  .hero{padding:56px 0 72px;}
   .changes{padding:88px 0;}
-  .differs{padding:80px 0;}
   .closing-outcome{padding:100px 0;}
   .nav .wrap{height:68px;}
 }
@@ -739,144 +1058,256 @@ footer{
 </nav>
 
 <header class="hero" id="heroSection">
-  <div class="hero-dot-texture" aria-hidden="true"></div>
-  <div class="hero-cursor-glow" id="heroCursorGlow" aria-hidden="true"></div>
+  <div class="hero-field" id="heroField" aria-hidden="true"></div>
+  <span class="hero-glow" id="heroGlow" aria-hidden="true"></span>
   <div class="hero-fade" aria-hidden="true"></div>
   <div class="wrap">
-    <span class="page-badge">How we solve</span>
-    <h1>
-      <span class="line-ink">AI Outcome</span>
-      <span class="line-blue">Engineering</span>
-    </h1>
-    <p class="hero-sub">The discipline of starting with a business outcome and engineering everything required to make it real.</p>
+    <div class="hero-copy">
+      <span class="page-badge">How we solve</span>
+      <h1>
+        <span class="line-ink">AI Outcome</span>
+        <span class="line-blue">Engineering</span>
+      </h1>
+      <p class="hero-sub">Starting with a business outcome, working backwards into the process that produces it, and engineering everything required to move it.</p>
+    </div>
   </div>
 </header>
 
-<section class="opening">
+<section class="whatitis">
   <div class="wrap">
-    <span class="section-eyebrow">the unsolved problem</span>
-    <p class="opening-lead">ROI from AI is the unsolved problem of the enterprise. Not because the intelligence is missing, but because the engineering is.</p>
-    <p class="opening-body">Pilots impress. Production changes the P&amp;L. Between the two sits everything hard: the process nobody mapped, the data nobody trusted, the platform nobody modernized, the operating model nobody redesigned, and the people nobody brought along.</p>
+    <div class="section-head">
+      <span class="section-eyebrow">what it is</span>
+      <h2 class="section-title section-title-wide">The discipline of starting with a business outcome and working backwards into the process that produces it.</h2>
+      <p class="section-sub">Searce practises AI Outcome Engineering as its core discipline across <strong>four engineering practices</strong> and <strong>eleven countries</strong>, engineering the AI, data, cloud, software and operating change required to move the number.</p>
+    </div>
+    <div class="versus">
+      <div class="versus-card">
+        <span class="icon-tile" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v16H7z"/><path d="M10 9h4M10 13h4"/></svg>
+        </span>
+        <p class="versus-name">AI consulting</p>
+        <p class="versus-out">Produces a recommendation.</p>
+      </div>
+      <div class="versus-card">
+        <span class="icon-tile" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16v12H4z"/><path d="M4 11h16M9 15h6"/></svg>
+        </span>
+        <p class="versus-name">AI implementation</p>
+        <p class="versus-out">Produces a system built to someone else&rsquo;s specification.</p>
+      </div>
+      <div class="versus-card versus-card--active">
+        <span class="icon-tile" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18l5-5 4 3 7-8"/><path d="M20 8h-4M20 8v4"/></svg>
+        </span>
+        <p class="versus-name">AI Outcome Engineering</p>
+        <p class="versus-out">Produces a measured change in a named business number, agreed before work begins and verified when it ends.</p>
+      </div>
+    </div>
   </div>
 </section>
 
-<section class="definition">
-  <div class="wrap definition-grid">
-    <div class="definition-visual" id="definitionVisual" aria-hidden="true">
-      <svg id="webSvg" viewBox="0 0 440 440" xmlns="http://www.w3.org/2000/svg"></svg>
+<section class="unsolved band-dark">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-eyebrow">why ROI from AI remains unsolved</span>
+      <h2 class="section-title section-title-wide"><span class="dim">Most enterprises now have AI in production somewhere.</span> Far fewer can attribute a change in their financial results to it.</h2>
+      <p class="section-sub">Pilots are optimised for demonstration. Production is optimised for reliability, exception handling, integration and human trust. The distance between them is not a modelling problem.</p>
     </div>
-    <div>
-      <span class="section-eyebrow">the definition</span>
-      <p class="def-text">AI Outcome Engineering is the discipline of starting with a <strong>business outcome</strong>, working backwards into the process, and engineering the AI, data, cloud, software and operating change required to make it real.</p>
+    <div class="gap-panel">
+      <div class="gap-end">
+        <span class="gap-label">the pilot</span>
+        <p class="gap-note">Optimised for demonstration.</p>
+      </div>
+      <div class="gap-middle">
+        <span class="gap-middle-label">five problems, usually all at once</span>
+        <div class="blockers">
+          <span class="blocker">a process problem</span>
+          <span class="blocker">a data problem</span>
+          <span class="blocker">a platform problem</span>
+          <span class="blocker">an operating model problem</span>
+          <span class="blocker">an adoption problem</span>
+        </div>
+        <p class="gap-caption">No single one of them can be solved in isolation.</p>
+      </div>
+      <div class="gap-end gap-end-goal">
+        <span class="gap-label">production</span>
+        <p class="gap-note">Optimised for reliability, exception handling, integration and human trust.</p>
+      </div>
+    </div>
+    <div class="baseline-note">
+      <span class="baseline-tag">the second reason</span>
+      <p>When no baseline is agreed before work starts, there is no way to prove what changed afterwards, so value becomes a matter of assertion. <strong>Searce treats the baseline as a precondition rather than a reporting exercise.</strong></p>
+    </div>
+  </div>
+</section>
+
+<section class="involves">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-eyebrow">what it actually involves</span>
+      <h2 class="section-title">Six moves, in order, every time.</h2>
+    </div>
+    <div class="steps-list" id="stepsList">
+      <details class="step" name="steps" open>
+        <summary>
+          <span class="step-index">01</span>
+          <span class="step-name">Starting from the number</span>
+          <span class="step-toggle" aria-hidden="true"></span>
+        </summary>
+        <p>Every Searce engagement begins with a business metric the client agrees should be dramatically better: a cycle time, a cost per transaction, a conversion rate, an error rate, a days-outstanding figure.</p>
+      </details>
+      <details class="step" name="steps">
+        <summary>
+          <span class="step-index">02</span>
+          <span class="step-name">Working backwards into the process</span>
+          <span class="step-toggle" aria-hidden="true"></span>
+        </summary>
+        <p>Searce maps the process as it actually runs, using event logs, ticket flows, system telemetry and document trails rather than workshop diagrams. What people describe and what the logs show are usually different processes.</p>
+      </details>
+      <details class="step" name="steps">
+        <summary>
+          <span class="step-index">03</span>
+          <span class="step-name">Building the metric ladder</span>
+          <span class="step-toggle" aria-hidden="true"></span>
+        </summary>
+        <p>The headline number is decomposed into the chain of steps that produce it, so it becomes clear which gaps are engineered and which are commercial.</p>
+      </details>
+      <details class="step" name="steps">
+        <summary>
+          <span class="step-index">04</span>
+          <span class="step-name">Locking the baseline</span>
+          <span class="step-toggle" aria-hidden="true"></span>
+        </summary>
+        <p>The current value of each gap is computed from the client&rsquo;s own systems, agreed in writing, and sealed with a date before any build begins.</p>
+      </details>
+      <details class="step" name="steps">
+        <summary>
+          <span class="step-index">05</span>
+          <span class="step-name">Engineering the change</span>
+          <span class="step-toggle" aria-hidden="true"></span>
+        </summary>
+        <p>Whatever moves the number: process redesign, systems rebuilt, agents deployed, platform modernised, people retrained, guardrails built. Searce squads carry all four capabilities.</p>
+      </details>
+      <details class="step" name="steps">
+        <summary>
+          <span class="step-index">06</span>
+          <span class="step-name">Verifying the reading</span>
+          <span class="step-toggle" aria-hidden="true"></span>
+        </summary>
+        <p>At the end, the same measurement is recomputed against the same sources and presented with the client rather than to them.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="ladder-section band-dark">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-eyebrow">the metric ladder</span>
+      <h2 class="section-title section-title-wide">The headline number decomposes into the chain of steps that produce it.</h2>
+      <p class="section-sub">A ship-to-cash figure, for example, breaks into five gaps &mdash; and the ladder makes it clear which of them are engineered and which are commercial.</p>
+    </div>
+    <div class="ladder">
+      <div class="ladder-head">
+        <span class="ladder-metric">Ship to cash</span>
+        <span class="ladder-sum">the headline number</span>
+      </div>
+      <div class="ladder-rungs">
+        <div class="rung rung-engineered">
+          <span class="rung-index">01</span>
+          <span class="rung-name">Ship to invoice</span>
+          <span class="rung-kind">engineered</span>
+        </div>
+        <div class="rung rung-engineered">
+          <span class="rung-index">02</span>
+          <span class="rung-name">Invoice to receipt</span>
+          <span class="rung-kind">engineered</span>
+        </div>
+        <div class="rung rung-engineered">
+          <span class="rung-index">03</span>
+          <span class="rung-name">Receipt to approval</span>
+          <span class="rung-kind">engineered</span>
+        </div>
+        <div class="rung rung-commercial">
+          <span class="rung-index">04</span>
+          <span class="rung-name">The contractual pay term</span>
+          <span class="rung-kind">commercial</span>
+        </div>
+        <div class="rung rung-engineered">
+          <span class="rung-index">05</span>
+          <span class="rung-name">Due date to payment</span>
+          <span class="rung-kind">engineered</span>
+        </div>
+      </div>
+      <div class="ladder-key">
+        <span class="key key-engineered">engineered &mdash; Searce moves these</span>
+        <span class="key key-commercial">commercial &mdash; negotiated, not built</span>
+      </div>
     </div>
   </div>
 </section>
 
 <section class="changes">
   <div class="wrap">
-    <span class="section-eyebrow">what it changes</span>
+    <div class="section-head">
+      <span class="section-eyebrow">what changes</span>
+      <h2 class="section-title">Eight numbers a verified reading can move.</h2>
+    </div>
     <div class="lever-grid" id="leverGrid">
-        <div class="lever">
-          <span class="lever-index">01</span>
-          <span class="lever-name">Revenue</span>
-        </div>
-        <div class="lever">
-          <span class="lever-index">02</span>
-          <span class="lever-name">Cost</span>
-        </div>
-        <div class="lever">
-          <span class="lever-index">03</span>
-          <span class="lever-name">Speed</span>
-        </div>
-        <div class="lever">
-          <span class="lever-index">04</span>
-          <span class="lever-name">Customer experience</span>
-        </div>
-        <div class="lever">
-          <span class="lever-index">05</span>
-          <span class="lever-name">Employee productivity</span>
-        </div>
-        <div class="lever">
-          <span class="lever-index">06</span>
-          <span class="lever-name">Risk</span>
-        </div>
-        <div class="lever">
-          <span class="lever-index">07</span>
-          <span class="lever-name">Reliability</span>
-        </div>
-        <div class="lever lever-final">
-          <span class="lever-index">08</span>
-          <span class="lever-name">How work gets done</span>
-        </div>
+      <div class="lever"><span class="lever-index">01</span><span class="lever-name">Revenue</span></div>
+      <div class="lever"><span class="lever-index">02</span><span class="lever-name">Cost</span></div>
+      <div class="lever"><span class="lever-index">03</span><span class="lever-name">Speed</span></div>
+      <div class="lever"><span class="lever-index">04</span><span class="lever-name">Customer experience</span></div>
+      <div class="lever"><span class="lever-index">05</span><span class="lever-name">Employee productivity</span></div>
+      <div class="lever"><span class="lever-index">06</span><span class="lever-name">Risk</span></div>
+      <div class="lever"><span class="lever-index">07</span><span class="lever-name">Reliability</span></div>
+      <div class="lever lever-final"><span class="lever-index">08</span><span class="lever-name">How work gets done</span></div>
     </div>
   </div>
 </section>
 
-<section class="differs">
-  <div class="wrap">
-    <div class="differs-grid">
-      <div>
-        <span class="section-eyebrow">how it differs</span>
-        <p class="differs-negation">It does not start with <em>a model.</em></p>
-      </div>
-      <ol class="beats">
-        <li class="beat">
-          <span class="beat-node">01</span>
-          <p class="beat-text">It starts with <strong>a number that matters to the business</strong>.</p>
-        </li>
-        <li class="beat">
-          <span class="beat-node">02</span>
-          <p class="beat-text">A <strong>baseline agreed</strong> before work begins.</p>
-        </li>
-        <li class="beat">
-          <span class="beat-node">03</span>
-          <p class="beat-text">A <strong>reading of what changed</strong>, presented with the client at the end.</p>
-        </li>
-      </ol>
+<section class="faq">
+  <div class="wrap faq-grid">
+    <div>
+      <span class="section-eyebrow">questions</span>
+      <h2 class="faq-title">Frequently Asked <span>Questions</span></h2>
     </div>
-    <p class="differs-punch">Recommendations are not the product. <span class="p-blue">Outcomes are.</span></p>
+    <div class="faq-list" id="faqList">
+      <details class="faq-item" name="faq">
+        <summary>How is AI Outcome Engineering different from AI consulting?
+          <span class="faq-toggle" aria-hidden="true"></span>
+        </summary>
+        <p>Consulting produces a recommendation and hands over. AI Outcome Engineering produces a measured change in a business number and stays accountable for it, including the build and the adoption.</p>
+      </details>
+      <details class="faq-item" name="faq">
+        <summary>What if the number does not move?
+          <span class="faq-toggle" aria-hidden="true"></span>
+        </summary>
+        <p>The verified reading reports what happened, including when the result disappoints. Searce presents the reading with the client either way, because a method that only reports successes is not a method.</p>
+      </details>
+      <details class="faq-item" name="faq">
+        <summary>Do you need a baseline before starting?
+          <span class="faq-toggle" aria-hidden="true"></span>
+        </summary>
+        <p><strong>Yes.</strong> Searce does not begin build work without a locked baseline. Without one, no claim about the result can be made honestly.</p>
+      </details>
+      <details class="faq-item" name="faq">
+        <summary>How long before there is a result?
+          <span class="faq-toggle" aria-hidden="true"></span>
+        </summary>
+        <p>The entry engagement, Outcome Discovery, runs two to four weeks and produces the ladder and the baseline. A first verified movement typically follows a production build.</p>
+      </details>
+    </div>
   </div>
 </section>
 
 <section class="closing-outcome">
   <span class="closing-bloom" aria-hidden="true"></span>
   <span class="closing-dots" aria-hidden="true"></span>
-  <svg class="closing-horizon" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-    <defs>
-      <linearGradient id="horizonFill" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="26%" stop-color="#0064ff" stop-opacity=".34"/>
-        <stop offset="58%" stop-color="#0064ff" stop-opacity=".12"/>
-        <stop offset="100%" stop-color="#0064ff" stop-opacity="0"/>
-      </linearGradient>
-      <linearGradient id="horizonRim" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stop-color="#6aa8ff" stop-opacity=".12"/>
-        <stop offset="50%" stop-color="#6aa8ff" stop-opacity=".72"/>
-        <stop offset="100%" stop-color="#6aa8ff" stop-opacity=".12"/>
-      </linearGradient>
-      <linearGradient id="horizonSweep" x1="0" y1="0" x2="0.3" y2="0">
-        <stop offset="0%" stop-color="#dce9ff" stop-opacity="0"/>
-        <stop offset="50%" stop-color="#dce9ff" stop-opacity=".9"/>
-        <stop offset="100%" stop-color="#dce9ff" stop-opacity="0"/>
-        <animateTransform attributeName="gradientTransform" type="translate"
-                          from="-0.34 0" to="1.04 0" dur="11s" repeatCount="indefinite"/>
-      </linearGradient>
-      <linearGradient id="horizonSheen" x1="0" y1="0" x2="0.46" y2="0">
-        <stop offset="0%" stop-color="#8fbcff" stop-opacity="0"/>
-        <stop offset="50%" stop-color="#8fbcff" stop-opacity=".42"/>
-        <stop offset="100%" stop-color="#8fbcff" stop-opacity="0"/>
-        <animateTransform attributeName="gradientTransform" type="translate"
-                          from="-0.5 0" to="1.06 0" dur="11s" repeatCount="indefinite"/>
-      </linearGradient>
-    </defs>
-    <path d="M0,27 Q50,-5 100,27 L100,100 L0,100 Z" fill="url(#horizonFill)"/>
-    <path d="M0,27 Q50,-5 100,27" fill="none" stroke="url(#horizonRim)"
-          stroke-width="1.4" vector-effect="non-scaling-stroke"/>
-    <path class="horizon-sheen" d="M0,27 Q50,-5 100,27 L100,100 L0,100 Z" fill="url(#horizonSheen)"/>
-    <path class="rim-streak" d="M0,27 Q50,-5 100,27" fill="none" stroke="url(#horizonSweep)"
-          stroke-width="1.6" vector-effect="non-scaling-stroke"/>
-  </svg>
+  <span class="closing-sweep" aria-hidden="true"></span>
   <div class="wrap">
-    <p class="closing-kicker"><span class="k-ink">AI is abundant. Outcomes aren&rsquo;t.</span><br><span class="k-blue">We engineer them.</span></p>
+    <span class="section-eyebrow">ai outcome engineering</span>
+    <p class="closing-kicker"><span class="k-ink">Agreed before work begins.</span><br><span class="k-blue">Verified when it ends.</span></p>
     <a class="cta-button" href="#">
       bring us a problem
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
@@ -904,227 +1335,172 @@ footer{
 </footer>
 
 <script>
-/* ============ HERO CURSOR GLOW ============
-   A soft blue glow follows the cursor only while it's over the hero.
-   Sits over a very fine, quiet dot texture — the glow is the only
-   moving element, so it reads as deliberate rather than busy. */
+/* ============ MASTHEAD HEIGHT ============
+   Published as a custom property so the hero can fill exactly what is left of
+   the viewport at any breakpoint. */
 (function(){
-  const hero = document.getElementById('heroSection');
-  const glow = document.getElementById('heroCursorGlow');
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(!hero || !glow || reduceMotion) return;
-
-  function onMove(e){
-    const rect = hero.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    glow.style.transform = `translate(${x}px, ${y}px)`;
-    glow.style.opacity = '1';
+  const nav = document.querySelector(".nav");
+  if(!nav) return;
+  function publish(){
+    document.documentElement.style.setProperty("--nav-h", Math.round(nav.getBoundingClientRect().height) + "px");
   }
-  function onLeave(){
-    glow.style.opacity = '0';
-  }
-  hero.addEventListener('pointermove', onMove);
-  hero.addEventListener('pointerleave', onLeave);
+  publish();
+  let t;
+  window.addEventListener("resize", ()=>{ clearTimeout(t); t = setTimeout(publish, 150); });
 })();
 
-/* ============ DEFINITION — a symmetric node network, not a labeled diagram ============
-   A single anchor point (the outcome) sits at the centre; a taut, evenly
-   spaced web of nodes and connections builds outward around it as the
-   section scrolls into view — the engineered structure a resolved
-   outcome quietly depends on. No labels: the copy beside it carries the
-   meaning. Moving the cursor over it brightens the nearest strands,
-   echoing the same proximity interaction as the hero grid above. */
-(function(){
-  const container = document.getElementById('definitionVisual');
-  const svg = document.getElementById('webSvg');
-  if(!container || !svg) return;
-  const svgNS = 'http://www.w3.org/2000/svg';
-  const CENTER = {x:220, y:220};
-  const RADII = [42, 76, 110, 144, 178];
-  const SPOKES = 8;
+/* ============ QUESTIONS — the list keeps its own height ============
+   Opening an answer used to push everything below it down the page. The list
+   reserves the height of its tallest open state, and only one answer is open
+   at a time, so the cards expand inside a box that never changes size. */
+function keepListHeight(listId, itemSelector){
+  const list = document.getElementById(listId);
+  if(!list) return;
+  const items = [...list.querySelectorAll(itemSelector)];
 
-  function polar(r, angleDeg){
-    const rad = (angleDeg - 90) * Math.PI / 180;
-    return {x: CENTER.x + r*Math.cos(rad), y: CENTER.y + r*Math.sin(rad)};
-  }
+  // name="details" gives exclusivity natively; this backs it up everywhere else
+  items.forEach(item => item.addEventListener('toggle', ()=>{
+    if(!item.open) return;
+    items.forEach(other =>{ if(other !== item) other.open = false; });
+  }));
 
-  const ringNodes = RADII.map(r =>
-    Array.from({length: SPOKES}, (_, i) => polar(r, i * (360/SPOKES)))
-  );
-
-  const edges = []; // {el, mx, my}
-  const nodeEls = []; // {el, x, y}
-  const spokeEdges = Array.from({length: SPOKES}, () => []);
-  const spokeNodes = Array.from({length: SPOKES}, () => []);
-
-  function addLine(p1, p2, tier, spokeIndex){
-    const line = document.createElementNS(svgNS, 'line');
-    line.setAttribute('x1', p1.x); line.setAttribute('y1', p1.y);
-    line.setAttribute('x2', p2.x); line.setAttribute('y2', p2.y);
-    line.setAttribute('class', 'web-edge');
-    line.style.transitionDelay = (tier * 150) + 'ms';
-    svg.appendChild(line);
-    edges.push({el:line, mx:(p1.x+p2.x)/2, my:(p1.y+p2.y)/2});
-    if(spokeIndex !== undefined) spokeEdges[spokeIndex].push(line);
-    return line;
-  }
-
-  function addNode(p, tier, r, spokeIndex){
-    const c = document.createElementNS(svgNS, 'circle');
-    c.setAttribute('cx', p.x); c.setAttribute('cy', p.y); c.setAttribute('r', r);
-    c.setAttribute('class', 'web-node');
-    c.style.transitionDelay = (tier * 150) + 'ms';
-    svg.appendChild(c);
-    nodeEls.push({el:c, x:p.x, y:p.y});
-    if(spokeIndex !== undefined) spokeNodes[spokeIndex].push(c);
-    return c;
-  }
-
-  // spokes: centre -> ring0 -> ring1 -> ring2 -> ring3 -> ring4
-  for(let i=0; i<SPOKES; i++){
-    addLine(CENTER, ringNodes[0][i], 0, i);
-    for(let k=0; k<RADII.length-1; k++){
-      addLine(ringNodes[k][i], ringNodes[k+1][i], k+1, i);
-    }
-  }
-  // circumferential rings (the "webbing")
-  const ringEdgeMap = RADII.map(() => []); // ringEdgeMap[k][i] = edge between spoke i and i+1 at ring k
-  RADII.forEach((r, k) => {
-    for(let i=0; i<SPOKES; i++){
-      ringEdgeMap[k][i] = addLine(ringNodes[k][i], ringNodes[k][(i+1)%SPOKES], k);
-    }
-  });
-  // nodes
-  RADII.forEach((r, k) => {
-    ringNodes[k].forEach((p, i) => addNode(p, k, k===0 ? 3 : 2.4, i));
-  });
-
-  // the centre anchor — solid, pulsing, always present
-  const pulse = document.createElementNS(svgNS,'circle');
-  pulse.setAttribute('cx', CENTER.x); pulse.setAttribute('cy', CENTER.y); pulse.setAttribute('r', 12);
-  pulse.setAttribute('class','web-center-pulse');
-  svg.appendChild(pulse);
-  const ring = document.createElementNS(svgNS,'circle');
-  ring.setAttribute('cx', CENTER.x); ring.setAttribute('cy', CENTER.y); ring.setAttribute('r', 12);
-  ring.setAttribute('class','web-center-ring');
-  svg.appendChild(ring);
-  const dot = document.createElementNS(svgNS,'circle');
-  dot.setAttribute('cx', CENTER.x); dot.setAttribute('cy', CENTER.y); dot.setAttribute('r', 5.5);
-  dot.setAttribute('class','web-center-dot');
-  svg.appendChild(dot);
-
-  const observer = new IntersectionObserver((entriesList)=>{
-    entriesList.forEach(entry=>{
-      if(entry.isIntersecting){
-        container.classList.add('in-view');
-        observer.disconnect();
-      }
+  function reserve(){
+    const wasOpen = items.filter(i => i.open);
+    list.style.minHeight = '';
+    items.forEach(i => i.open = false);
+    let tallest = list.getBoundingClientRect().height;
+    items.forEach(i =>{
+      i.open = true;
+      tallest = Math.max(tallest, list.getBoundingClientRect().height);
+      i.open = false;
     });
-  }, {threshold:0.35});
-  observer.observe(container);
-
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  // ambient auto-pulse — periodically lights up one random spoke,
-  // from the centre out to its outermost node, on its own.
-  let sectionVisible = false;
-  let userHovering = false;
-  if(!reduceMotion){
-    const visObserver = new IntersectionObserver((entriesList)=>{
-      entriesList.forEach(entry=> sectionVisible = entry.isIntersecting);
-    }, {threshold:0});
-    visObserver.observe(container);
-
-    function pulseRandomWalk(){
-      let ring = -1;
-      let spoke = Math.floor(Math.random() * SPOKES);
-      const usedEdges = [];
-      const usedNodes = [];
-      const steps = 5 + Math.floor(Math.random() * 4); // 5-8 hops
-
-      // leave the centre onto a random spoke
-      usedEdges.push(spokeEdges[spoke][0]);
-      ring = 0;
-      usedNodes.push(spokeNodes[spoke][0]);
-
-      for(let step=0; step<steps; step++){
-        const canOutward = ring < RADII.length - 1;
-        const roll = Math.random();
-
-        if(canOutward && roll < 0.35){
-          // continue outward along the same spoke
-          usedEdges.push(spokeEdges[spoke][ring+1]);
-          ring += 1;
-          usedNodes.push(spokeNodes[spoke][ring]);
-        } else if(roll < 0.35 + 0.5){
-          // hop sideways to a neighbouring spoke on this ring — the webbing
-          const dir = Math.random() < 0.5 ? 1 : -1;
-          const newSpoke = (spoke + dir + SPOKES) % SPOKES;
-          usedEdges.push(dir === 1 ? ringEdgeMap[ring][spoke] : ringEdgeMap[ring][newSpoke]);
-          spoke = newSpoke;
-          usedNodes.push(spokeNodes[spoke][ring]);
-        } else if(ring > 0){
-          // occasionally step back inward before pushing out again
-          usedEdges.push(spokeEdges[spoke][ring]);
-          ring -= 1;
-          usedNodes.push(spokeNodes[spoke][ring]);
-        }
-      }
-
-      const uniqueEdges = [...new Set(usedEdges)];
-      const uniqueNodes = [...new Set(usedNodes)];
-      uniqueEdges.forEach(el => el.classList.add('near'));
-      uniqueNodes.forEach(el => el.classList.add('near'));
-      const holdTime = 700 + uniqueEdges.length * 90;
-      setTimeout(()=>{
-        uniqueEdges.forEach(el => el.classList.remove('near'));
-        uniqueNodes.forEach(el => el.classList.remove('near'));
-      }, Math.min(holdTime, 1800));
-    }
-
-    setInterval(()=>{
-      if(!sectionVisible || userHovering) return;
-      pulseRandomWalk();
-    }, 1900);
+    wasOpen.forEach(i => i.open = true);
+    list.style.minHeight = Math.ceil(tallest) + 'px';
   }
 
-  // cursor proximity — brightens nearby strands and nodes
-  let pending = false, cx = -9999, cy = -9999;
-  const NEAR = 50;
+  reserve();
+  let t;
+  window.addEventListener('resize', ()=>{ clearTimeout(t); t = setTimeout(reserve, 180); });
+}
 
-  function paint(){
+keepListHeight('faqList', '.faq-item');
+keepListHeight('stepsList', '.step');
+
+/* ============ HERO — a squad forms around the cursor ============
+   A field of loose points. Whatever the pointer is near is pulled into a
+   squad: the nearest few light up, link to each other, and take a core.
+   Everything else stays loose. Grid maths keeps the per-frame work to the
+   handful of points near the cursor rather than the whole field. */
+function buildSquadField(host, section, glow){
+  if(!host || !section) return;
+
+  const NS = 'http://www.w3.org/2000/svg';
+  const SPACING = 46;
+  const RADIUS = 132;
+  const SQUAD = 6;
+
+  let svg, dots = [], cols = 0, rows = 0, link = null, lit = [];
+
+  function build(){
+    const r = section.getBoundingClientRect();
+    cols = Math.ceil(r.width / SPACING) + 1;
+    rows = Math.ceil(r.height / SPACING) + 1;
+    host.innerHTML = '';
+    svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('viewBox', `0 0 ${r.width} ${r.height}`);
+    svg.setAttribute('preserveAspectRatio', 'none');
+    link = document.createElementNS(NS, 'path');
+    link.setAttribute('class', 'squad-link');
+    svg.appendChild(link);
+    dots = [];
+    for(let y = 0; y < rows; y++){
+      for(let x = 0; x < cols; x++){
+        const cx = x * SPACING, cy = y * SPACING;
+        const c = document.createElementNS(NS, 'circle');
+        c.setAttribute('cx', cx);
+        c.setAttribute('cy', cy);
+        c.setAttribute('r', 2);
+        c.setAttribute('class', 'field-dot');
+        svg.appendChild(c);
+        dots.push({el:c, x:cx, y:cy});
+      }
+    }
+    host.appendChild(svg);
+  }
+
+  function clear(){
+    lit.forEach(d =>{ d.el.classList.remove('lit','core'); d.el.setAttribute('r', 2); });
+    lit = [];
+    if(link) link.classList.remove('on');
+  }
+
+  function formSquad(px, py){
+    clear();
+    // only the cells in the cursor's neighbourhood are candidates
+    const c0 = Math.max(0, Math.floor((px - RADIUS) / SPACING));
+    const c1 = Math.min(cols - 1, Math.ceil((px + RADIUS) / SPACING));
+    const r0 = Math.max(0, Math.floor((py - RADIUS) / SPACING));
+    const r1 = Math.min(rows - 1, Math.ceil((py + RADIUS) / SPACING));
+    const near = [];
+    for(let y = r0; y <= r1; y++){
+      for(let x = c0; x <= c1; x++){
+        const d = dots[y * cols + x];
+        if(!d) continue;
+        const dist = Math.hypot(d.x - px, d.y - py);
+        if(dist <= RADIUS) near.push({d, dist});
+      }
+    }
+    if(!near.length) return;
+    near.sort((a,b)=> a.dist - b.dist);
+    const squad = near.slice(0, SQUAD).map(n => n.d);
+
+    squad.forEach((d, i) =>{
+      d.el.classList.add(i === 0 ? 'core' : 'lit');
+      d.el.setAttribute('r', i === 0 ? 6 : 3.4);
+    });
+    lit = squad;
+
+    // link every member back to the core: one unit, one centre
+    const core = squad[0];
+    const path = squad.slice(1).map(d => `M${core.x} ${core.y} L${d.x} ${d.y}`).join(' ');
+    link.setAttribute('d', path);
+    link.classList.add('on');
+  }
+
+  let pending = false, mx = 0, my = 0;
+  function frame(){
     pending = false;
-    edges.forEach(e=>{
-      const d = Math.hypot(e.mx-cx, e.my-cy);
-      e.el.classList.toggle('near', d < NEAR);
-    });
-    nodeEls.forEach(n=>{
-      const d = Math.hypot(n.x-cx, n.y-cy);
-      n.el.classList.toggle('near', d < NEAR*0.7);
-    });
+    formSquad(mx, my);
+    if(glow){
+      glow.style.transform = `translate(${mx - 260}px, ${my - 260}px)`;
+    }
   }
-  function toSvgPoint(e){
-    const rect = svg.getBoundingClientRect();
-    return {
-      x: (e.clientX - rect.left) * (440/rect.width),
-      y: (e.clientY - rect.top) * (440/rect.height),
-    };
-  }
-  function onMove(e){
-    userHovering = true;
-    const p = toSvgPoint(e);
-    cx = p.x; cy = p.y;
-    if(!pending){ pending = true; requestAnimationFrame(paint); }
-  }
-  function onLeave(){
-    userHovering = false;
-    cx = -9999; cy = -9999;
-    if(!pending){ pending = true; requestAnimationFrame(paint); }
-  }
-  container.addEventListener('pointermove', onMove);
-  container.addEventListener('pointerleave', onLeave);
-})();
+
+  section.addEventListener('pointermove', e =>{
+    if(e.pointerType !== 'mouse') return;
+    const r = section.getBoundingClientRect();
+    mx = e.clientX - r.left;
+    my = e.clientY - r.top;
+    if(glow) glow.classList.add('on');
+    if(!pending){ pending = true; requestAnimationFrame(frame); }
+  });
+
+  section.addEventListener('pointerleave', ()=>{
+    clear();
+    if(glow) glow.classList.remove('on');
+  });
+
+  build();
+  let t;
+  window.addEventListener('resize', ()=>{ clearTimeout(t); t = setTimeout(build, 160); });
+}
+
+buildSquadField(document.getElementById('heroField'),
+                document.getElementById('heroSection'),
+                document.getElementById('heroGlow'));
+buildSquadField(document.getElementById('squadField'),
+                document.querySelector('.squad-is'),
+                null);
 
 /* ============ WHAT IT CHANGES — staggered lever reveal ============
    Keeps the sequential feel of the old word cycle, but reveals the eight
