@@ -695,6 +695,31 @@ a:focus-visible, button:focus-visible{
 }
 .mover:hover .mover-name{color:var(--blue-strong);}
 
+/* The trace. Rather than draw a path between the eight — which would have to
+   cross the names to get from one column to the other — each name is filled
+   with blue left to right in turn, so the word itself is what gets traced.
+   The gradient is twice the width of the text and holds blue in its left half
+   and ink in its right, so sliding it from 100% to 0% wipes the colour across
+   the glyphs. Guarded, because the fill is transparent and text clipped to a
+   background would be invisible without it. */
+@supports ((-webkit-background-clip:text) or (background-clip:text)){
+  .mover-name{
+    background-image:linear-gradient(90deg,var(--blue-strong) 0 50%,var(--ink) 50%);
+    background-size:200% 100%;
+    background-repeat:no-repeat;
+    background-position:100% 0;
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    transition:background-position .6s cubic-bezier(.33,.9,.35,1);
+  }
+  .mover.trace .mover-name,
+  .mover:hover .mover-name{background-position:0 0;}
+}
+@media (prefers-reduced-motion: reduce){
+  .mover-name{transition:none;}
+}
+
 /* ============ CLOSING ============
    Three white sections ran back to back into a black footer with no crescendo.
    This one lands on the deep step so the page arrives somewhere, and stays
@@ -1389,28 +1414,57 @@ buildHeroField(document.getElementById('heroField'),
                document.getElementById('heroSection'),
                document.getElementById('heroGlow'));
 
-/* ============ WHAT IT CHANGES — staggered reveal ============
-   The eight arrive one after another rather than all at once, so the diagram
-   reads as things feeding into the spine rather than as a static block. */
+/* ============ WHAT IT CHANGES — the trace ============
+   Plays once when the list comes into view and stops on the last name, which
+   keeps its fill. The order the client asked for runs across the two columns
+   rather than down them — Revenue, Employee productivity, Cost, Risk, and so
+   on — which in a column-major grid is just reading order row by row. Below
+   760px the grid is a single run of eight and that mapping no longer holds,
+   so the sequence falls back to DOM order. */
 (function(){
-  const grid = document.getElementById('moverMap');
-  if(!grid) return;
-  const levers = [...grid.querySelectorAll('.mover')];
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const list = document.getElementById('moverMap');
+  if(!list) return;
+  const rows = [...list.querySelectorAll('.mover')];
+  const ZIGZAG = [0,4,1,5,2,6,3,7];
+  const STEP = 520, HOLD = 900;
 
-  if(reduceMotion){
-    levers.forEach(l => l.classList.add('show'));
+  const sequence = ()=> window.matchMedia('(max-width:760px)').matches
+    ? rows.map((_, i) => i)
+    : ZIGZAG;
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function reveal(){
+    rows.forEach(r => r.classList.add('show'));
+  }
+
+  function play(){
+    const order = sequence();
+    order.forEach((idx, k)=>{
+      const row = rows[idx];
+      if(!row) return;
+      setTimeout(()=>{
+        row.classList.add('trace');
+        // every name but the last hands its fill back once the next is under way
+        if(k < order.length - 1) setTimeout(()=> row.classList.remove('trace'), HOLD);
+      }, k * STEP);
+    });
+  }
+
+  if(reduce){
+    reveal();
+    rows[rows.length - 1].classList.add('trace');
     return;
   }
 
-  const observer = new IntersectionObserver((entries, obs)=>{
-    entries.forEach(entry =>{
-      if(!entry.isIntersecting) return;
-      levers.forEach((lever, i)=> setTimeout(()=> lever.classList.add('show'), i * 90));
+  new IntersectionObserver((entries, obs)=>{
+    entries.forEach(e =>{
+      if(!e.isIntersecting) return;
+      rows.forEach((r, i)=> setTimeout(()=> r.classList.add('show'), i * 70));
+      setTimeout(play, rows.length * 70 + 260);
       obs.disconnect();
     });
-  }, {threshold:0.25});
-  observer.observe(grid);
+  }, {threshold:0.35}).observe(list);
 })();
 </script>
 
