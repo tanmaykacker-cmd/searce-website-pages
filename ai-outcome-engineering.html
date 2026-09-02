@@ -185,8 +185,8 @@ a:focus-visible, button:focus-visible{
 .lang-toggle svg{width:9px;height:9px;}
 
 /* ============ HERO ============
-   The field is the page's thesis made literal: loose points that form a squad
-   around wherever the reader is looking, and fall apart again behind them. */
+   A loose field of points as texture, with a soft glow tracking the pointer.
+   The field itself is inert — the glow is the whole interaction. */
 .hero{
   position:relative;
   display:flex;
@@ -205,8 +205,8 @@ a:focus-visible, button:focus-visible{
   inset:0;
   z-index:0;
   pointer-events:none;
-  /* The squad forms anywhere, but the field recedes under the copy so the
-     links never fight the headline. */
+  /* The field recedes under the copy so the texture never fights the
+     headline, and reaches full strength out to the right. */
   -webkit-mask-image:linear-gradient(to right, rgba(0,0,0,.16) 0%, rgba(0,0,0,.3) 30%, #000 60%);
   mask-image:linear-gradient(to right, rgba(0,0,0,.16) 0%, rgba(0,0,0,.3) 30%, #000 60%);
 }
@@ -214,20 +214,7 @@ a:focus-visible, button:focus-visible{
 .field-dot{
   fill:var(--ink-40);
   opacity:.28;
-  transition:fill .18s ease, opacity .18s ease, r .18s ease;
 }
-.field-dot.lit{fill:var(--blue);opacity:1;}
-.field-dot.core{fill:var(--blue);opacity:1;}
-.squad-link{
-  fill:none;
-  stroke:var(--blue);
-  stroke-width:1.4;
-  stroke-linecap:round;
-  stroke-linejoin:round;
-  opacity:0;
-  transition:opacity .22s ease;
-}
-.squad-link.on{opacity:.5;}
 .hero-glow{
   position:absolute;
   width:520px;
@@ -269,6 +256,23 @@ a:focus-visible, button:focus-visible{
   color:var(--ink-60);
   max-width:44ch;
   margin:28px 0 0;
+}
+
+/* The chip above the headline. Matched to the Solver Squads page so the two
+   sub-pages open identically; it was rendering as bare inline text here. */
+.page-badge{
+  display:inline-block;
+  background:var(--blue-06);
+  border:1px solid var(--blue-12);
+  color:var(--blue-strong);
+  font-family:var(--display);
+  font-weight:600;
+  font-size:12.5px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  padding:9px 20px;
+  border-radius:8px;
+  margin-bottom:26px;
 }
 
 /* ============ SHARED SECTION UTILS ============
@@ -346,61 +350,15 @@ a:focus-visible, button:focus-visible{
   margin-bottom:22px;
 }
 .icon-tile svg{width:22px;height:22px;}
-.capacity-card{border-radius:18px;}
-.capacity-card--active{
-  border-color:var(--blue);
-  box-shadow:0 14px 40px rgba(0,100,255,.13);
-}
-.capacity-card--active .icon-tile{
-  background:var(--blue);
-  border-color:var(--blue);
-  color:#fff;
-}
-.capacity-title{
-  font-family:var(--display);
-  font-weight:600;
-  font-size:clamp(16px,1.5vw,18.5px);
-  letter-spacing:-0.01em;
-  color:var(--ink);
-  margin:0 0 9px;
-}
-.capacity-desc{font-size:15.5px;line-height:1.6;color:var(--ink);margin:0;}
-/* Three cards side by side read as three unrelated things. The braid shows
-   what the copy says: every squad draws on all three at once. */
-.capacity-braid{display:block;width:100%;height:auto;margin-top:-2px;}
-.capacity-sink{
-  display:flex;
-  justify-content:center;
-  margin-top:-4px;
-}
-.capacity-sink span{
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-  padding:15px 30px;
-  border-radius:999px;
-  background:var(--blue);
-  color:#fff;
-  font-family:var(--display);
-  font-weight:600;
-  font-size:16px;
-}
-.capacity-sink span::before{
-  content:"";
-  width:8px;height:8px;
-  border-radius:50%;
-  background:#fff;
-}
-
 
 /* ============ WHAT IT IS ============ */
 .whatitis,
 .involves,
-.changes,
+.movers,
 .faq{padding:clamp(92px,9.5vw,132px) 0;}
 .whatitis,
 .involves,
-.changes{border-bottom:1px solid var(--paper-line);}
+.movers{border-bottom:1px solid var(--paper-line);}
 .unsolved,
 .ladder-section{padding:clamp(100px,10vw,144px) 0;}
 
@@ -547,7 +505,6 @@ a:focus-visible, button:focus-visible{
   color:var(--blue);
   white-space:nowrap;
 }
-.step-index::after{content:" \2192";}
 .step-name{
   font-family:var(--display);
   font-weight:500;
@@ -689,63 +646,109 @@ a:focus-visible, button:focus-visible{
 }
 
 /* ============ WHAT IT CHANGES ============
-   Eight levers, all of them visible. The old treatment showed one word at a
-   time, which hid seven of the eight and left the section a single word on an
-   empty field. The eighth is the payoff, so it carries the fill. */
-.changes{
+   The copy for this section is eight bare nouns, so the section has to be
+   carried by its picture rather than its text. Everything else on the page is
+   a rectangle in a grid; this one is a diagram — one blue spine down the
+   middle, the eight things feeding into it from both sides on short ticks.
+   The eight are left equal, because the copy lists them flat. */
+.movers{
   padding:130px 0;
   border-bottom:1px solid var(--paper-line);
 }
-.changes .section-eyebrow{margin-bottom:48px;}
-.lever-grid{
+.movers-map{
+  /* One length drives both the column gap and the tick, so each tick lands
+     exactly on the spine's edge with no measuring at runtime. */
+  --tick:clamp(18px,3vw,44px);
   display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:1px;
-  background:var(--paper-line);
-  border:1px solid var(--paper-line);
-  border-radius:20px;
-  overflow:hidden;
+  grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+  column-gap:var(--tick);
+  align-items:stretch;
 }
-.lever{
-  background:var(--paper);
-  padding:30px 26px 34px;
-  min-height:172px;
+.movers-col{
+  display:grid;
+  grid-template-rows:repeat(4,1fr);
+  gap:14px;
+}
+.mover{
+  position:relative;
   display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  gap:28px;
+  align-items:center;
+  gap:18px;
+  padding:22px clamp(20px,2vw,28px);
+  background:var(--paper);
+  border:1px solid var(--paper-line);
+  border-radius:14px;
   opacity:0;
-  transform:translateY(14px);
-  transition:opacity .5s ease, transform .5s ease, background .25s ease;
+  transform:translateY(12px);
+  transition:opacity .5s ease, transform .5s ease,
+             background .25s ease, border-color .25s ease;
 }
-.lever.show{opacity:1;transform:none;}
-.lever-index{
-  font-family:var(--display);
-  font-weight:600;
-  font-size:12.5px;
-  letter-spacing:.12em;
-  /* --blue-24 reads as decoration but these numerals carry the order, and it
-     only reaches 1.57:1 on paper; ink-60 is legible and lets blue mark hover. */
-  color:var(--ink-60);
-  transition:color .25s ease;
+.mover.show{opacity:1;transform:none;}
+.mover::after{
+  content:"";
+  position:absolute;
+  top:50%;
+  width:var(--tick);
+  height:1px;
+  background:var(--paper-line);
+  transition:background .25s ease;
 }
-.lever-name{
+.movers-col-a .mover::after{right:calc(-1 * var(--tick) - 1px);}
+.movers-col-b .mover::after{left:calc(-1 * var(--tick) - 1px);}
+/* The left flank is mirrored so both sides read as feeding inward: on wide
+   viewports the cards are far wider than their labels, and left-aligning both
+   columns left the left one pointing away from the spine. */
+.movers-col-a .mover{flex-direction:row-reverse;}
+.movers-col-a .mover-name{text-align:right;}
+.mover-dot{
+  flex:none;
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:var(--ink-40);
+  transition:background .25s ease, box-shadow .25s ease;
+}
+.mover-name{
   font-family:var(--display);
   font-weight:500;
-  font-size:clamp(17px,1.5vw,21px);
-  line-height:1.24;
+  font-size:clamp(16px,1.4vw,20px);
+  line-height:1.25;
   letter-spacing:-0.012em;
   color:var(--ink);
 }
-.lever:hover{background:var(--blue-06);}
-.lever:hover .lever-index{color:var(--blue);}
-/* The deeper step, not --blue: white at this size needs 4.5:1 and the brighter
-   fill only reaches 3.6:1. */
-.lever-final{background:var(--blue-strong);}
-.lever-final .lever-index{color:rgba(255,255,255,.86);}
-.lever-final .lever-name{color:#fff;}
-.lever-final:hover{background:var(--blue-deep);}
-.lever-final:hover .lever-index{color:#fff;}
+.mover:hover{background:var(--blue-06);border-color:var(--blue-12);}
+.mover:hover .mover-dot{background:var(--blue);box-shadow:0 0 0 5px rgba(0,100,255,.13);}
+.mover:hover::after{background:var(--blue);}
+
+/* The spine. --blue-strong rather than --blue: white on the brighter fill
+   only reaches 3.6:1, and this label sits below the large-text threshold. */
+.movers-hub{
+  width:clamp(62px,6vw,84px);
+  border-radius:16px;
+  background:var(--blue-strong);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:28px 0;
+}
+.hub-label{
+  writing-mode:vertical-rl;
+  transform:rotate(180deg);
+  font-family:var(--display);
+  font-weight:500;
+  font-size:clamp(14px,1.15vw,17px);
+  line-height:1;
+  letter-spacing:.01em;
+  color:#fff;
+  white-space:nowrap;
+}
+.hub-label .hub-tag{
+  font-weight:600;
+  font-size:11.5px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.66);
+}
 
 /* ============ CLOSING ============
    Three white sections ran back to back into a black footer with no crescendo.
@@ -841,14 +844,22 @@ a:focus-visible, button:focus-visible{
 .cta-button svg{width:14px;height:14px;}
 
 @media (max-width:980px){
-  .lever-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+  /* Below this the two flanks no longer fit either side of the spine, so the
+     diagram unrolls: spine on top as a bar, then the eight in one column. */
+  .movers-map{grid-template-columns:minmax(0,1fr);row-gap:14px;}
+  /* Same 14px rhythm as inside a column, so the seam between the two flanks
+     does not read as a break in the list. */
+  .movers-hub{order:-1;width:auto;padding:20px 26px;margin-bottom:12px;}
+  .hub-label{writing-mode:horizontal-tb;transform:none;}
+  .mover::after{display:none;}
+  .movers-col-a .mover{flex-direction:row;}
+  .movers-col-a .mover-name{text-align:left;}
 }
 @media (max-width:560px){
-  .lever-grid{grid-template-columns:minmax(0,1fr);}
-  .lever{min-height:0;padding:24px 22px 26px;gap:20px;}
+
 }
 @media (prefers-reduced-motion: reduce){
-  .lever{opacity:1;transform:none;transition:none;}
+  .mover{opacity:1;transform:none;transition:none;}
   .closing-sweep,
   .closing-dots,
   .closing-bloom{animation:none;}
@@ -1003,7 +1014,7 @@ footer{
 }
 @media (max-width:640px){
   .hero{padding:56px 0 72px;}
-  .changes{padding:88px 0;}
+  .movers{padding:88px 0;}
   .closing-outcome{padding:100px 0;}
   .nav .wrap{height:68px;}
 }
@@ -1247,21 +1258,28 @@ footer{
   </div>
 </section>
 
-<section class="changes">
+<section class="movers">
   <div class="wrap">
     <div class="section-head">
       <span class="section-eyebrow">what changes</span>
-      <h2 class="section-title">Eight numbers a verified reading can move.</h2>
+      <h2 class="section-title">Eight things a verified reading can move.</h2>
     </div>
-    <div class="lever-grid" id="leverGrid">
-      <div class="lever"><span class="lever-index">01</span><span class="lever-name">Revenue</span></div>
-      <div class="lever"><span class="lever-index">02</span><span class="lever-name">Cost</span></div>
-      <div class="lever"><span class="lever-index">03</span><span class="lever-name">Speed</span></div>
-      <div class="lever"><span class="lever-index">04</span><span class="lever-name">Customer experience</span></div>
-      <div class="lever"><span class="lever-index">05</span><span class="lever-name">Employee productivity</span></div>
-      <div class="lever"><span class="lever-index">06</span><span class="lever-name">Risk</span></div>
-      <div class="lever"><span class="lever-index">07</span><span class="lever-name">Reliability</span></div>
-      <div class="lever lever-final"><span class="lever-index">08</span><span class="lever-name">How work gets done</span></div>
+    <div class="movers-map" id="moverMap">
+      <div class="movers-col movers-col-a">
+        <div class="mover"><span class="mover-dot"></span><span class="mover-name">Revenue</span></div>
+        <div class="mover"><span class="mover-dot"></span><span class="mover-name">Cost</span></div>
+        <div class="mover"><span class="mover-dot"></span><span class="mover-name">Speed</span></div>
+        <div class="mover"><span class="mover-dot"></span><span class="mover-name">Customer experience</span></div>
+      </div>
+      <div class="movers-hub">
+        <span class="hub-label"><span class="hub-tag">one</span> verified reading</span>
+      </div>
+      <div class="movers-col movers-col-b">
+        <div class="mover"><span class="mover-dot"></span><span class="mover-name">Employee productivity</span></div>
+        <div class="mover"><span class="mover-dot"></span><span class="mover-name">Risk</span></div>
+        <div class="mover"><span class="mover-dot"></span><span class="mover-name">Reliability</span></div>
+        <div class="mover"><span class="mover-dot"></span><span class="mover-name">How work gets done</span></div>
+      </div>
     </div>
   </div>
 </section>
@@ -1386,129 +1404,73 @@ function keepListHeight(listId, itemSelector){
 keepListHeight('faqList', '.faq-item');
 keepListHeight('stepsList', '.step');
 
-/* ============ HERO — a squad forms around the cursor ============
-   A field of loose points. Whatever the pointer is near is pulled into a
-   squad: the nearest few light up, link to each other, and take a core.
-   Everything else stays loose. Grid maths keeps the per-frame work to the
-   handful of points near the cursor rather than the whole field. */
-function buildSquadField(host, section, glow){
+/* ============ HERO — a lit field under the cursor ============
+   A static field of loose points sits behind the copy; the only interaction
+   is a soft glow that follows the pointer. The points are not linked into a
+   squad here — that construct belongs to the Solver Squads page, and on this
+   page it read as a second idea competing with the headline. */
+function buildHeroField(host, section, glow){
   if(!host || !section) return;
 
   const NS = 'http://www.w3.org/2000/svg';
   const SPACING = 46;
-  const RADIUS = 132;
-  const SQUAD = 6;
-
-  let svg, dots = [], cols = 0, rows = 0, link = null, lit = [];
 
   function build(){
     const r = section.getBoundingClientRect();
-    cols = Math.ceil(r.width / SPACING) + 1;
-    rows = Math.ceil(r.height / SPACING) + 1;
-    host.innerHTML = '';
-    svg = document.createElementNS(NS, 'svg');
+    const cols = Math.ceil(r.width / SPACING) + 1;
+    const rows = Math.ceil(r.height / SPACING) + 1;
+    const svg = document.createElementNS(NS, 'svg');
     svg.setAttribute('viewBox', `0 0 ${r.width} ${r.height}`);
     svg.setAttribute('preserveAspectRatio', 'none');
-    link = document.createElementNS(NS, 'path');
-    link.setAttribute('class', 'squad-link');
-    svg.appendChild(link);
-    dots = [];
     for(let y = 0; y < rows; y++){
       for(let x = 0; x < cols; x++){
-        const cx = x * SPACING, cy = y * SPACING;
         const c = document.createElementNS(NS, 'circle');
-        c.setAttribute('cx', cx);
-        c.setAttribute('cy', cy);
+        c.setAttribute('cx', x * SPACING);
+        c.setAttribute('cy', y * SPACING);
         c.setAttribute('r', 2);
         c.setAttribute('class', 'field-dot');
         svg.appendChild(c);
-        dots.push({el:c, x:cx, y:cy});
       }
     }
+    host.innerHTML = '';
     host.appendChild(svg);
   }
 
-  function clear(){
-    lit.forEach(d =>{ d.el.classList.remove('lit','core'); d.el.setAttribute('r', 2); });
-    lit = [];
-    if(link) link.classList.remove('on');
-  }
-
-  function formSquad(px, py){
-    clear();
-    // only the cells in the cursor's neighbourhood are candidates
-    const c0 = Math.max(0, Math.floor((px - RADIUS) / SPACING));
-    const c1 = Math.min(cols - 1, Math.ceil((px + RADIUS) / SPACING));
-    const r0 = Math.max(0, Math.floor((py - RADIUS) / SPACING));
-    const r1 = Math.min(rows - 1, Math.ceil((py + RADIUS) / SPACING));
-    const near = [];
-    for(let y = r0; y <= r1; y++){
-      for(let x = c0; x <= c1; x++){
-        const d = dots[y * cols + x];
-        if(!d) continue;
-        const dist = Math.hypot(d.x - px, d.y - py);
-        if(dist <= RADIUS) near.push({d, dist});
+  if(glow){
+    let pending = false, mx = 0, my = 0;
+    section.addEventListener('pointermove', e =>{
+      if(e.pointerType !== 'mouse') return;
+      const r = section.getBoundingClientRect();
+      mx = e.clientX - r.left;
+      my = e.clientY - r.top;
+      glow.classList.add('on');
+      if(!pending){
+        pending = true;
+        requestAnimationFrame(()=>{
+          pending = false;
+          glow.style.transform = `translate(${mx - 260}px, ${my - 260}px)`;
+        });
       }
-    }
-    if(!near.length) return;
-    near.sort((a,b)=> a.dist - b.dist);
-    const squad = near.slice(0, SQUAD).map(n => n.d);
-
-    squad.forEach((d, i) =>{
-      d.el.classList.add(i === 0 ? 'core' : 'lit');
-      d.el.setAttribute('r', i === 0 ? 6 : 3.4);
     });
-    lit = squad;
-
-    // link every member back to the core: one unit, one centre
-    const core = squad[0];
-    const path = squad.slice(1).map(d => `M${core.x} ${core.y} L${d.x} ${d.y}`).join(' ');
-    link.setAttribute('d', path);
-    link.classList.add('on');
+    section.addEventListener('pointerleave', ()=> glow.classList.remove('on'));
   }
-
-  let pending = false, mx = 0, my = 0;
-  function frame(){
-    pending = false;
-    formSquad(mx, my);
-    if(glow){
-      glow.style.transform = `translate(${mx - 260}px, ${my - 260}px)`;
-    }
-  }
-
-  section.addEventListener('pointermove', e =>{
-    if(e.pointerType !== 'mouse') return;
-    const r = section.getBoundingClientRect();
-    mx = e.clientX - r.left;
-    my = e.clientY - r.top;
-    if(glow) glow.classList.add('on');
-    if(!pending){ pending = true; requestAnimationFrame(frame); }
-  });
-
-  section.addEventListener('pointerleave', ()=>{
-    clear();
-    if(glow) glow.classList.remove('on');
-  });
 
   build();
   let t;
   window.addEventListener('resize', ()=>{ clearTimeout(t); t = setTimeout(build, 160); });
 }
 
-buildSquadField(document.getElementById('heroField'),
-                document.getElementById('heroSection'),
-                document.getElementById('heroGlow'));
-buildSquadField(document.getElementById('squadField'),
-                document.querySelector('.squad-is'),
-                null);
+buildHeroField(document.getElementById('heroField'),
+               document.getElementById('heroSection'),
+               document.getElementById('heroGlow'));
 
-/* ============ WHAT IT CHANGES — staggered lever reveal ============
-   Keeps the sequential feel of the old word cycle, but reveals the eight
-   levers in place rather than replacing one word with the next. */
+/* ============ WHAT IT CHANGES — staggered reveal ============
+   The eight arrive one after another rather than all at once, so the diagram
+   reads as things feeding into the spine rather than as a static block. */
 (function(){
-  const grid = document.getElementById('leverGrid');
+  const grid = document.getElementById('moverMap');
   if(!grid) return;
-  const levers = [...grid.querySelectorAll('.lever')];
+  const levers = [...grid.querySelectorAll('.mover')];
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if(reduceMotion){
