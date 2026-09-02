@@ -285,6 +285,58 @@ a:focus-visible, button:focus-visible{
   margin-bottom:26px;
 }
 
+/* ============ SHARED SECTION UTILS ============
+   Every section opens the same way: a small eyebrow, then one very large
+   light-weight statement, then a single component. The statement is drawn
+   from the section's own copy rather than written for the slot. */
+.section-head{margin-bottom:clamp(42px,4.8vw,68px);}
+.section-title{
+  font-family:var(--display);
+  font-weight:300;
+  font-size:clamp(30px,4.2vw,60px);
+  line-height:1.14;
+  letter-spacing:-0.022em;
+  color:var(--ink);
+  margin:16px 0 0;
+  max-width:19ch;
+  text-wrap:balance;
+}
+.section-title-wide{max-width:26ch;}
+.section-title .dim{color:var(--ink-40);}
+.section-title .hi{color:var(--blue);}
+.section-sub{
+  font-size:clamp(16.5px,1.5vw,19px);
+  line-height:1.68;
+  color:var(--ink);
+  max-width:58ch;
+  margin:24px 0 0;
+  text-wrap:pretty;
+}
+
+/* A dark band with the blue bloom behind it, used to break the run of light
+   sections into chapters. */
+.band-dark{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  background:#03102a;
+  color:#fff;
+}
+.band-dark::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background:radial-gradient(54% 62% at 26% 40%, rgba(0,100,255,.32), rgba(0,100,255,0) 72%);
+}
+.band-dark .section-eyebrow{color:var(--blue-24);}
+.band-dark .section-title{color:#fff;}
+.band-dark .section-title .dim{color:rgba(255,255,255,.42);}
+.band-dark .section-title .hi{color:var(--blue-lift);}
+.band-dark .section-sub{color:rgba(255,255,255,.74);}
+.band-dark .wrap{position:relative;z-index:1;}
+.band-dark{border-bottom-color:rgba(255,255,255,.08);}
+
 /* ============ SHARED SECTION UTILS ============ */
 .section-eyebrow{
   display:block;
@@ -379,9 +431,8 @@ a:focus-visible, button:focus-visible{
   position:relative;
   isolation:isolate;
   overflow:hidden;
-  /* Deep blue rather than flat black: the band carries the same live field as
-     the hero, and black gave the dots nowhere to sit. */
-  background:var(--blue-abyss);
+  /* Shares the band treatment with the other dark chapters; the live field
+     sits above its bloom. */
   color:#fff;
   padding:clamp(96px,10vw,140px) 0;
 }
@@ -392,11 +443,10 @@ a:focus-visible, button:focus-visible{
 .on-dark .squad-link{stroke:var(--blue-lift);}
 .on-dark .squad-link.on{opacity:.55;}
 .squad-is .section-eyebrow{color:var(--blue-24);}
-.squad-is-grid{
+.capability-row{
   display:grid;
-  grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);
-  gap:clamp(44px,5.5vw,92px);
-  align-items:center;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:clamp(14px,1.6vw,22px);
 }
 .squad-is-text{
   font-family:var(--display);
@@ -414,11 +464,7 @@ a:focus-visible, button:focus-visible{
   color:rgba(255,255,255,.6);
   margin:26px 0 0;
 }
-.capability-stack{
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-}
+
 .capability{
   display:flex;
   align-items:center;
@@ -450,7 +496,7 @@ a:focus-visible, button:focus-visible{
 }
 .capability-brace svg{width:26px;height:26px;stroke-width:2.4;}
 .capability-outcome{
-  padding:20px 22px;
+  padding:22px;
   border-radius:13px;
   background:var(--blue);
   font-family:var(--display);
@@ -573,13 +619,7 @@ a:focus-visible, button:focus-visible{
   margin:0 0 48px;
 }
 .flex-body strong{color:var(--ink);font-weight:600;}
-.flex-layout{
-  align-items:center;
-  display:grid;
-  grid-template-columns:minmax(0,1.04fr) minmax(0,.96fr);
-  gap:60px;
-  align-items:center;
-}
+.flex-layout{display:flex;justify-content:center;}
 .flex-heading{
   font-family:var(--display);
   font-weight:600;
@@ -896,12 +936,8 @@ footer{
   padding:clamp(92px,9.5vw,132px) 0;
   border-bottom:1px solid var(--paper-line);
 }
-.who-grid{
-  display:grid;
-  grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);
-  gap:clamp(44px,5vw,88px);
-  align-items:center;
-}
+.who-grid{display:flex;justify-content:center;}
+.craft-tree{width:min(100%,780px);}
 /* Five flat tiles said nothing about how the crafts relate. The copy's own
    argument is that process people and system people ship together, under one
    lead, so that is the shape. */
@@ -1010,7 +1046,28 @@ h1, h3, .opening-lead, .builds-punch, .accountability-punch, .evaluate-lead, .fl
   transition:background .22s ease, border-color .22s ease;
 }
 .capacity-card:hover{background:var(--blue-06);border-color:var(--blue-12);}
-.capacity-card svg{width:24px;height:24px;color:var(--blue);margin-bottom:18px;}
+/* Outlined rounded-square tile holding the glyph, and one card in the group
+   carrying the accent, both taken from the reference. */
+.icon-tile{
+  display:grid;
+  place-items:center;
+  width:46px;height:46px;
+  border-radius:13px;
+  border:1.5px solid var(--blue-24);
+  color:var(--blue);
+  margin-bottom:22px;
+}
+.icon-tile svg{width:22px;height:22px;}
+.capacity-card{border-radius:18px;}
+.capacity-card--active{
+  border-color:var(--blue);
+  box-shadow:0 14px 40px rgba(0,100,255,.13);
+}
+.capacity-card--active .icon-tile{
+  background:var(--blue);
+  border-color:var(--blue);
+  color:#fff;
+}
 .capacity-title{
   font-family:var(--display);
   font-weight:600;
@@ -1168,6 +1225,31 @@ h1, h3, .opening-lead, .builds-punch, .accountability-punch, .evaluate-lead, .fl
   background:var(--blue);
 }
 
+/* Dark-band variants: these components were built for paper. */
+.band-dark .flow-node{
+  border-color:rgba(255,255,255,.16);
+  background:rgba(255,255,255,.04);
+}
+.band-dark .flow-label{color:rgba(255,255,255,.52);}
+.band-dark .flow-item{color:rgba(255,255,255,.9);}
+.band-dark .flow-item::before{background:var(--blue-lift);}
+.band-dark .flow-gates{
+  background:rgba(0,100,255,.16);
+  border-color:rgba(106,168,255,.34);
+}
+.band-dark .flow-gates .flow-label{color:var(--blue-lift);}
+.band-dark .flow-gates .flow-item::before{background:none;border-color:var(--blue-lift);}
+.band-dark .flow-arrow{color:rgba(255,255,255,.34);}
+/* .band-dark .flow-node outranks .flow-verified, so the accent is restated. */
+.band-dark .flow-verified{background:var(--blue);border-color:var(--blue);}
+.band-dark .flow-verified .flow-label{color:rgba(255,255,255,.74);}
+.band-dark .map-land{fill:rgba(255,255,255,.19);}
+.band-dark .map-label{fill:rgba(255,255,255,.86);}
+.band-dark .map-dot-ring{stroke:rgba(106,168,255,.5);}
+.band-dark .map-route{stroke:rgba(106,168,255,.5);}
+.band-dark .map-dot{fill:var(--blue-lift);}
+.band-dark .section-sub strong{color:#fff;}
+
 /* ============ AFTER THE BUILD ============ */
 .handover{
   padding:clamp(92px,9.5vw,132px) 0;
@@ -1248,12 +1330,7 @@ h1, h3, .opening-lead, .builds-punch, .accountability-punch, .evaluate-lead, .fl
   padding:clamp(92px,9.5vw,132px) 0;
   border-bottom:1px solid var(--paper-line);
 }
-.evaluate-grid{
-  display:grid;
-  grid-template-columns:minmax(0,.86fr) minmax(0,1.14fr);
-  gap:clamp(40px,5vw,84px);
-  align-items:center;
-}
+.evaluate-grid{display:block;}
 .evaluate-lead{
   font-family:var(--display);
   font-weight:500;
@@ -1311,49 +1388,94 @@ h1, h3, .opening-lead, .builds-punch, .accountability-punch, .evaluate-lead, .fl
 .preview-desc{font-size:15.5px;line-height:1.6;color:var(--ink);margin:0;}
 
 /* ============ QUESTIONS ============
-   An accordion so the answer costs nothing until it is wanted. */
+   Split like the reference: the title holds the left column and the answers
+   stack on the right as cards, closed ones plain and the open one accented. */
 .faq{padding:clamp(92px,9.5vw,132px) 0;}
-.faq .section-eyebrow{margin-bottom:34px;}
-.faq-list{border-top:1px solid var(--paper-line);}
-.faq-item{border-bottom:1px solid var(--paper-line);}
+.faq-grid{
+  display:grid;
+  grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);
+  gap:clamp(40px,5vw,92px);
+  align-items:start;
+}
+.faq-title{
+  font-family:var(--display);
+  font-weight:300;
+  font-size:clamp(34px,4.4vw,60px);
+  line-height:1.08;
+  letter-spacing:-0.022em;
+  color:var(--ink);
+  margin:16px 0 0;
+  max-width:9ch;
+}
+.faq-title span{color:var(--blue);}
+.faq-list{display:flex;flex-direction:column;gap:14px;}
+.faq-item{
+  border:1px solid var(--paper-line);
+  border-radius:18px;
+  background:var(--paper);
+  transition:background .22s ease, border-color .22s ease, box-shadow .22s ease;
+}
+.faq-item[open]{
+  background:var(--blue-06);
+  border-color:var(--blue);
+  box-shadow:0 14px 40px rgba(0,100,255,.12);
+}
 .faq-item summary{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:20px;
-  padding:26px 0;
+  gap:22px;
+  padding:22px clamp(20px,2.2vw,28px);
   cursor:pointer;
   list-style:none;
   font-family:var(--display);
   font-weight:500;
-  font-size:clamp(18px,1.8vw,23px);
+  font-size:clamp(16.5px,1.55vw,20px);
+  line-height:1.32;
   letter-spacing:-0.01em;
   color:var(--ink);
-  transition:color .2s ease;
 }
 .faq-item summary::-webkit-details-marker{display:none;}
-.faq-item summary:hover{color:var(--blue);}
-.faq-item summary svg{
-  width:19px;height:19px;
+.faq-item[open] summary{color:var(--blue-strong);font-weight:600;}
+.faq-toggle{
+  position:relative;
+  width:36px;height:36px;
+  border-radius:50%;
+  background:var(--paper-dim);
   flex:none;
-  color:var(--blue);
-  transition:transform .25s ease;
+  transition:background .22s ease;
 }
-.faq-item[open] summary svg{transform:rotate(180deg);}
+.faq-toggle::before,
+.faq-toggle::after{
+  content:"";
+  position:absolute;
+  left:50%;top:50%;
+  background:var(--ink);
+  border-radius:2px;
+  transition:opacity .2s ease, background .22s ease;
+}
+.faq-toggle::before{width:13px;height:2px;transform:translate(-50%,-50%);}
+.faq-toggle::after{width:2px;height:13px;transform:translate(-50%,-50%);}
+.faq-item[open] .faq-toggle{background:var(--blue);}
+.faq-item[open] .faq-toggle::before{background:#fff;}
+.faq-item[open] .faq-toggle::after{opacity:0;}
 .faq-item p{
   margin:0;
-  padding:0 0 28px;
-  font-size:17.5px;
-  line-height:1.7;
+  padding:0 clamp(20px,2.2vw,28px) 26px;
+  font-size:16.5px;
+  line-height:1.72;
   color:var(--ink);
-  max-width:66ch;
+  max-width:62ch;
 }
 .faq-item p strong{font-weight:600;}
 
 @media (max-width:900px){
+  .faq-grid{grid-template-columns:minmax(0,1fr);gap:36px;}
+  .faq-title{max-width:none;}
   .who-grid{grid-template-columns:minmax(0,1fr);gap:44px;}
 }
 @media (max-width:820px){
+  .capability-row{grid-template-columns:minmax(0,1fr);}
   .capacity-grid{grid-template-columns:minmax(0,1fr);}
   .capacity-braid{display:none;}
   .capacity-sink{margin-top:22px;}
@@ -1477,11 +1599,10 @@ h1, h3, .opening-lead, .builds-punch, .accountability-punch, .evaluate-lead, .fl
 
 <section class="opening">
   <div class="wrap">
-    <span class="section-eyebrow">the old model</span>
-    <p class="opening-lead">
-      <span class="lead-muted">The traditional professional services model ships resumes and counts hours.</span>
-      <span class="lead-strong">Searce ships squads and counts outcomes.</span>
-    </p>
+    <div class="section-head">
+      <span class="section-eyebrow">the old model</span>
+      <h2 class="section-title section-title-wide"><span class="dim">The traditional professional services model ships resumes and counts hours.</span> Searce ships squads and counts outcomes.</h2>
+    </div>
     <div class="compare">
       <div class="compare-side compare-old">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
@@ -1500,36 +1621,34 @@ h1, h3, .opening-lead, .builds-punch, .accountability-punch, .evaluate-lead, .fl
   </div>
 </section>
 
-<section class="squad-is">
+<section class="squad-is band-dark">
   <div class="hero-field on-dark" id="squadField" aria-hidden="true"></div>
   <div class="wrap">
-    <span class="section-eyebrow">what a squad is</span>
-    <div class="squad-is-grid">
-      <div>
-        <p class="squad-is-text">A cohesive team built to solve one business problem as a unit, around a <strong>single accountable outcome</strong>.</p>
-        <p class="squad-is-note">Squads are not staffed roles filled against a rate card. They are formed teams that integrate into the client&rsquo;s operating model and work where the problem lives.</p>
-      </div>
-      <div class="capability-stack">
-        <div class="capability"><span aria-hidden="true"></span>Business understanding</div>
-        <div class="capability"><span aria-hidden="true"></span>Hands-on engineering</div>
-        <div class="capability"><span aria-hidden="true"></span>Client success</div>
-        <div class="capability-brace" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 4v16M6 14l6 6 6-6"/></svg>
-        </div>
-        <div class="capability-outcome">A single accountable outcome</div>
-      </div>
+    <div class="section-head">
+      <span class="section-eyebrow">what a squad is</span>
+      <h2 class="section-title section-title-wide">A cohesive team built to solve one business problem as a unit, around a <span class="hi">single accountable outcome</span>.</h2>
+      <p class="section-sub">Squads are not staffed roles filled against a rate card. They are formed teams that integrate into the client&rsquo;s operating model and work where the problem lives.</p>
     </div>
+    <div class="capability-row">
+      <div class="capability"><span aria-hidden="true"></span>Business understanding</div>
+      <div class="capability"><span aria-hidden="true"></span>Hands-on engineering</div>
+      <div class="capability"><span aria-hidden="true"></span>Client success</div>
+    </div>
+    <div class="capability-brace" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 4v16M6 14l6 6 6-6"/></svg>
+    </div>
+    <div class="capability-outcome">A single accountable outcome</div>
   </div>
 </section>
 
 <section class="who">
   <div class="wrap">
-    <span class="section-eyebrow">who is in a squad</span>
+    <div class="section-head">
+      <span class="section-eyebrow">who is in a squad</span>
+      <h2 class="section-title">Composition varies by practice.</h2>
+      <p class="section-sub">Rebuilding how work runs requires both the people who redesign the process and the people who build the system. <strong>Searce does not staff one craft without the other.</strong></p>
+    </div>
     <div class="who-grid">
-      <div>
-        <p class="who-lead">Composition varies by practice.</p>
-        <p class="who-note">Rebuilding how work runs requires both the people who redesign the process and the people who build the system. <strong>Searce does not staff one craft without the other.</strong></p>
-      </div>
       <div class="craft-tree">
         <p class="craft-caption">a business systems engineering squad</p>
         <div class="craft-head">Product engineering managers</div>
@@ -1557,21 +1676,23 @@ h1, h3, .opening-lead, .builds-punch, .accountability-punch, .evaluate-lead, .fl
 
 <section class="capacity">
   <div class="wrap">
-    <span class="section-eyebrow">three sources of capacity</span>
-    <p class="capacity-lead">Every squad draws on all three at once.</p>
+    <div class="section-head">
+      <span class="section-eyebrow">three sources of capacity</span>
+      <h2 class="section-title">Every squad draws on all three at once.</h2>
+    </div>
     <div class="capacity-grid">
         <div class="capacity-card">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20v-7l8-6 8 6v7"/><path d="M10 20v-5h4v5"/></svg>
+          <span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20v-7l8-6 8 6v7"/><path d="M10 20v-5h4v5"/></svg></span>
           <p class="capacity-title">Onsite solvers</p>
           <p class="capacity-desc">Work inside the client&rsquo;s operation.</p>
         </div>
-        <div class="capacity-card">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 3 2.6 15 0 18M12 3c-2.6 3-2.6 15 0 18"/></svg>
+        <div class="capacity-card capacity-card--active">
+          <span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 3 2.6 15 0 18M12 3c-2.6 3-2.6 15 0 18"/></svg></span>
           <p class="capacity-title">The engineering engine</p>
           <p class="capacity-desc">Across eleven countries, building around the clock.</p>
         </div>
         <div class="capacity-card">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 3v4M9 13h.01M15 13h.01"/></svg>
+          <span class="icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 3v4M9 13h.01M15 13h.01"/></svg></span>
           <p class="capacity-title">AI-native agent coworkers</p>
           <p class="capacity-desc">Trained on Searce&rsquo;s pattern library, carrying capture, evaluation and monitoring.</p>
         </div>
@@ -1587,7 +1708,10 @@ h1, h3, .opening-lead, .builds-punch, .accountability-punch, .evaluate-lead, .fl
 
 <section class="accountability">
   <div class="wrap">
-    <span class="section-eyebrow">who is accountable</span>
+    <div class="section-head">
+      <span class="section-eyebrow">who is accountable</span>
+      <h2 class="section-title">One initiative, one owner, no committees.</h2>
+    </div>
     <div class="acct-flow">
       <span class="acct-end"><i>one initiative</i></span>
       <span class="acct-line" aria-hidden="true"></span>
@@ -1606,14 +1730,16 @@ h1, h3, .opening-lead, .builds-punch, .accountability-punch, .evaluate-lead, .fl
         <p class="acct-desc">Runs the engagement, measures what changed, and presents it alongside the client.</p>
       </div>
     </div>
-    <p class="accountability-punch">One initiative, one owner, no committees.</p>
   </div>
 </section>
 
-<section class="builds">
+<section class="builds band-dark">
   <div class="wrap">
-    <span class="section-eyebrow">how Searce builds</span>
-    <p class="builds-lead">Searce builds AI-native. Agents do the generating; every step passes a gate.</p>
+    <div class="section-head">
+      <span class="section-eyebrow">how Searce builds</span>
+      <h2 class="section-title section-title-wide"><span class="dim">Generation speed is a commodity now.</span> Verified replacement of systems the business depends on is the actual craft.</h2>
+      <p class="section-sub">Searce builds AI-native. Agents do the generating; every step passes a gate.</p>
+    </div>
     <div class="build-flow">
       <div class="flow-node">
         <span class="flow-label">agents generate</span>
@@ -1639,13 +1765,16 @@ h1, h3, .opening-lead, .builds-punch, .accountability-punch, .evaluate-lead, .fl
         <strong>Verified replacement</strong>
       </div>
     </div>
-    <p class="builds-punch"><span class="punch-muted">Generation speed is a commodity now.</span> Verified replacement of systems the business depends on is the actual craft.</p>
   </div>
 </section>
 
 <section class="handover">
   <div class="wrap">
-    <span class="section-eyebrow">what happens after the build</span>
+    <div class="section-head">
+      <span class="section-eyebrow">what happens after the build</span>
+      <h2 class="section-title">Searce does not leave systems without owners.</h2>
+      <p class="section-sub">Where the operating owner is Searce, that is a managed operations contract rather than an informal expectation.</p>
+    </div>
     <div class="handover-track">
       <div class="handover-stop">
         <span class="handover-when">at handover</span>
@@ -1663,18 +1792,17 @@ h1, h3, .opening-lead, .builds-punch, .accountability-punch, .evaluate-lead, .fl
         <p class="handover-desc">How it ends, agreed at the start.</p>
       </div>
     </div>
-    <p class="handover-note"><strong>Searce does not leave systems without owners.</strong> Where the operating owner is Searce, that is a managed operations contract rather than an informal expectation.</p>
   </div>
 </section>
 
 <section class="evaluate">
   <div class="wrap">
-    <span class="section-eyebrow">evaluating a squad</span>
+    <div class="section-head">
+      <span class="section-eyebrow">evaluating a squad</span>
+      <h2 class="section-title">You meet the squad before you commit to it.</h2>
+      <p class="section-sub">Searce shows the format during the pursuit.</p>
+    </div>
     <div class="evaluate-grid">
-      <div>
-        <p class="evaluate-lead">You meet the squad before you commit to it.</p>
-        <p class="evaluate-note">Searce shows the format during the pursuit.</p>
-      </div>
       <div class="preview">
         <div class="preview-bar">before committing</div>
         <div class="preview-row">
@@ -1705,18 +1833,17 @@ h1, h3, .opening-lead, .builds-punch, .accountability-punch, .evaluate-lead, .fl
           </div>
         </div>
       </div>
-    </div>
   </div>
 </section>
 
 <section class="flex-section">
   <div class="wrap">
-    <span class="section-eyebrow">how squads flex</span>
+    <div class="section-head">
+      <span class="section-eyebrow">how squads flex</span>
+      <h2 class="section-title">The same squad, sized to the moment.</h2>
+      <p class="section-sub">Allocation adjusts quarterly to match your delivery lifecycle: <strong>scale up for launch, streamline for stabilization</strong>. The squad stays consistent; knowledge compounds instead of walking out the door.</p>
+    </div>
     <div class="flex-layout">
-      <div>
-        <h3 class="flex-heading">The same squad, sized to the moment.</h3>
-        <p class="flex-body">Allocation adjusts quarterly to match your delivery lifecycle: <strong>scale up for launch, streamline for stabilization</strong>. The squad stays consistent; knowledge compounds instead of walking out the door.</p>
-      </div>
       <div class="flex-visual" id="flexVisual">
         <div class="flex-toggle" id="flexToggle">
           <button class="flex-tab active" data-state="launch" type="button">Launch</button>
@@ -1728,10 +1855,13 @@ h1, h3, .opening-lead, .builds-punch, .accountability-punch, .evaluate-lead, .fl
   </div>
 </section>
 
-<section class="global-section">
+<section class="global-section band-dark">
   <div class="wrap">
-    <span class="section-eyebrow">global by design</span>
-    <p class="global-text">Squads draw on Searce's delivery presence across <strong>11 countries</strong>. <span class="accent">Onsite</span> where the problem lives, <span class="accent">follow-the-sun</span> where the build never sleeps.</p>
+    <div class="section-head">
+      <span class="section-eyebrow">global by design</span>
+      <h2 class="section-title section-title-wide"><span class="hi">Onsite</span> where the problem lives. <span class="hi">Follow-the-sun</span> where the build never sleeps.</h2>
+      <p class="section-sub">Squads draw on Searce&rsquo;s delivery presence across <strong>11 countries</strong>.</p>
+    </div>
     <div class="global-map" aria-hidden="true">
       <svg id="mapSvg" viewBox="0 40 1000 320" xmlns="http://www.w3.org/2000/svg"></svg>
     </div>
@@ -1739,24 +1869,27 @@ h1, h3, .opening-lead, .builds-punch, .accountability-punch, .evaluate-lead, .fl
 </section>
 
 <section class="faq">
-  <div class="wrap">
-    <span class="section-eyebrow">questions</span>
+  <div class="wrap faq-grid">
+    <div>
+      <span class="section-eyebrow">questions</span>
+      <h2 class="faq-title">Frequently Asked <span>Questions</span></h2>
+    </div>
     <div class="faq-list" id="faqList">
       <details class="faq-item">
         <summary>Is a solver squad the same as staff augmentation?
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+          <span class="faq-toggle" aria-hidden="true"></span>
         </summary>
         <p><strong>No.</strong> Staff augmentation supplies individuals against roles. A squad is a formed team accountable for a named outcome, with its own lead and its own measurement.</p>
       </details>
       <details class="faq-item">
         <summary>Does the squad change during the engagement?
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+          <span class="faq-toggle" aria-hidden="true"></span>
         </summary>
         <p>Composition flexes with the delivery lifecycle, but the squad stays consistent so knowledge compounds rather than walking out the door.</p>
       </details>
       <details class="faq-item">
         <summary>Where do squads work from?
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+          <span class="faq-toggle" aria-hidden="true"></span>
         </summary>
         <p>Onsite where the problem lives, with follow-the-sun engineering across eleven countries.</p>
       </details>
