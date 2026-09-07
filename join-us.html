@@ -417,280 +417,231 @@ footer{
 }
 
 
-/* ============ THE LAW ============
-   The multiplication is the strongest idea in this section's copy and it was
-   set as two lines of running text. It is now stated as a law: the terms on
-   plates, the operators as blue marks between them, the result carrying the
-   fill. Two rows, because the copy gives two. */
-/* One section, four blocks. These were four <section>s with their own padding
-   and rules between them, which read as four sections of a page; they are one
-   section of a page that has not been designed yet. */
-.solvers{padding:clamp(88px,9vw,132px) 0 clamp(96px,10vw,148px);}
-.solvers-open{margin-bottom:clamp(52px,5.6vw,84px);}
+/* ============ SOLVERS ============
+   Sized to sit between an employee carousel and "voice of searcians" without
+   taking the page over. Two columns, like the section it replaces, because on
+   this page the block has to read as one stop in a sequence rather than as the
+   destination — a stack of four full-width blocks was twice the height of
+   everything around it.
+   The 1,000-days ratio is deliberately not visualised here: the hero already
+   draws exactly that comparison as a chart, so this section carries only the
+   mechanism behind it (Monday, Friday, quarter end). */
+.solvers{
+  padding:clamp(62px,6vw,88px) 0 clamp(66px,6.4vw,94px);
+  background:var(--paper);
+}
+.solvers-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  column-gap:clamp(40px,5vw,88px);
+  align-items:start;
+}
 .solvers-title{
   font-family:var(--display);
   font-weight:300;
-  font-size:clamp(34px,5vw,72px);
-  line-height:1.06;
-  letter-spacing:-0.028em;
+  font-size:clamp(28px,3.2vw,44px);
+  line-height:1.12;
+  letter-spacing:-0.024em;
   color:var(--ink);
   margin:0;
-  max-width:20ch;
+  max-width:19ch;
 }
 .solvers-sub{
-  font-size:clamp(17px,1.6vw,21px);
-  line-height:1.6;
+  font-size:clamp(15.5px,1.35vw,17.5px);
+  line-height:1.62;
   color:var(--ink-60);
-  max-width:52ch;
-  margin:clamp(20px,2.2vw,30px) 0 0;
+  max-width:46ch;
+  margin:clamp(16px,1.6vw,22px) 0 0;
 }
-/* The blocks are told apart by air, not by rules — the section already sits
-   between whatever comes before and the culture band. */
-.velocity-block{margin-top:clamp(72px,8vw,116px);}
-.paths-block{margin-top:clamp(72px,8vw,116px);}
-.velocity-block .section-eyebrow,
-.paths-block .section-eyebrow{margin-bottom:clamp(30px,3.4vw,46px);}
-.law-board{
-  background:var(--blue-06);
-  border:1px solid var(--blue-12);
-  border-radius:26px;
-  padding:clamp(34px,4.4vw,64px) clamp(24px,4vw,64px);
+/* The learning-velocity line as three beats of one week. Horizontal and small:
+   it is a supporting detail here, not the section's headline. */
+.beats{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:clamp(8px,1vw,14px);
+  margin-top:clamp(24px,2.4vw,32px);
 }
-/* Both equations live in one five-column grid so the two multiplication signs
-   sit in the same column and the two equals signs in the next, which is what
-   makes the pair read as a derivation instead of two centred sentences. */
+.beat{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  padding:12px 16px;
+  border:1px solid var(--paper-line);
+  border-radius:11px;
+  background:var(--paper);
+  transition:border-color .25s ease, background .25s ease;
+}
+.beat:hover{border-color:var(--blue-24);background:var(--blue-06);}
+.beat-when{
+  font-family:var(--display);
+  font-weight:600;
+  font-size:10.5px;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+  color:var(--blue);
+}
+.beat-what{
+  font-family:var(--display);
+  font-weight:500;
+  font-size:14.5px;
+  line-height:1.2;
+  letter-spacing:-0.01em;
+  color:var(--ink);
+  margin:0;
+}
+.beat-link{
+  font-family:var(--display);
+  font-weight:500;
+  font-size:13px;
+  color:var(--ink-40);
+  padding:0 2px;
+}
+
+/* The multiplication, stated as a law. Both rows share one four-column grid so
+   the two multiplication signs sit in the same column and the two equals signs
+   in the next — that alignment is what makes the pair read as a derivation
+   rather than two sentences that happen to be stacked. */
 .law-eqs{
   display:grid;
-  grid-template-columns:auto auto auto auto auto;
-  justify-content:center;
-  align-items:center;
-  column-gap:clamp(10px,1.4vw,20px);
-  row-gap:clamp(18px,2.2vw,30px);
+  grid-template-columns:auto auto auto minmax(0,1fr);
+  align-items:baseline;
+  column-gap:clamp(8px,.9vw,13px);
+  row-gap:clamp(9px,1vw,14px);
 }
-.law-eqs .term{text-align:right;}
-.law-eqs .term-answer{justify-self:start;text-align:left;}
 .term{
   font-family:var(--display);
   font-weight:400;
-  font-size:clamp(21px,2.5vw,40px);
-  line-height:1.1;
-  letter-spacing:-0.02em;
+  font-size:clamp(19px,2vw,29px);
+  line-height:1.14;
+  letter-spacing:-0.018em;
   color:var(--ink);
   white-space:nowrap;
+  text-align:right;
 }
 .op{
   font-family:var(--display);
   font-weight:300;
-  font-size:clamp(19px,2.2vw,34px);
-  line-height:1;
-  color:var(--blue);
-  padding:0 clamp(2px,.5vw,8px);
-}
-/* The answer, not another term. --blue-strong rather than --blue: white on the
-   brighter fill only reaches 3.6:1 and this sits below the large-text size. */
-.term-answer{
-  background:var(--blue-strong);
-  color:#fff;
-  padding:clamp(8px,.9vw,14px) clamp(16px,1.8vw,28px);
-  border-radius:14px;
-}
-.law-note{
-  margin:clamp(28px,3vw,42px) 0 0;
-  padding-top:clamp(22px,2.4vw,32px);
-  border-top:1px solid var(--blue-12);
-  text-align:center;
-  font-size:clamp(15.5px,1.4vw,18px);
-  line-height:1.6;
-  color:var(--ink);
-}
-
-/* ============ VELOCITY ============
-   The trade a candidate is actually being offered, and the reason to read the
-   page at all. It was a body-size line inside a bordered box; it is now the
-   largest thing on the page after the headline, set as the comparison it is. */
-
-.trade{
-  display:grid;
-  grid-template-columns:1fr auto 1fr;
-  align-items:center;
-  gap:clamp(20px,3.4vw,56px);
-  margin-bottom:clamp(40px,4.4vw,60px);
-}
-.trade-side{text-align:center;}
-.trade-figure{
-  display:block;
-  font-family:var(--display);
-  font-weight:300;
-  font-size:clamp(54px,9vw,132px);
-  line-height:.92;
-  letter-spacing:-0.045em;
-  font-variant-numeric:tabular-nums;
-  color:var(--ink);
-}
-.trade-side--here .trade-figure{color:var(--blue);}
-.trade-label{
-  display:block;
-  margin-top:clamp(10px,1.2vw,18px);
-  font-family:var(--display);
-  font-weight:500;
-  font-size:clamp(14px,1.35vw,18px);
-  letter-spacing:.02em;
-  color:var(--ink-60);
-}
-/* Sized against the figures either side of it, not against body copy: at
-   60px it read as a hairline pair next to a 132px numeral. */
-.trade-equals{
-  font-family:var(--display);
-  font-weight:300;
-  font-size:clamp(40px,5.4vw,84px);
+  font-size:clamp(17px,1.8vw,25px);
   line-height:1;
   color:var(--blue-24);
 }
-/* Three beats of one week, so "learning velocity" has a shape rather than
-   being asserted. The arrows are the copy's own sequence, not added meaning. */
-.beats{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:1px;
-  background:var(--paper-line);
-  border:1px solid var(--paper-line);
-  border-radius:20px;
-  overflow:hidden;
+/* --blue-strong, not --blue: the answer sits on paper at this size and the
+   brighter blue only reaches 4.46:1 against it. */
+.term-answer{
+  color:var(--blue-strong);
+  font-weight:500;
+  text-align:left;
+  white-space:nowrap;
 }
-.beat{
-  background:var(--paper);
-  padding:clamp(26px,2.8vw,38px) clamp(22px,2.4vw,32px);
-  transition:background .25s ease;
-}
-.beat:hover{background:var(--blue-06);}
-.beat-when{
-  display:block;
-  font-family:var(--display);
-  font-weight:600;
-  font-size:11.5px;
-  letter-spacing:.16em;
-  text-transform:uppercase;
-  color:var(--blue);
-  margin-bottom:14px;
-}
-.beat-what{
-  font-family:var(--display);
-  font-weight:400;
-  font-size:clamp(18px,1.7vw,24px);
-  line-height:1.22;
-  letter-spacing:-0.016em;
-  color:var(--ink);
-  margin:0;
+.law-note{
+  margin:clamp(16px,1.7vw,22px) 0 0;
+  font-size:14.5px;
+  line-height:1.55;
+  color:var(--ink-40);
 }
 
 /* ============ THE SOLVER PATHS ============
-   Seven chips the size of tags, for the seven jobs someone might come here to
-   do — the least prominent thing in the section and the most actionable. They
-   are plates now, big enough to be read as a choice. */
-
+   Seven chips the size of tags became seven plates. Inline rather than stacked
+   — the glyph beside the name instead of above it — which is what keeps the
+   grid to three tight rows in half the page width. */
+/* Full width under both columns rather than stacked in the right one: with
+   the paths inside the right column it ran 180px past the left, and the left
+   column just ended in white space. */
+.paths-block{margin-top:clamp(34px,3.4vw,48px);}
+.paths-block .section-eyebrow{margin-bottom:clamp(16px,1.7vw,22px);}
 .path-grid{
   display:grid;
   grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:clamp(14px,1.6vw,22px);
+  gap:clamp(8px,.9vw,12px);
 }
 .path{
-  display:block;
+  display:flex;
+  align-items:center;
+  gap:12px;
   text-decoration:none;
   background:var(--paper);
   border:1px solid var(--paper-line);
-  border-radius:20px;
-  padding:clamp(24px,2.4vw,32px);
-  min-height:148px;
-  transition:border-color .28s ease, transform .28s ease, box-shadow .28s ease;
+  border-radius:12px;
+  padding:12px 14px;
+  transition:border-color .25s ease, background .25s ease, transform .25s ease;
 }
 .path:hover{
   border-color:var(--blue);
-  transform:translateY(-4px);
-  box-shadow:0 16px 44px rgba(0,100,255,.13);
+  background:var(--blue-06);
+  transform:translateY(-2px);
 }
-.path:hover .icon-tile{background:var(--blue);border-color:var(--blue);color:#fff;}
-/* Larger than the shared tile: these cards are 280px wide and the 46px
-   default sat lost in one. */
 .path .icon-tile{
-  width:54px;height:54px;border-radius:15px;
-  margin-bottom:clamp(18px,2vw,26px);
+  width:32px;height:32px;
+  border-radius:9px;
+  border-width:1px;
+  margin-bottom:0;
+  flex:none;
 }
-.path .icon-tile svg{width:25px;height:25px;}
+.path .icon-tile svg{width:17px;height:17px;}
+.path:hover .icon-tile{background:var(--blue);border-color:var(--blue);color:#fff;}
 .path-name{
-  display:block;
   font-family:var(--display);
   font-weight:500;
-  font-size:clamp(17px,1.55vw,20px);
-  line-height:1.25;
-  letter-spacing:-0.012em;
+  font-size:14.5px;
+  line-height:1.22;
+  letter-spacing:-0.01em;
   color:var(--ink);
 }
 /* The one path with a page of its own behind it. */
-.path--linked .path-name::after{
-  content:" \2192";
-  color:var(--blue);
-}
+.path--linked .path-name::after{content:" \2192";color:var(--blue);}
 
 /* ============ CULTURE ============
-   The invitation. A full-bleed near-black slab with "culture" set at 188px
-   read as a monument rather than a welcome, so three things changed: the band
-   is an inset rounded panel like the equation board instead of a slab running
-   off both edges; the light is lifted well off black and gathers on the right,
-   away from the copy; and the hierarchy is inverted — the sentence about how
-   people behave is the largest thing here now, and the heading is back to
-   being a heading. */
-.culture{padding:0 0 clamp(96px,10vw,140px);}
-.culture-panel{
+   Full-bleed again, not the inset rounded panel I had before seeing the page:
+   this sits between a white section and "voice of searcians", and the page's
+   rhythm is full-width dark and light bands alternating. An inset panel broke
+   that. The invitation comes from the scale and the light instead — a heading
+   at a normal heading size, the statement carrying the section, and the glow
+   gathered on the right where nothing has to be read. */
+.culture{
   position:relative;
   isolation:isolate;
   overflow:hidden;
-  border-radius:clamp(20px,2.4vw,34px);
-  padding:clamp(48px,6vw,92px) clamp(30px,4.6vw,76px) clamp(52px,6.4vw,96px);
-  /* Lifted off #020c1d: the darkest corner is now a blue that reads as blue.
-     White copy still measures far past 4.5:1 against it. */
+  padding:clamp(70px,7vw,104px) 0 clamp(74px,7.4vw,112px);
   background:
     /* A veil over the copy column. Two of the happier letters (#0064FF and
        #734BFF) are light enough that they cannot reach 3:1 against the lifted
-       blue on their own, and their values are fixed, so the backdrop behind
-       the text is darkened instead. The light still gathers on the right,
-       where nothing has to be read. */
-    linear-gradient(94deg, rgba(2,11,28,.62) 0%, rgba(2,11,28,.40) 44%, rgba(2,11,28,0) 72%),
-    radial-gradient(62% 96% at 96% 16%, rgba(0,116,255,.72), rgba(0,116,255,0) 62%),
-    linear-gradient(106deg, #06265c 0%, #0a3277 52%, #0b3f96 100%);
+       blue on their own, and their values are fixed, so the ground behind the
+       text is darkened instead. */
+    linear-gradient(94deg, rgba(2,11,28,.58) 0%, rgba(2,11,28,.34) 46%, rgba(2,11,28,0) 74%),
+    radial-gradient(62% 108% at 94% 24%, rgba(0,116,255,.60), rgba(0,116,255,0) 64%),
+    linear-gradient(106deg, #061f4c 0%, #092c68 54%, #0b3d92 100%);
   color:#fff;
 }
-.culture-panel::before{
+.culture::before{
   content:"";
   position:absolute;
   inset:0;
   z-index:-1;
-  background-image:radial-gradient(circle, rgba(255,255,255,.17) 1px, rgba(255,255,255,0) 1.5px);
+  background-image:radial-gradient(circle, rgba(255,255,255,.15) 1px, rgba(255,255,255,0) 1.5px);
   background-size:29px 29px;
-  -webkit-mask-image:radial-gradient(66% 76% at 86% 34%, #000 0%, rgba(0,0,0,0) 74%);
-  mask-image:radial-gradient(66% 76% at 86% 34%, #000 0%, rgba(0,0,0,0) 74%);
+  -webkit-mask-image:radial-gradient(60% 76% at 88% 34%, #000 0%, rgba(0,0,0,0) 74%);
+  mask-image:radial-gradient(60% 76% at 88% 34%, #000 0%, rgba(0,0,0,0) 74%);
 }
 .culture-title{
   font-family:var(--display);
-  font-weight:400;
-  font-size:clamp(25px,2.4vw,35px);
-  line-height:1.1;
-  letter-spacing:-0.02em;
-  margin:0 0 clamp(22px,2.4vw,32px);
-  color:var(--blue-lift);
-}
-/* The statement carries the section now, on a wider measure: at 34ch it sat
-   in a narrow strip down the left of a very wide band. */
-.culture-copy{
-  font-family:var(--display);
   font-weight:300;
-  /* Floor at 24px: that is the large-text threshold for regular weight, and
-     it keeps the 3:1 bar in force at every viewport rather than 4.5:1. */
-  font-size:clamp(24px,2.6vw,38px);
-  line-height:1.34;
-  letter-spacing:-0.018em;
-  max-width:40ch;
-  margin:0 0 clamp(38px,4.4vw,58px);
+  font-size:clamp(40px,4.6vw,68px);
+  line-height:1.02;
+  letter-spacing:-0.03em;
+  margin:0 0 clamp(24px,2.6vw,36px);
   color:#fff;
+}
+/* Floor at 24px: that is the large-text threshold at regular weight, which
+   keeps the achievable 3:1 bar in force for the happier letters at every
+   viewport rather than an impossible 4.5:1. */
+.culture-copy{
+  font-size:clamp(24px,2.1vw,29px);
+  line-height:1.45;
+  letter-spacing:-0.012em;
+  max-width:44ch;
+  margin:0 0 clamp(32px,3.4vw,46px);
+  color:rgba(255,255,255,.94);
 }
 .culture-copy strong{font-weight:400;}
 /* The seven letters of "happier", in order, in the brand's own values. These
@@ -702,46 +653,34 @@ footer{
 .happier span:nth-child(5){color:#734BFF;}  /* i  purple    */
 .happier span:nth-child(6){color:#28C8E1;}  /* e  turquoise */
 .happier span:nth-child(7){color:#00DC96;}  /* r  green     */
-.culture .cta-button{background:#fff;color:var(--blue-strong);}
-.culture .cta-button:hover{background:var(--blue-lift);color:var(--blue-deep);}
+/* Blue pill, matching the button already on this band rather than the white
+   one I had used. */
+.culture .cta-button{background:var(--blue);color:#fff;}
+.culture .cta-button:hover{background:#fff;color:var(--blue-strong);}
 
 /* ============ JOIN-US RESPONSIVE ============ */
 @media (max-width:1080px){
   .path-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
 }
 @media (max-width:860px){
-  /* The equals sign has no column of its own once the two sides stack. */
-  .trade{grid-template-columns:minmax(0,1fr);gap:clamp(14px,3vw,24px);}
-  /* A span in a single-column grid sits at the start of its row, so the pivot
-     pinned to the left margin once the two sides stacked. */
-  .trade-equals{font-size:clamp(24px,5vw,34px);justify-self:center;}
-  .beats{grid-template-columns:minmax(0,1fr);}
+  /* One column: the right-hand stack goes under the copy rather than beside it. */
+  .solvers-grid{grid-template-columns:minmax(0,1fr);row-gap:clamp(40px,6vw,56px);}
+  .solvers-title,.solvers-sub{max-width:none;}
   .path-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
   .culture-copy{max-width:none;}
 }
-@media (max-width:560px){
-  /* "join the solver movement" needs 290px on one line at the desktop size,
-     and the panel only offers 252px at 360px wide, so it was breaking onto
-     three lines inside the pill. The panel gives back some padding and the
-     button comes down a size. */
-  .culture-panel{padding:clamp(38px,9vw,48px) 22px clamp(42px,10vw,52px);}
-  .culture .cta-button{font-size:14.5px;padding:14px 22px;}
-  /* Below this a term plus its operator no longer fits one row, so the grid
-     unrolls to a single column and the operators sit between the lines. */
-  .law-eqs{grid-template-columns:minmax(0,1fr);row-gap:12px;}
-  /* Every child needs centring, operators included: a grid item sits at the
-     start of its row, so the signs hung off the left margin. */
+@media (max-width:620px){
+  /* A term plus its operator no longer fits one row, so the grid unrolls and
+     the operators sit between the lines. Every child needs centring, operators
+     included: a grid item otherwise sits at the start of its row. */
+  .law-eqs{grid-template-columns:minmax(0,1fr);row-gap:8px;}
   .law-eqs > *{justify-self:center;text-align:center;}
-  /* Needs the same two-class specificity as the rule that pushes the answer
-     plate to the start of its column on wide layouts, or it stays left. */
   .law-eqs .term-answer{justify-self:center;text-align:center;}
-  /* The sixth child opens the second equation. Without this the answer of the
-     first ran straight into it at the same row gap, and the two read as one
-     six-line stack. */
-  .law-eqs > *:nth-child(6){margin-top:clamp(22px,5vw,32px);}
+  .law-eqs > *:nth-child(5){margin-top:18px;}
   .term,.op{white-space:normal;}
   .path-grid{grid-template-columns:minmax(0,1fr);}
-  .path{min-height:0;}
+  .beats{gap:8px;}
+  .beat-link{display:none;}
 }
 
 /* ============ RESPONSIVE ============ */
@@ -803,52 +742,22 @@ footer{
 
 
 <section class="solvers">
-  <div class="wrap">
+  <div class="wrap solvers-grid">
 
-    <div class="solvers-open">
+    <div>
       <h2 class="solvers-title">Solvers don't build from ticket queues.</h2>
       <p class="solvers-sub">They work where the problem lives, with the operators and leaders who own it, on outcomes that get measured and read out loud.</p>
-    </div>
-
-    <div class="law-board">
-      <div class="law-eqs">
-        <span class="term">real thinkers</span>
-        <span class="op" aria-hidden="true">&#215;</span>
-        <span class="term">real doers</span>
-        <span class="op" aria-hidden="true">=</span>
-        <span class="term term-answer">real solvers</span>
-
-        <span class="term">strategy</span>
-        <span class="op" aria-hidden="true">&#215;</span>
-        <span class="term">execution</span>
-        <span class="op" aria-hidden="true">=</span>
-        <span class="term term-answer">solving</span>
-      </div>
-      <p class="law-note">Multiplication, not addition. Either one at zero, and so is the answer.</p>
-    </div>
-
-    <div class="velocity-block">
-      <span class="section-eyebrow">learning velocity is the deal</span>
-      <div class="trade">
-        <div class="trade-side trade-side--here">
-          <span class="trade-figure">1,000</span>
-          <span class="trade-label">days at Searce</span>
-        </div>
-        <span class="trade-equals" aria-hidden="true">=</span>
-        <div class="trade-side">
-          <span class="trade-figure">10</span>
-          <span class="trade-label">years anywhere else</span>
-        </div>
-      </div>
       <div class="beats">
         <div class="beat">
           <span class="beat-when">monday</span>
           <p class="beat-what">Learn it.</p>
         </div>
+        <span class="beat-link" aria-hidden="true">&#8594;</span>
         <div class="beat">
           <span class="beat-when">friday</span>
           <p class="beat-what">Ship it.</p>
         </div>
+        <span class="beat-link" aria-hidden="true">&#8594;</span>
         <div class="beat">
           <span class="beat-when">quarter end</span>
           <p class="beat-what">Present the outcome.</p>
@@ -856,31 +765,46 @@ footer{
       </div>
     </div>
 
+    <div>
+      <div class="law-eqs">
+        <span class="term">real thinkers</span>
+        <span class="op" aria-hidden="true">&#215;</span>
+        <span class="term">real doers</span>
+        <span class="term term-answer">= real solvers</span>
+
+        <span class="term">strategy</span>
+        <span class="op" aria-hidden="true">&#215;</span>
+        <span class="term">execution</span>
+        <span class="term term-answer">= solving</span>
+      </div>
+      <p class="law-note">Multiplication, not addition. Either one at zero, and so is the answer.</p>
+    </div>
+
+  </div>
+
+  <div class="wrap">
     <div class="paths-block">
       <span class="section-eyebrow">the solver paths</span>
       <div class="path-grid">
-        <a class="path path--linked" href="forward-deployed-solver-squads.html"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.3 7.6 8 9 4.7-1.4 8-4.5 8-9V6l-8-3Z"/></svg></span><span class="path-name">Forward-Deployed Solver</span></a>
-        <div class="path"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"/><path d="M12 18v3"/><path d="M4.5 7.5 7 9"/><path d="M17 15l2.5 1.5"/><path d="M4.5 16.5 7 15"/><path d="M17 9l2.5-1.5"/><path d="M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"/></svg></span><span class="path-name">AI Engineer</span></div>
-        <div class="path"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V11"/><path d="M10 20V5"/><path d="M16 20v-6"/><path d="M22 20H2"/></svg></span><span class="path-name">Platform Engineer</span></div>
-        <div class="path"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 21 8v8l-9 5-9-5V8l9-5Z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/></svg></span><span class="path-name">Data Engineer</span></div>
-        <div class="path"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 8 5 12l4 4"/><path d="M15 8l4 4-4 4"/></svg></span><span class="path-name">Software Engineer</span></div>
-        <div class="path"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z"/><path d="M8.5 12.5 11 15l4.5-5"/></svg></span><span class="path-name">Reliability Engineer</span></div>
-        <div class="path"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 4.5 19.5 8.5 8.5 19.5H4.5v-4L15.5 4.5Z"/><path d="M13.5 6.5l4 4"/></svg></span><span class="path-name">Experience Designer</span></div>
+        <a class="path path--linked" href="forward-deployed-solver-squads.html"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.3 7.6 8 9 4.7-1.4 8-4.5 8-9V6l-8-3Z"/></svg></span><span class="path-name">Forward-Deployed Solver</span></a>
+        <div class="path"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"/><path d="M12 18v3"/><path d="M4.5 7.5 7 9"/><path d="M17 15l2.5 1.5"/><path d="M4.5 16.5 7 15"/><path d="M17 9l2.5-1.5"/><path d="M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"/></svg></span><span class="path-name">AI Engineer</span></div>
+        <div class="path"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V11"/><path d="M10 20V5"/><path d="M16 20v-6"/><path d="M22 20H2"/></svg></span><span class="path-name">Platform Engineer</span></div>
+        <div class="path"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 21 8v8l-9 5-9-5V8l9-5Z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/></svg></span><span class="path-name">Data Engineer</span></div>
+        <div class="path"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 8 5 12l4 4"/><path d="M15 8l4 4-4 4"/></svg></span><span class="path-name">Software Engineer</span></div>
+        <div class="path"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z"/><path d="M8.5 12.5 11 15l4.5-5"/></svg></span><span class="path-name">Reliability Engineer</span></div>
+        <div class="path"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 4.5 19.5 8.5 8.5 19.5H4.5v-4L15.5 4.5Z"/><path d="M13.5 6.5l4 4"/></svg></span><span class="path-name">Experience Designer</span></div>
       </div>
     </div>
-
   </div>
 </section>
 
 <section class="culture">
   <div class="wrap">
-    <div class="culture-panel">
-      <h2 class="culture-title">culture</h2>
-      <p class="culture-copy"><strong class="happier"><span>h</span><span>a</span><span>p</span><span>p</span><span>i</span><span>e</span><span>r</span></strong> is how we behave. Mistakes are encouraged. Solve-a-thons are how we hire and how we work: never the easiest first option, three to eight iterations, always.</p>
-      <a class="cta-button" href="#">join the solver movement
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
-      </a>
-    </div>
+    <h2 class="culture-title">culture</h2>
+    <p class="culture-copy"><strong class="happier"><span>h</span><span>a</span><span>p</span><span>p</span><span>i</span><span>e</span><span>r</span></strong> is how we behave. Mistakes are encouraged. Solve-a-thons are how we hire and how we work: never the easiest first option, three to eight iterations, always.</p>
+    <a class="cta-button" href="#">join the solver movement
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+    </a>
   </div>
 </section>
 
