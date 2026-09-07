@@ -39,6 +39,16 @@
   --blue-12:#dbe9ff;
   --blue-24:#b3d0ff;
 
+  /* Deeper steps for the dark chapter, and a mono stack. The mono is the
+     whole tech device: gates, stage numbers and field labels are set in it,
+     which reads as instrumentation without adding a webfont or a colour. */
+  --blue-void:#04091a;
+  --blue-panel:#070f24;
+  --blue-card:#0a1430;
+  --blue-hair:rgba(139,186,255,.16);
+  --blue-hair-lit:rgba(0,100,255,.55);
+
+  --mono:ui-monospace,'SF Mono','Roboto Mono',Menlo,Consolas,'Liberation Mono',monospace;
   --display:'Poppins', system-ui, sans-serif;
   --body:'Google Sans Flex Variable','Google Sans Text','Google Sans', system-ui, -apple-system, sans-serif;
 }
@@ -356,6 +366,60 @@ a:focus-visible, button:focus-visible{
 }
 .icon-tile svg{width:22px;height:22px;}
 
+/* ============ TECH PRIMITIVES (dark chapter) ============
+   Shared by the diagnosis, the assurances strip and the methodology. The
+   mocks separated things with five different accent hues; the design system is
+   black, white and #0064ff with tints and tones, so separation is carried by
+   the mono labels, the hairlines and one blue instead. */
+.mono{
+  font-family:var(--mono);
+  font-size:11.5px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  line-height:1;
+}
+/* A faint square grid, the one texture the dark surfaces share. */
+.grid-tex{
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  background-image:
+    linear-gradient(to right, rgba(139,186,255,.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(139,186,255,.055) 1px, transparent 1px);
+  background-size:64px 64px;
+}
+.panel{
+  position:relative;
+  isolation:isolate;
+  border:1px solid var(--blue-hair);
+  border-radius:18px;
+  background:var(--blue-panel);
+  overflow:hidden;
+}
+.card-dark{
+  position:relative;
+  border:1px solid var(--blue-hair);
+  border-radius:14px;
+  background:var(--blue-card);
+  transition:border-color .28s ease, background .28s ease;
+}
+.card-dark:hover{border-color:var(--blue-hair-lit);background:#0c1838;}
+/* The small square bullet the mocks put beside every field label. */
+.pip{
+  display:inline-block;
+  width:6px;height:6px;
+  border-radius:2px;
+  background:var(--blue);
+  flex:none;
+}
+.hair{
+  height:1px;
+  border:0;
+  margin:0;
+  background:var(--blue-hair);
+}
+
 /* ============ WHAT IT IS ============ */
 .whatitis,
 .involves,
@@ -395,162 +459,539 @@ a:focus-visible, button:focus-visible{
 }
 .versus-out{font-size:15.5px;line-height:1.62;color:var(--ink);margin:0;text-wrap:pretty;}
 
-/* ============ WHY IT REMAINS UNSOLVED ============
-   The five problems sit in the gap itself rather than in a list, because the
-   copy's point is that they arrive together and none resolves alone. */
-.gap-panel{
+/* ============ ASSURANCES ============
+   The four numbers the page is accountable to, sitting straight after "what it
+   is" so the claim is quantified before it is explained. Reads as a spec strip
+   rather than a KPI dashboard: mono field label, one large figure, a name and
+   a line of definition.
+   The mock coloured each figure differently — green, cyan, white, amber. The
+   system is one hue, so the four are separated by their labels and by a single
+   accented tile instead. */
+.assurances{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  padding:clamp(56px,5.6vw,84px) 0 clamp(60px,6vw,90px);
+  background:var(--blue-void);
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.assurances-grid{
   display:grid;
-  grid-template-columns:minmax(0,.85fr) minmax(0,1.3fr) minmax(0,.85fr);
-  gap:clamp(14px,1.8vw,24px);
-  align-items:stretch;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:clamp(12px,1.2vw,18px);
 }
-.gap-end{
-  padding:clamp(24px,2.6vw,32px);
-  border:1px solid rgba(255,255,255,.16);
-  border-radius:18px;
-  background:rgba(255,255,255,.04);
-}
-.gap-end-goal{border-color:rgba(106,168,255,.42);background:rgba(0,100,255,.15);}
-.gap-label{
-  display:block;
-  font-family:var(--display);
-  font-weight:600;
-  font-size:11.5px;
-  letter-spacing:.14em;
-  text-transform:uppercase;
-  color:var(--blue-lift);
-  margin-bottom:14px;
-}
-.gap-note{margin:0;font-size:15.5px;line-height:1.62;color:rgba(255,255,255,.82);}
-.gap-middle{
-  padding:clamp(24px,2.6vw,32px);
-  border-radius:18px;
-  border:1px dashed rgba(255,255,255,.24);
-  text-align:center;
-}
-.gap-middle-label{
-  display:block;
-  font-family:var(--display);
-  font-weight:600;
-  font-size:11.5px;
-  letter-spacing:.14em;
-  text-transform:uppercase;
-  color:rgba(255,255,255,.5);
-}
-.blockers{
+.assure{
   display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  justify-content:center;
-  margin:18px 0 16px;
+  flex-direction:column;
+  padding:clamp(22px,2.4vw,32px);
+  border-radius:16px;
 }
-.blocker{
-  padding:9px 16px;
-  border-radius:999px;
-  background:rgba(255,255,255,.07);
-  border:1px solid rgba(255,255,255,.17);
-  font-size:14px;
-  color:#fff;
-  white-space:nowrap;
+.assure-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:clamp(20px,2.2vw,30px);
 }
-.gap-caption{margin:0;font-size:13.5px;line-height:1.55;color:rgba(255,255,255,.55);}
-.baseline-note{
-  margin-top:clamp(26px,3vw,40px);
-  display:grid;
-  grid-template-columns:auto minmax(0,1fr);
-  gap:clamp(18px,2.2vw,28px);
-  align-items:start;
-  padding:clamp(22px,2.4vw,30px);
-  border-radius:18px;
-  background:rgba(255,255,255,.04);
-  border:1px solid rgba(255,255,255,.14);
+.assure-kind{color:var(--blue-lift);}
+.assure-dot{
+  width:7px;height:7px;
+  border-radius:50%;
+  background:var(--blue);
+  flex:none;
 }
-.baseline-tag{
+.assure-figure{
   font-family:var(--display);
   font-weight:600;
+  font-size:clamp(34px,3.8vw,56px);
+  line-height:1;
+  letter-spacing:-0.032em;
+  color:#fff;
+  margin:0 0 clamp(14px,1.5vw,20px);
+  font-variant-numeric:tabular-nums;
+}
+/* One tile carries the accent, the last one, because it is the promise the
+   other three exist to support. */
+.assure--key{
+  border-color:var(--blue-hair-lit);
+  background:linear-gradient(160deg,rgba(0,100,255,.16),rgba(0,100,255,.03));
+}
+.assure--key .assure-figure{color:var(--blue-lift);}
+.assure-name{
+  font-family:var(--display);
+  font-weight:600;
+  font-size:15.5px;
+  line-height:1.26;
+  letter-spacing:-0.01em;
+  color:#fff;
+  margin:0 0 10px;
+}
+.assure-note{
+  font-size:13.5px;
+  line-height:1.58;
+  color:rgba(255,255,255,.6);
+  margin:0;
+}
+
+/* ============ WHY ROI REMAINS UNSOLVED — systems diagnosis ============
+   Approved layout: headline left with a supporting note right, then one panel
+   holding the pilot/production pair either side of a chasm badge, the five
+   friction points as a row of five, and the precondition axiom underneath. */
+.unsolved{padding:clamp(84px,8.4vw,128px) 0 clamp(96px,9.6vw,144px);}
+.diag-head{
+  display:grid;
+  grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);
+  column-gap:clamp(36px,5vw,88px);
+  align-items:start;
+  margin-bottom:clamp(44px,4.6vw,68px);
+}
+.diag-eyebrow{
+  display:block;
+  color:var(--blue-lift);
+  margin-bottom:clamp(16px,1.8vw,24px);
+}
+.diag-title{
+  font-family:var(--display);
+  font-weight:600;
+  font-size:clamp(30px,3.7vw,54px);
+  line-height:1.14;
+  letter-spacing:-0.026em;
+  color:#fff;
+  margin:0;
+}
+.diag-note{
+  font-size:clamp(15.5px,1.35vw,17.5px);
+  line-height:1.62;
+  color:rgba(255,255,255,.68);
+  margin:clamp(8px,1vw,14px) 0 0;
+}
+
+/* ---- the chasm: pilot | badge | production ---- */
+.chasm{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+  /* Stretch, not centre: the two flanks carry different amounts of copy and
+     centring left one card visibly shorter than the other. */
+  align-items:stretch;
+  gap:clamp(18px,2.4vw,36px);
+  padding:clamp(24px,2.8vw,40px);
+}
+.side{
+  display:flex;
+  flex-direction:column;
+  padding:clamp(22px,2.4vw,32px);
+}
+/* The meter sits on the floor of the card whatever the copy above it does. */
+.side .meter{margin-top:auto;padding-top:clamp(20px,2.2vw,30px);}
+.side-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:clamp(16px,1.8vw,24px);
+}
+.side-kind{color:var(--blue-lift);}
+/* Both flanks are marked, and marked the same: the mock gave one an amber
+   glyph and the other a green one, which would read as good and bad. The
+   difference between them is what the copy says, not a colour. */
+.side-mark{
+  width:11px;height:11px;
+  border-radius:3px;
+  background:var(--blue);
+  transform:rotate(45deg);
+  flex:none;
+}
+.side--pilot .side-mark{
+  background:transparent;
+  border:1.5px solid var(--blue-24);
+}
+.side-name{
+  font-family:var(--display);
+  font-weight:600;
+  font-size:clamp(19px,1.8vw,25px);
+  letter-spacing:-0.014em;
+  color:#fff;
+  margin:0 0 clamp(10px,1.2vw,15px);
+}
+.side-note{
+  font-size:15px;
+  line-height:1.62;
+  color:rgba(255,255,255,.66);
+  margin:0;
+}
+/* A meter, not a chart: one bar on a shared track, so the two read against
+   the same scale rather than as two unrelated statistics. */
+.meter{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-top:clamp(20px,2.2vw,30px);
+}
+.meter-track{
+  position:relative;
+  flex:1 1 auto;
+  height:3px;
+  border-radius:2px;
+  background:rgba(139,186,255,.14);
+  overflow:hidden;
+}
+.meter-fill{
+  position:absolute;
+  inset:0 auto 0 0;
+  border-radius:2px;
+  background:linear-gradient(90deg,var(--blue-strong),var(--blue));
+}
+.side--pilot .meter-fill{background:var(--blue-24);}
+.meter-read{
+  font-family:var(--mono);
   font-size:11.5px;
-  letter-spacing:.13em;
-  text-transform:uppercase;
+  letter-spacing:.06em;
   color:var(--blue-lift);
   white-space:nowrap;
-  padding-top:5px;
+  flex:none;
 }
-.baseline-note p{margin:0;font-size:16.5px;line-height:1.7;color:rgba(255,255,255,.85);text-wrap:pretty;}
-.baseline-note strong{color:#fff;font-weight:600;}
+.chasm-badge{
+  align-self:center;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:14px;
+}
+.chasm-ring{
+  display:grid;
+  place-items:center;
+  width:60px;height:60px;
+  border-radius:50%;
+  border:1px solid var(--blue-hair-lit);
+  background:radial-gradient(circle,rgba(0,100,255,.34),rgba(0,100,255,0) 72%);
+  color:var(--blue-lift);
+}
+.chasm-ring svg{width:22px;height:22px;}
+.chasm-badge .mono{color:var(--blue-lift);text-align:center;}
 
-/* ============ WHAT IT INVOLVES ============
-   A numbered accordion: six moves, one open at a time. */
-.steps-list{display:flex;flex-direction:column;gap:12px;}
-.step{
-  border:1px solid var(--paper-line);
+/* ---- the five friction points ---- */
+.friction{padding:0 clamp(24px,2.8vw,40px) clamp(28px,3vw,42px);}
+.friction > .mono{
+  display:block;
+  /* .42 measured 3.94:1 against the panel — under the 4.5:1 this size needs. */
+  color:rgba(255,255,255,.56);
+  margin:clamp(26px,2.8vw,38px) 0 clamp(16px,1.8vw,22px);
+}
+.friction-grid{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:clamp(10px,1vw,14px);
+}
+.fp{padding:clamp(16px,1.7vw,22px);}
+.fp-tag{
+  display:block;
+  margin-bottom:12px;
+  /* One hue, stepping lighter to deeper across the five. They are ordered
+     01-05, so a sequential ramp encodes something real; five separate hues
+     would imply five unrelated categories. The ramp stops at #4b90ff rather
+     than running down to --blue: #0064ff measured 3.69:1 on this card, and
+     these tags are 11.5px. */
+  color:var(--fp,var(--blue-lift));
+}
+.fp-tag b{font-weight:400;color:rgba(255,255,255,.5);}
+.fp-name{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  font-family:var(--display);
+  font-weight:600;
+  font-size:15.5px;
+  line-height:1.24;
+  letter-spacing:-0.01em;
+  color:#fff;
+  margin:0 0 10px;
+}
+.fp-mark{
+  width:7px;height:7px;
+  border-radius:2px;
+  background:var(--fp,var(--blue));
+  transform:rotate(45deg);
+  flex:none;
+}
+.fp-note{
+  font-size:13.5px;
+  line-height:1.55;
+  color:rgba(255,255,255,.6);
+  margin:0;
+}
+
+/* ---- the precondition axiom ---- */
+.axiom{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:clamp(22px,3vw,44px);
+  margin:clamp(20px,2.2vw,30px) clamp(24px,2.8vw,40px) clamp(24px,2.8vw,40px);
+  padding:clamp(26px,2.8vw,38px);
+  border:1px solid var(--blue-hair-lit);
   border-radius:16px;
-  background:var(--paper);
-  transition:background .22s ease, border-color .22s ease, box-shadow .22s ease;
+  background:linear-gradient(102deg,rgba(0,100,255,.14),rgba(0,100,255,.04));
 }
-.step[open]{
-  background:var(--blue-06);
-  border-color:var(--blue);
-  box-shadow:0 14px 40px rgba(0,100,255,.11);
+.axiom-tag{display:block;color:var(--blue-lift);margin-bottom:16px;}
+.axiom-quote{
+  font-family:var(--display);
+  font-weight:300;
+  font-size:clamp(19px,1.9vw,27px);
+  line-height:1.34;
+  letter-spacing:-0.016em;
+  color:#fff;
+  margin:0;
 }
-.step summary{
+.axiom-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  flex:none;
+  padding:13px 22px;
+  border-radius:999px;
+  background:var(--blue);
+  color:#fff;
+  font-family:var(--mono);
+  font-size:11.5px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  white-space:nowrap;
+  transition:background .25s ease;
+}
+.axiom-pill:hover{background:#fff;color:var(--blue-strong);}
+.axiom-pill .pip{background:currentColor;border-radius:50%;}
+
+/* ============ WHAT IT INVOLVES — execution methodology ============
+   Approved layout: six moves listed down the left, the selected move expanded
+   in a detail pane on the right. The list is a set of radio-driven tabs, so it
+   works with the keyboard and without pointer hover, and the pane's height is
+   reserved so selecting a longer move cannot shunt the page.
+   The mock tinted every gate, glyph and field label a different hue; here they
+   are all mono in one blue, and the selected move is the only thing that
+   changes colour. */
+.involves{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  padding:clamp(84px,8.4vw,128px) 0 clamp(96px,9.6vw,144px);
+  background:var(--blue-panel);
+  color:#fff;
+}
+.method-head{margin-bottom:clamp(44px,4.6vw,68px);}
+.method-eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  color:var(--blue-lift);
+  margin-bottom:clamp(16px,1.8vw,24px);
+}
+.method-title{
+  font-family:var(--display);
+  font-weight:600;
+  font-size:clamp(30px,3.7vw,54px);
+  line-height:1.12;
+  letter-spacing:-0.026em;
+  color:#fff;
+  margin:0;
+}
+.method-sub{
+  font-size:clamp(15.5px,1.35vw,17.5px);
+  line-height:1.62;
+  color:rgba(255,255,255,.68);
+  max-width:62ch;
+  margin:clamp(14px,1.6vw,22px) 0 0;
+}
+/* The radios and the detail pane have to be siblings for :checked ~ .stages
+   to reach the pane, so the fieldset IS the two-column grid rather than
+   wrapping a list inside one column. Rows are declared explicitly because
+   grid-row:1/-1 resolves against explicit lines only — with implicit rows the
+   pane collapses onto row 1. */
+.method{
+  display:grid;
+  grid-template-columns:minmax(0,.82fr) minmax(0,1.5fr);
+  grid-template-rows:repeat(6,auto);
+  column-gap:clamp(18px,2.2vw,34px);
+  row-gap:clamp(8px,.85vw,12px);
+  align-items:start;
+  margin:0;
+  padding:0;
+  border:0;
+  min-width:0;
+}
+.method legend{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);}
+.move{grid-column:1;}
+.stages{grid-column:2;grid-row:1 / -1;}
+.move-radio{position:absolute;opacity:0;pointer-events:none;}
+.move{
   display:grid;
   grid-template-columns:auto minmax(0,1fr) auto;
-  gap:clamp(14px,1.8vw,24px);
   align-items:center;
-  padding:20px clamp(18px,2.2vw,26px);
+  gap:clamp(12px,1.3vw,18px);
+  padding:clamp(14px,1.5vw,19px) clamp(14px,1.5vw,20px);
+  border:1px solid var(--blue-hair);
+  border-radius:13px;
+  background:var(--blue-card);
   cursor:pointer;
-  list-style:none;
+  transition:border-color .25s ease, background .25s ease;
 }
-.step summary::-webkit-details-marker{display:none;}
-.step-index{
+.move:hover{border-color:var(--blue-hair-lit);}
+.move-num{
+  display:grid;
+  place-items:center;
+  width:34px;height:34px;
+  border-radius:9px;
+  background:rgba(139,186,255,.09);
+  color:rgba(255,255,255,.45);
+  font-family:var(--mono);
+  font-size:12px;
+  letter-spacing:.04em;
+  transition:background .25s ease, color .25s ease;
+}
+.move-name{
   font-family:var(--display);
   font-weight:600;
-  font-size:12.5px;
+  font-size:clamp(15px,1.3vw,17px);
+  line-height:1.24;
+  letter-spacing:-0.012em;
+  color:#fff;
+  display:block;
+}
+.move-hint{
+  display:block;
+  font-size:13px;
+  line-height:1.45;
+  color:rgba(255,255,255,.55);
+  margin-top:4px;
+}
+.move-chev{
+  width:16px;height:16px;
+  color:rgba(255,255,255,.32);
+  transition:color .25s ease, transform .25s ease;
+}
+.move:hover .move-chev{color:var(--blue-lift);transform:translateX(2px);}
+/* The selected move. :checked is on the input, so the label is styled through
+   the sibling combinator — which is why every input precedes its label. */
+.move-radio:checked + .move{
+  border-color:var(--blue);
+  background:linear-gradient(102deg,rgba(0,100,255,.22),rgba(0,100,255,.07));
+}
+.move-radio:checked + .move .move-num{background:var(--blue);color:#fff;}
+.move-radio:checked + .move .move-hint{color:var(--blue-lift);}
+.move-radio:checked + .move .move-chev{color:var(--blue-lift);}
+.move-radio:focus-visible + .move{outline:2px solid var(--blue-lift);outline-offset:2px;}
+
+/* ---- the detail pane ---- */
+.stages{position:relative;min-width:0;align-self:stretch;}
+.stage{
+  display:none;
+  padding:clamp(24px,2.6vw,38px);
+}
+/* Each input controls the pane with the matching index. Written out rather
+   than generated because CSS has no arithmetic across siblings. */
+#mv1:checked ~ .stages .stage-1,
+#mv2:checked ~ .stages .stage-2,
+#mv3:checked ~ .stages .stage-3,
+#mv4:checked ~ .stages .stage-4,
+#mv5:checked ~ .stages .stage-5,
+#mv6:checked ~ .stages .stage-6{display:block;}
+.stage-top{
+  display:flex;
+  align-items:center;
+  gap:clamp(12px,1.4vw,20px);
+  flex-wrap:wrap;
+}
+.stage-badge{
+  padding:8px 13px;
+  border-radius:8px;
+  background:var(--blue);
+  color:#fff;
+  font-family:var(--mono);
+  font-size:11.5px;
   letter-spacing:.1em;
-  color:var(--blue);
+  text-transform:uppercase;
   white-space:nowrap;
 }
-.step-name{
+.stage-gate{color:var(--blue-lift);white-space:nowrap;}
+.stage-glyph{
+  margin-left:auto;
+  display:grid;
+  place-items:center;
+  width:44px;height:44px;
+  border-radius:11px;
+  border:1px solid var(--blue-hair-lit);
+  color:var(--blue-lift);
+  font-family:var(--mono);
+  font-size:16px;
+  flex:none;
+}
+.stage-top + .hair{margin:clamp(20px,2.2vw,30px) 0;}
+.stage-name{
+  font-family:var(--display);
+  font-weight:600;
+  font-size:clamp(22px,2.2vw,32px);
+  line-height:1.16;
+  letter-spacing:-0.02em;
+  color:#fff;
+  margin:0 0 clamp(14px,1.5vw,20px);
+}
+.stage-body{
+  font-size:clamp(15px,1.35vw,17px);
+  line-height:1.64;
+  color:rgba(255,255,255,.74);
+  margin:0 0 clamp(22px,2.4vw,32px);
+}
+.stage-fields{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:clamp(12px,1.2vw,18px);
+}
+.field{padding:clamp(16px,1.7vw,22px);border-radius:12px;}
+.field-label{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  color:var(--blue-lift);
+  margin-bottom:12px;
+}
+.field-value{
   font-family:var(--display);
   font-weight:500;
-  font-size:clamp(16.5px,1.6vw,21px);
-  line-height:1.3;
-  letter-spacing:-0.01em;
-  color:var(--ink);
-}
-.step[open] .step-name{color:var(--blue-strong);font-weight:600;}
-.step-toggle{
-  position:relative;
-  width:34px;height:34px;
-  border-radius:50%;
-  background:var(--paper-dim);
-  flex:none;
-  transition:background .22s ease;
-}
-.step-toggle::before{
-  content:"";
-  position:absolute;
-  left:50%;top:50%;
-  width:8px;height:8px;
-  border-right:2px solid var(--ink);
-  border-bottom:2px solid var(--ink);
-  transform:translate(-50%,-70%) rotate(45deg);
-  transition:transform .25s ease, border-color .22s ease;
-}
-.step[open] .step-toggle{background:var(--blue);}
-.step[open] .step-toggle::before{
-  border-color:#fff;
-  transform:translate(-50%,-30%) rotate(225deg);
-}
-.step p{
+  font-size:14.5px;
+  line-height:1.42;
+  letter-spacing:-0.008em;
+  color:#fff;
   margin:0;
-  padding:0 clamp(18px,2.2vw,26px) 24px calc(clamp(18px,2.2vw,26px) + 44px);
-  font-size:16.5px;
-  line-height:1.72;
-  color:var(--ink);
-  max-width:74ch;
-  text-wrap:pretty;
 }
+.stage-foot{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:clamp(16px,2vw,28px);
+  flex-wrap:wrap;
+  margin-top:clamp(20px,2.2vw,30px);
+}
+.signoff{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color:var(--blue-lift);
+  min-width:0;
+}
+.signoff span:last-child{text-transform:none;letter-spacing:.04em;}
+.stage-go{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  font-family:var(--display);
+  font-weight:600;
+  font-size:14.5px;
+  color:var(--blue-lift);
+  white-space:nowrap;
+  transition:color .22s ease, gap .22s ease;
+}
+.stage-go:hover{color:#fff;gap:12px;}
+.stage-go svg{width:15px;height:15px;}
 
 /* ============ THE METRIC LADDER ============
    Five gaps across one rail. The engineered ones are filled; the commercial
@@ -972,6 +1413,38 @@ footer{
   color:rgba(255,255,255,0.35);
 }
 
+/* ============ RESPONSIVE — dark chapter ============ */
+@media (max-width:1200px){
+  .friction-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+}
+@media (max-width:1080px){
+  /* The pane no longer fits beside the list: the grid collapses to one column
+     and the pane, being the last child, falls in under the six moves. Both the
+     column and the row span have to be released or it stays pinned right. */
+  .method{grid-template-columns:minmax(0,1fr);grid-template-rows:none;}
+  .move{grid-column:auto;}
+  .stages{grid-column:auto;grid-row:auto;margin-top:clamp(14px,2vw,22px);}
+  .assurances-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+@media (max-width:900px){
+  .diag-head{grid-template-columns:minmax(0,1fr);row-gap:clamp(18px,3vw,26px);}
+  /* The badge sits between the flanks rather than beside them once they stack,
+     so it takes its own row and the label reads as a divider. */
+  .chasm{grid-template-columns:minmax(0,1fr);}
+  .chasm-badge{flex-direction:row;gap:16px;padding:6px 0;}
+  .axiom{grid-template-columns:minmax(0,1fr);}
+  .friction-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+}
+@media (max-width:620px){
+  .assurances-grid,
+  .friction-grid,
+  .stage-fields{grid-template-columns:minmax(0,1fr);}
+  .stage-glyph{margin-left:0;}
+  .stage-foot{align-items:flex-start;flex-direction:column;gap:14px;}
+  .move{grid-template-columns:auto minmax(0,1fr);}
+  .move-chev{display:none;}
+}
+
 /* ============ RESPONSIVE ============ */
 @media (max-width:960px){
   .wrap{padding:0 24px;}
@@ -1078,97 +1551,362 @@ footer{
   </div>
 </section>
 
-<section class="unsolved band-dark">
+<section class="assurances">
+  <span class="grid-tex" aria-hidden="true"></span>
   <div class="wrap">
-    <div class="section-head">
-      <span class="section-eyebrow">why ROI from AI remains unsolved</span>
-      <h2 class="section-title section-title-wide"><span class="dim">Most enterprises now have AI in production somewhere.</span> Far fewer can attribute a change in their financial results to it.</h2>
-      <p class="section-sub">Pilots are optimised for demonstration. Production is optimised for reliability, exception handling, integration and human trust. The distance between them is not a modelling problem.</p>
-    </div>
-    <div class="gap-panel">
-      <div class="gap-end">
-        <span class="gap-label">the pilot</span>
-        <p class="gap-note">Optimised for demonstration.</p>
-      </div>
-      <div class="gap-middle">
-        <span class="gap-middle-label">five problems, usually all at once</span>
-        <div class="blockers">
-          <span class="blocker">a process problem</span>
-          <span class="blocker">a data problem</span>
-          <span class="blocker">a platform problem</span>
-          <span class="blocker">an operating model problem</span>
-          <span class="blocker">an adoption problem</span>
+    <div class="assurances-grid">
+      <div class="assure card-dark">
+        <div class="assure-top">
+          <span class="assure-kind mono">precondition sla</span>
+          <span class="assure-dot" aria-hidden="true"></span>
         </div>
-        <p class="gap-caption">No single one of them can be solved in isolation.</p>
+        <p class="assure-figure">100%</p>
+        <h3 class="assure-name">Locked Baseline Precondition</h3>
+        <p class="assure-note">No build begins without cryptographically signed pre-deployment telemetry.</p>
       </div>
-      <div class="gap-end gap-end-goal">
-        <span class="gap-label">production</span>
-        <p class="gap-note">Optimised for reliability, exception handling, integration and human trust.</p>
+      <div class="assure card-dark">
+        <div class="assure-top">
+          <span class="assure-kind mono">speed attainment</span>
+          <span class="assure-dot" aria-hidden="true"></span>
+        </div>
+        <p class="assure-figure">70.2%</p>
+        <h3 class="assure-name">Avg. Cycle Velocity Gain</h3>
+        <p class="assure-note">Measured latency reduction across multi-tier enterprise ship-to-cash pipelines.</p>
+      </div>
+      <div class="assure card-dark">
+        <div class="assure-top">
+          <span class="assure-kind mono">global coverage</span>
+          <span class="assure-dot" aria-hidden="true"></span>
+        </div>
+        <p class="assure-figure">11 Hubs</p>
+        <h3 class="assure-name">Forward-Deployed Squads</h3>
+        <p class="assure-note">Sovereign cloud &amp; autonomous agent centres operating across 11 nations.</p>
+      </div>
+      <div class="assure card-dark assure--key">
+        <div class="assure-top">
+          <span class="assure-kind mono">roi accountability</span>
+          <span class="assure-dot" aria-hidden="true"></span>
+        </div>
+        <p class="assure-figure">$0 Pilot</p>
+        <h3 class="assure-name">Verified Attributed ROI</h3>
+        <p class="assure-note">Zero throwaway sandboxes; every dollar tied directly to a shifted operational number.</p>
       </div>
     </div>
-    <div class="baseline-note">
-      <span class="baseline-tag">the second reason</span>
-      <p>When no baseline is agreed before work starts, there is no way to prove what changed afterwards, so value becomes a matter of assertion. <strong>Searce treats the baseline as a precondition rather than a reporting exercise.</strong></p>
+  </div>
+</section>
+
+<section class="unsolved band-dark">
+  <span class="grid-tex" aria-hidden="true"></span>
+  <div class="wrap">
+
+    <div class="diag-head">
+      <div>
+        <span class="diag-eyebrow mono">systems diagnosis</span>
+        <h2 class="diag-title">Most enterprises have AI in production somewhere. Far fewer can attribute a change in their financial results to it.</h2>
+      </div>
+      <p class="diag-note">Pilots are optimised for demonstration. Production is optimised for reliability, exception handling, integration and human trust. The distance between them is not a modelling problem.</p>
+    </div>
+
+    <div class="panel">
+      <span class="grid-tex" aria-hidden="true"></span>
+
+      <div class="chasm">
+        <div class="side side--pilot card-dark">
+          <div class="side-top">
+            <span class="side-kind mono">the sandbox illusion</span>
+            <span class="side-mark" aria-hidden="true"></span>
+          </div>
+          <h3 class="side-name">The Pilot</h3>
+          <p class="side-note">Operates on sanitised, static extracts. Bypasses enterprise edge cases, security audits, and latency constraints. Demonstrates 95% accuracy in a vacuum, with 90% failure to attribute ROI once exposed to dirty operational reality.</p>
+          <div class="meter">
+            <span class="meter-track"><span class="meter-fill" style="width:95%"></span></span>
+            <span class="meter-read">95% sandbox</span>
+          </div>
+        </div>
+
+        <div class="chasm-badge">
+          <span class="chasm-ring" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 8 5 12l4 4"/><path d="M15 8l4 4-4 4"/></svg></span>
+          <span class="mono">the 5-point chasm</span>
+        </div>
+
+        <div class="side side--prod card-dark">
+          <div class="side-top">
+            <span class="side-kind mono">operational sovereign reality</span>
+            <span class="side-mark" aria-hidden="true"></span>
+          </div>
+          <h3 class="side-name">Production Enterprise</h3>
+          <p class="side-note">Must guarantee 99.99% reliability, continuous exception routing, SOC2/HIPAA compliance, WORM data immutability, and full human psychological trust across critical enterprise workloads.</p>
+          <div class="meter">
+            <span class="meter-track"><span class="meter-fill" style="width:99.99%"></span></span>
+            <span class="meter-read">99.99% SLA</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="friction">
+        <hr class="hair">
+        <span class="mono">the five simultaneous friction points</span>
+        <div class="friction-grid">
+        <div class="fp card-dark" style="--fp:var(--blue-lift)">
+          <span class="fp-tag mono">01 <b>/ PROCESS</b></span>
+          <h3 class="fp-name">Process Fracture<span class="fp-mark" aria-hidden="true"></span></h3>
+          <p class="fp-note">Informal tribal workarounds that defy official ERP SOPs and break model pipelines.</p>
+        </div>
+        <div class="fp card-dark" style="--fp:#7aaeff">
+          <span class="fp-tag mono">02 <b>/ DATA</b></span>
+          <h3 class="fp-name">Data Lineage Decay<span class="fp-mark" aria-hidden="true"></span></h3>
+          <p class="fp-note">Dirty transaction schemas, silent semantic drift, and unsynchronised data pipelines.</p>
+        </div>
+        <div class="fp card-dark" style="--fp:#69a2ff">
+          <span class="fp-tag mono">03 <b>/ PLATFORM</b></span>
+          <h3 class="fp-name">Platform Rigidity<span class="fp-mark" aria-hidden="true"></span></h3>
+          <p class="fp-note">Brittle cloud wrappers lacking auto-recovery, telemetry buffers, and state persistence.</p>
+        </div>
+        <div class="fp card-dark" style="--fp:#5896ff">
+          <span class="fp-tag mono">04 <b>/ OPERATING</b></span>
+          <h3 class="fp-name">Incentive Inertia<span class="fp-mark" aria-hidden="true"></span></h3>
+          <p class="fp-note">Departmental KPIs that penalise teams for automated deviations or cycle compressions.</p>
+        </div>
+        <div class="fp card-dark" style="--fp:#4b90ff">
+          <span class="fp-tag mono">05 <b>/ ADOPTION</b></span>
+          <h3 class="fp-name">Human Disconnect<span class="fp-mark" aria-hidden="true"></span></h3>
+          <p class="fp-note">Silent abandonment when autonomous AI suggestions contradict clinician or analyst instincts.</p>
+        </div>
+        </div>
+      </div>
+
+      <div class="axiom">
+        <div>
+          <span class="axiom-tag mono">the immutable searce precondition axiom</span>
+          <p class="axiom-quote">&ldquo;Without a locked baseline before work begins, value is mere assertion. We refuse to build without one.&rdquo;</p>
+        </div>
+        <a class="axiom-pill" href="#"><span class="pip" aria-hidden="true"></span>zero poc theater</a>
+      </div>
+
     </div>
   </div>
 </section>
 
 <section class="involves">
+  <span class="grid-tex" aria-hidden="true"></span>
   <div class="wrap">
-    <div class="section-head">
-      <span class="section-eyebrow">what it actually involves</span>
-      <h2 class="section-title">Six moves, in order, every time.</h2>
+
+    <div class="method-head">
+      <span class="method-eyebrow mono"><span class="pip" aria-hidden="true"></span>execution methodology</span>
+      <h2 class="method-title">Six moves. In order. Every single time.</h2>
+      <p class="method-sub">Our delivery methodology is a rigid state machine. Each move produces verified mechanical deliverables before execution is permitted to advance to the next gate.</p>
     </div>
-    <div class="steps-list" id="stepsList">
-      <details class="step" name="steps" open>
-        <summary>
-          <span class="step-index">01</span>
-          <span class="step-name">Starting from the number</span>
-          <span class="step-toggle" aria-hidden="true"></span>
-        </summary>
-        <p>Every Searce engagement begins with a business metric the client agrees should be dramatically better: a cycle time, a cost per transaction, a conversion rate, an error rate, a days-outstanding figure.</p>
-      </details>
-      <details class="step" name="steps">
-        <summary>
-          <span class="step-index">02</span>
-          <span class="step-name">Working backwards into the process</span>
-          <span class="step-toggle" aria-hidden="true"></span>
-        </summary>
-        <p>Searce maps the process as it actually runs, using event logs, ticket flows, system telemetry and document trails rather than workshop diagrams. What people describe and what the logs show are usually different processes.</p>
-      </details>
-      <details class="step" name="steps">
-        <summary>
-          <span class="step-index">03</span>
-          <span class="step-name">Building the metric ladder</span>
-          <span class="step-toggle" aria-hidden="true"></span>
-        </summary>
-        <p>The headline number is decomposed into the chain of steps that produce it, so it becomes clear which gaps are engineered and which are commercial.</p>
-      </details>
-      <details class="step" name="steps">
-        <summary>
-          <span class="step-index">04</span>
-          <span class="step-name">Locking the baseline</span>
-          <span class="step-toggle" aria-hidden="true"></span>
-        </summary>
-        <p>The current value of each gap is computed from the client&rsquo;s own systems, agreed in writing, and sealed with a date before any build begins.</p>
-      </details>
-      <details class="step" name="steps">
-        <summary>
-          <span class="step-index">05</span>
-          <span class="step-name">Engineering the change</span>
-          <span class="step-toggle" aria-hidden="true"></span>
-        </summary>
-        <p>Whatever moves the number: process redesign, systems rebuilt, agents deployed, platform modernised, people retrained, guardrails built. Searce squads carry all four capabilities.</p>
-      </details>
-      <details class="step" name="steps">
-        <summary>
-          <span class="step-index">06</span>
-          <span class="step-name">Verifying the reading</span>
-          <span class="step-toggle" aria-hidden="true"></span>
-        </summary>
-        <p>At the end, the same measurement is recomputed against the same sources and presented with the client rather than to them.</p>
-      </details>
-    </div>
+
+    <fieldset class="method" id="moveList">
+      <legend>Choose a move to expand</legend>
+        <input class="move-radio" type="radio" name="move" id="mv1" checked>
+        <label class="move" for="mv1">
+          <span class="move-num">01</span>
+          <span>
+            <span class="move-name">Starting from the number</span>
+            <span class="move-hint">Agree on a singular, high-stakes operational metric</span>
+          </span>
+          <svg class="move-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+        </label>
+        <input class="move-radio" type="radio" name="move" id="mv2">
+        <label class="move" for="mv2">
+          <span class="move-num">02</span>
+          <span>
+            <span class="move-name">Working backwards into the process</span>
+            <span class="move-hint">Mine live logs and telemetry rather than interview diagrams</span>
+          </span>
+          <svg class="move-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+        </label>
+        <input class="move-radio" type="radio" name="move" id="mv3">
+        <label class="move" for="mv3">
+          <span class="move-num">03</span>
+          <span>
+            <span class="move-name">Building the metric ladder</span>
+            <span class="move-hint">Decompose macro KPIs into engineered vs commercial steps</span>
+          </span>
+          <svg class="move-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+        </label>
+        <input class="move-radio" type="radio" name="move" id="mv4">
+        <label class="move" for="mv4">
+          <span class="move-num">04</span>
+          <span>
+            <span class="move-name">Locking the baseline</span>
+            <span class="move-hint">Compute value from live tables &amp; seal cryptographically</span>
+          </span>
+          <svg class="move-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+        </label>
+        <input class="move-radio" type="radio" name="move" id="mv5">
+        <label class="move" for="mv5">
+          <span class="move-num">05</span>
+          <span>
+            <span class="move-name">Engineering the change</span>
+            <span class="move-hint">Deploy autonomous agent squads, platform refactors &amp; guardrails</span>
+          </span>
+          <svg class="move-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+        </label>
+        <input class="move-radio" type="radio" name="move" id="mv6">
+        <label class="move" for="mv6">
+          <span class="move-num">06</span>
+          <span>
+            <span class="move-name">Verifying the reading</span>
+            <span class="move-hint">Recompute against original telemetry and present with client</span>
+          </span>
+          <svg class="move-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+        </label>
+      <div class="stages panel" id="stageBox">
+        <div class="stage stage-1">
+          <div class="stage-top">
+            <span class="stage-badge">stage 01</span>
+            <span class="stage-gate mono">gate: pre-build charter</span>
+            <span class="stage-glyph" aria-hidden="true">&#9873;</span>
+          </div>
+          <hr class="hair">
+          <h3 class="stage-name">Starting from the number</h3>
+          <p class="stage-body">Every Searce engagement begins with a business metric the client agrees must be dramatically better: a cycle time, a cost per transaction, a conversion rate, an error rate, or a days-outstanding figure. We refuse to start from &lsquo;We need an LLM.&rsquo;</p>
+          <div class="stage-fields">
+            <div class="field card-dark">
+              <span class="field-label mono"><span class="pip" aria-hidden="true"></span>key deliverable</span>
+              <p class="field-value">Outcome Definition Document (ODD) with named executive sponsor</p>
+            </div>
+            <div class="field card-dark">
+              <span class="field-label mono"><span class="pip" aria-hidden="true"></span>telemetry inputs</span>
+              <p class="field-value">ERP ledgers, CRM pipeline snapshots, and billing journals</p>
+            </div>
+          </div>
+          <hr class="hair" style="margin-top:clamp(20px,2.2vw,30px)">
+          <div class="stage-foot">
+            <span class="signoff mono"><span class="pip" aria-hidden="true"></span><span>Sign-off: Client CFO/CTO countersignature required</span></span>
+            <a class="stage-go" href="#">Initiate this move <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></a>
+          </div>
+        </div>
+        <div class="stage stage-2">
+          <div class="stage-top">
+            <span class="stage-badge">stage 02</span>
+            <span class="stage-gate mono">gate: process reality mapping</span>
+            <span class="stage-glyph" aria-hidden="true">&#11041;</span>
+          </div>
+          <hr class="hair">
+          <h3 class="stage-name">Working backwards into the process</h3>
+          <p class="stage-body">Searce maps the workflow as it genuinely executes in the wild &mdash; using event logs, ticket flows, system telemetry, and document audit trails rather than sanitised workshop diagrams. What people describe and what the production logs prove are fundamentally divergent realities.</p>
+          <div class="stage-fields">
+            <div class="field card-dark">
+              <span class="field-label mono"><span class="pip" aria-hidden="true"></span>key deliverable</span>
+              <p class="field-value">Process Telemetry Heatmap &amp; Dark Matter Topology</p>
+            </div>
+            <div class="field card-dark">
+              <span class="field-label mono"><span class="pip" aria-hidden="true"></span>telemetry inputs</span>
+              <p class="field-value">Kafka queues, Datadog traces, and SAP/Salesforce audit logs</p>
+            </div>
+          </div>
+          <hr class="hair" style="margin-top:clamp(20px,2.2vw,30px)">
+          <div class="stage-foot">
+            <span class="signoff mono"><span class="pip" aria-hidden="true"></span><span>Sign-off: Algorithmic path reconciliation against log stores</span></span>
+            <a class="stage-go" href="#">Initiate this move <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></a>
+          </div>
+        </div>
+        <div class="stage stage-3">
+          <div class="stage-top">
+            <span class="stage-badge">stage 03</span>
+            <span class="stage-gate mono">gate: metric attribution</span>
+            <span class="stage-glyph" aria-hidden="true">&#8673;</span>
+          </div>
+          <hr class="hair">
+          <h3 class="stage-name">Building the metric ladder</h3>
+          <p class="stage-body">The headline macro number is systematically decomposed into the discrete chain of micro-steps that produce it. This isolates which operational bottlenecks are engineered and which gaps are purely contractual or commercial schedules.</p>
+          <div class="stage-fields">
+            <div class="field card-dark">
+              <span class="field-label mono"><span class="pip" aria-hidden="true"></span>key deliverable</span>
+              <p class="field-value">Multi-Tier Metric Ladder Architecture Matrix</p>
+            </div>
+            <div class="field card-dark">
+              <span class="field-label mono"><span class="pip" aria-hidden="true"></span>telemetry inputs</span>
+              <p class="field-value">Step-level execution timers, human review handoff logs</p>
+            </div>
+          </div>
+          <hr class="hair" style="margin-top:clamp(20px,2.2vw,30px)">
+          <div class="stage-foot">
+            <span class="signoff mono"><span class="pip" aria-hidden="true"></span><span>Sign-off: Mechanical attribution consensus with VP Operations</span></span>
+            <a class="stage-go" href="#">Initiate this move <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></a>
+          </div>
+        </div>
+        <div class="stage stage-4">
+          <div class="stage-top">
+            <span class="stage-badge">stage 04</span>
+            <span class="stage-gate mono">gate: immutable seal</span>
+            <span class="stage-glyph" aria-hidden="true">&#128274;</span>
+          </div>
+          <hr class="hair">
+          <h3 class="stage-name">Locking the baseline</h3>
+          <p class="stage-body">The current value of each operational gap is computed directly from live client systems, agreed upon in writing by stakeholder leadership, and sealed with a cryptographic timestamp before a single line of production code is written.</p>
+          <div class="stage-fields">
+            <div class="field card-dark">
+              <span class="field-label mono"><span class="pip" aria-hidden="true"></span>key deliverable</span>
+              <p class="field-value">Sealed Baseline Certificate (SHA-256 Digest)</p>
+            </div>
+            <div class="field card-dark">
+              <span class="field-label mono"><span class="pip" aria-hidden="true"></span>telemetry inputs</span>
+              <p class="field-value">90-day unedited database historical snapshots</p>
+            </div>
+          </div>
+          <hr class="hair" style="margin-top:clamp(20px,2.2vw,30px)">
+          <div class="stage-foot">
+            <span class="signoff mono"><span class="pip" aria-hidden="true"></span><span>Sign-off: Cryptographic hash lock signed by joint leadership</span></span>
+            <a class="stage-go" href="#">Initiate this move <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></a>
+          </div>
+        </div>
+        <div class="stage stage-5">
+          <div class="stage-top">
+            <span class="stage-badge">stage 05</span>
+            <span class="stage-gate mono">gate: production deployment</span>
+            <span class="stage-glyph" aria-hidden="true">&#9881;</span>
+          </div>
+          <hr class="hair">
+          <h3 class="stage-name">Engineering the change</h3>
+          <p class="stage-body">Whatever moves the number: autonomous agents deployed, database pipelines re-architected, state engines modernised, legacy apps containerised, and operational guardrails embedded. Forward-deployed squads carry full-stack sovereign capability.</p>
+          <div class="stage-fields">
+            <div class="field card-dark">
+              <span class="field-label mono"><span class="pip" aria-hidden="true"></span>key deliverable</span>
+              <p class="field-value">Production Sovereign Agent Fabric &amp; Automated Failovers</p>
+            </div>
+            <div class="field card-dark">
+              <span class="field-label mono"><span class="pip" aria-hidden="true"></span>telemetry inputs</span>
+              <p class="field-value">Real-time inference latencies, throughput counters, token telemetry</p>
+            </div>
+          </div>
+          <hr class="hair" style="margin-top:clamp(20px,2.2vw,30px)">
+          <div class="stage-foot">
+            <span class="signoff mono"><span class="pip" aria-hidden="true"></span><span>Sign-off: Continuous integration validation in live pipeline</span></span>
+            <a class="stage-go" href="#">Initiate this move <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></a>
+          </div>
+        </div>
+        <div class="stage stage-6">
+          <div class="stage-top">
+            <span class="stage-badge">stage 06</span>
+            <span class="stage-gate mono">gate: joint outcome audit</span>
+            <span class="stage-glyph" aria-hidden="true">&#10022;</span>
+          </div>
+          <hr class="hair">
+          <h3 class="stage-name">Verifying the reading</h3>
+          <p class="stage-body">At the conclusion of the sprint cadence, the identical telemetry metrics are recomputed against the identical data sources. The reading is presented with the client rather than to them &mdash; establishing permanent operational ownership.</p>
+          <div class="stage-fields">
+            <div class="field card-dark">
+              <span class="field-label mono"><span class="pip" aria-hidden="true"></span>key deliverable</span>
+              <p class="field-value">Verified Outcome Differential Audit &amp; Attestation</p>
+            </div>
+            <div class="field card-dark">
+              <span class="field-label mono"><span class="pip" aria-hidden="true"></span>telemetry inputs</span>
+              <p class="field-value">Post-deployment live data stream delta comparisons</p>
+            </div>
+          </div>
+          <hr class="hair" style="margin-top:clamp(20px,2.2vw,30px)">
+          <div class="stage-foot">
+            <span class="signoff mono"><span class="pip" aria-hidden="true"></span><span>Sign-off: Co-signed Executive Board Attestation</span></span>
+            <a class="stage-go" href="#">Initiate this move <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </fieldset>
+
   </div>
 </section>
 
@@ -1359,7 +2097,36 @@ function keepListHeight(listId, itemSelector){
 }
 
 keepListHeight('faqList', '.faq-item');
-keepListHeight('stepsList', '.step');
+
+/* ============ METHODOLOGY — the pane holds its own height ============
+   Only one stage is displayed at a time and they are not the same length, so
+   selecting a longer move would otherwise shunt everything below it. The pane
+   reserves its tallest state, measured once per layout. */
+(function(){
+  const box = document.getElementById('stageBox');
+  if(!box) return;
+  const stages = [...box.querySelectorAll('.stage')];
+  if(!stages.length) return;
+
+  function reserve(){
+    box.style.minHeight = '';
+    const shown = stages.filter(st => getComputedStyle(st).display !== 'none');
+    let tallest = 0;
+    stages.forEach(st =>{
+      // measure every stage laid out, not just the selected one
+      st.style.display = 'block';
+      tallest = Math.max(tallest, st.getBoundingClientRect().height);
+      st.style.display = '';
+    });
+    shown.forEach(st => st.style.display = '');
+    box.style.minHeight = Math.ceil(tallest) + 'px';
+  }
+
+  reserve();
+  let t;
+  window.addEventListener('resize', ()=>{ clearTimeout(t); t = setTimeout(reserve, 180); });
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(reserve);
+})();
 
 /* ============ HERO — a lit field under the cursor ============
    A static field of loose points sits behind the copy; the only interaction
