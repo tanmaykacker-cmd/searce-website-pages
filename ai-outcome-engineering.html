@@ -204,6 +204,10 @@ a:focus-visible, button:focus-visible{
    the routes. It says what the page says — four processes working back to one
    outcome — and it is drawn on canvas because the routes are measured from the
    copy's own box at runtime rather than positioned by hand.
+   It runs as a loop. The target ring is there from the first frame; after a
+   beat the field wipes in from the ring leftwards, runs, then retracts to the
+   ring and begins again.
+
    Hovering probes it: the scan column follows the pointer, the nearest route
    lights along its whole length, and a ring pulses out of the junction closest
    to the cursor. */
@@ -2182,9 +2186,30 @@ keepListHeight('faqList', '.faq-item');
   const COLS = 12, ROWS = 10;          // extent the grid step is solved for
   const MERGE_U = (14 - 4) / 14;       // where all four arrive together
 
+  /* The loop, in seconds. HOLD is the beat where only the ring is up; DRAW is
+     the wipe out from it; LIVE is chosen to hold exactly two traversals at
+     PACKET_RATE so the packets always finish mid-route rather than being cut
+     off, and BACK retracts the field to the ring again. */
+  const HOLD = 0.9, DRAW = 1.7, LIVE = 9.0, BACK = 1.1;
+  const LOOP = HOLD + DRAW + LIVE + BACK;
+  const PACKET_RATE = 1 / 4.5;
+
   let W = 1, H = 1, step = 48, ring = { x: 0, y: 0 }, R = 20;
   let strength = 0, t0 = performance.now(), frame = null;
+  let edge = 0, wipe = 0;                 // reveal edge, and how live the wipe is
   const ptr = { x: 0, y: 0, active: false, scan: 0, lit: -1, pulse: 0 };
+
+  const smooth = q => q * q * (3 - 2 * q);
+
+  /* rv: how far the field has wiped out from the ring, 0-1.
+     lt: seconds into the live stretch, or -1 when the packets are not running. */
+  function phase(t){
+    const c = ((t % LOOP) + LOOP) % LOOP;
+    if(c < HOLD)               return { rv: 0, lt: -1, moving: 0 };
+    if(c < HOLD + DRAW)        return { rv: smooth((c - HOLD) / DRAW), lt: -1, moving: 1 };
+    if(c < HOLD + DRAW + LIVE) return { rv: 1, lt: c - HOLD - DRAW, moving: 0 };
+    return { rv: 1 - smooth((c - HOLD - DRAW - LIVE) / BACK), lt: -1, moving: 1 };
+  }
 
   function contentRight(el){
     let right = el.getBoundingClientRect().left;
@@ -2234,6 +2259,9 @@ keepListHeight('faqList', '.faq-item');
   const px = c => ({ x: ring.x + c[0] * step, y: ring.y + c[1] * step });
   const fieldLeft = () => ring.x - COLS * step;
   const fade = x => Math.max(0, Math.min(1, (x - fieldLeft()) / (step * 2.2)));
+  /* Everything left of the reveal edge is not there yet; a short ramp at the
+     edge keeps the wipe from looking like a hard cut. */
+  const vis = x => fade(x) * Math.max(0, Math.min(1, (x - edge) / (step * .85)));
 
   function metrics(route){
     const pts = route.map(px);
@@ -2279,27 +2307,33 @@ keepListHeight('faqList', '.faq-item');
     ctx.lineWidth = 1;
     for(let k = Math.ceil((x0 - ring.x) / step); ring.x + k * step < W + step; k++){
       const x = ring.x + k * step;
-      if(x < x0) continue;
+      if(x < x0 || x < edge) continue;
       const scan = Math.exp(-Math.pow(x - ptr.scan, 2) / (step * step * 2.2));
-      ctx.strokeStyle = `rgba(${BLUE},${(.06 + scan * .16) * strength * fade(x)})`;
+      ctx.strokeStyle = `rgba(${BLUE},${(.06 + scan * .16) * strength * vis(x)})`;
       ctx.beginPath();
       ctx.moveTo(Math.round(x) + .5, 0);
       ctx.lineTo(Math.round(x) + .5, H);
       ctx.stroke();
     }
+    /* The horizontal lines start wherever the wipe has reached, so the whole
+       grid arrives with the routes rather than sitting there waiting. */
+    const hStart = Math.max(x0, edge);
     for(let k = Math.ceil(-ring.y / step); ring.y + k * step < H + step; k++){
       const y = ring.y + k * step;
-      const g = ctx.createLinearGradient(x0, 0, fieldLeft(), 0);
-      g.addColorStop(0, `rgba(${BLUE},0)`);
-      g.addColorStop(1, `rgba(${BLUE},${.055 * strength})`);
-      ctx.strokeStyle = g;
-      ctx.beginPath();
-      ctx.moveTo(x0, Math.round(y) + .5);
-      ctx.lineTo(fieldLeft(), Math.round(y) + .5);
-      ctx.stroke();
+      const ramp = Math.min(fieldLeft(), hStart + step * 2.2);
+      if(hStart < ramp){
+        const g = ctx.createLinearGradient(hStart, 0, ramp, 0);
+        g.addColorStop(0, `rgba(${BLUE},0)`);
+        g.addColorStop(1, `rgba(${BLUE},${.055 * strength})`);
+        ctx.strokeStyle = g;
+        ctx.beginPath();
+        ctx.moveTo(hStart, Math.round(y) + .5);
+        ctx.lineTo(ramp, Math.round(y) + .5);
+        ctx.stroke();
+      }
       ctx.strokeStyle = `rgba(${BLUE},${.055 * strength})`;
       ctx.beginPath();
-      ctx.moveTo(fieldLeft(), Math.round(y) + .5);
+      ctx.moveTo(Math.max(ramp, hStart), Math.round(y) + .5);
       ctx.lineTo(W, Math.round(y) + .5);
       ctx.stroke();
     }
@@ -2317,11 +2351,29 @@ keepListHeight('faqList', '.faq-item');
     }
   }
 
+  /* A soft vertical highlight sitting on the reveal edge while it travels, so
+     the wipe reads as a deliberate sweep rather than a clipping artefact. */
+  function wipeEdge(){
+    if(wipe <= 0 || edge <= fieldLeft() - step || edge >= ring.x - 2) return;
+    const g = ctx.createLinearGradient(edge - step * 1.5, 0, edge + step * .3, 0);
+    g.addColorStop(0, `rgba(${BLUE},0)`);
+    g.addColorStop(1, `rgba(${BLUE},${.16 * strength * wipe})`);
+    ctx.fillStyle = g;
+    ctx.fillRect(edge - step * 1.5, 0, step * 1.8, H);
+    ctx.strokeStyle = `rgba(${BLUE},${.30 * strength * wipe})`;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(Math.round(edge) + .5, 0);
+    ctx.lineTo(Math.round(edge) + .5, H);
+    ctx.stroke();
+  }
+
   function junction(x, y, lit, scale){
+    if(x < edge) return;
     const r = 3.4 * (scale || 1);
     ctx.fillStyle = lit
-      ? `rgba(${BLUE},${.92 * strength * fade(x)})`
-      : `rgba(${INK},${.22 * strength * fade(x)})`;
+      ? `rgba(${BLUE},${.92 * strength * vis(x)})`
+      : `rgba(${INK},${.22 * strength * vis(x)})`;
     ctx.beginPath();
     if(ctx.roundRect) ctx.roundRect(x - r, y - r, r*2, r*2, 1.4);
     else ctx.rect(x - r, y - r, r*2, r*2);
@@ -2352,10 +2404,18 @@ keepListHeight('faqList', '.faq-item');
     });
   }
 
-  function draw(now){
+  function draw(now, forceFull){
     const time = (now - t0) / 1000;
     ctx.clearRect(0, 0, W, H);
     if(strength <= 0){ plainGrid(); return; }
+
+    const ph = forceFull ? { rv: 1, lt: 0, moving: 0 } : phase(time);
+    /* The wipe starts at the right edge of the hero, not at the ring, so the
+       load beat really is only the ring: at rv=0 nothing else is past the
+       edge at all. It then sweeps left, taking the grid and the routes with
+       it in one pass. */
+    edge = W - ph.rv * (W - (fieldLeft() - step * 2.6));
+    wipe = ph.moving;
 
     const ms = M();
 
@@ -2387,9 +2447,19 @@ keepListHeight('faqList', '.faq-item');
       ctx.lineWidth = 1.2 + on * 0.9;
       for(let k = 1; k < m.pts.length; k++){
         const a = m.pts[k-1], b = m.pts[k];
-        const alpha = (.32 + on * .5) * strength * fade((a.x + b.x) / 2);
+        // clip to the reveal edge; a vertical run is in or out, a horizontal
+        // one is trimmed at whatever point the wipe has reached
+        let ax = a.x, bx = b.x;
+        if(a.y === b.y){
+          const lo = Math.max(Math.min(ax, bx), edge), hi = Math.max(ax, bx);
+          if(hi <= lo) continue;
+          ax = ax < bx ? lo : hi;
+          bx = ax === lo ? hi : lo;
+        }else if(ax < edge) continue;
+        const alpha = (.32 + on * .5) * strength * vis((ax + bx) / 2);
+        if(alpha <= .004) continue;
         ctx.strokeStyle = `rgba(${BLUE},${alpha})`;
-        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(ax, a.y); ctx.lineTo(bx, b.y); ctx.stroke();
       }
       m.pts.forEach((q, k) =>
         junction(q.x, q.y, k === m.pts.length - 1 || on > .5, 1 + on * .35));
@@ -2398,9 +2468,10 @@ keepListHeight('faqList', '.faq-item');
     /* Two waves, half a cycle apart, sharing one progress value so all four
        reach the merge junction on the same frame. Past the merge they are on
        the same run, so one packet is drawn instead of four stacked. */
-    const rate = 0.075 + ptr.pulse * 0.06;
+    if(ph.lt < 0){ wipeEdge(); return; }
+    const rate = PACKET_RATE + ptr.pulse * 0.06;
     for(let k = 0; k < 2; k++){
-      const u = (time * rate + k * 0.5) % 1;
+      const u = (ph.lt * rate + k * 0.5) % 1;
       const draws = u <= MERGE_U ? ms : [ms[0]];
       draws.forEach((m, i) =>{
         const q = at(m, u);
@@ -2420,6 +2491,8 @@ keepListHeight('faqList', '.faq-item');
         }
       });
     }
+
+    wipeEdge();
 
     // a ring pulsing out of the junction nearest the cursor
     if(ptr.lit >= 0 && ptr.pulse > 0.02){
@@ -2441,7 +2514,7 @@ keepListHeight('faqList', '.faq-item');
   function start(){
     layout();
     if(frame){ cancelAnimationFrame(frame); frame = null; }
-    if(still.matches){ draw(t0); return; }
+    if(still.matches){ draw(t0, true); return; }   // the finished field, held
     frame = requestAnimationFrame(tick);
   }
 
