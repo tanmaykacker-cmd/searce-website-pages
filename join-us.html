@@ -632,43 +632,65 @@ footer{
 }
 
 /* ============ CULTURE ============
-   The dark finish. A deep navy lifting to brand blue across the diagonal,
-   which is where the page should feel most like an offer. */
-.culture{
+   The invitation. A full-bleed near-black slab with "culture" set at 188px
+   read as a monument rather than a welcome, so three things changed: the band
+   is an inset rounded panel like the equation board instead of a slab running
+   off both edges; the light is lifted well off black and gathers on the right,
+   away from the copy; and the hierarchy is inverted — the sentence about how
+   people behave is the largest thing here now, and the heading is back to
+   being a heading. */
+.culture{padding:0 0 clamp(96px,10vw,140px);}
+.culture-panel{
   position:relative;
   isolation:isolate;
   overflow:hidden;
-  padding:clamp(112px,12vw,180px) 0;
-  background:linear-gradient(108deg, #020c1d 0%, #04173a 46%, var(--blue-deep) 100%);
+  border-radius:clamp(20px,2.4vw,34px);
+  padding:clamp(48px,6vw,92px) clamp(30px,4.6vw,76px) clamp(52px,6.4vw,96px);
+  /* Lifted off #020c1d: the darkest corner is now a blue that reads as blue.
+     White copy still measures far past 4.5:1 against it. */
+  background:
+    /* A veil over the copy column. Two of the happier letters (#0064FF and
+       #734BFF) are light enough that they cannot reach 3:1 against the lifted
+       blue on their own, and their values are fixed, so the backdrop behind
+       the text is darkened instead. The light still gathers on the right,
+       where nothing has to be read. */
+    linear-gradient(94deg, rgba(2,11,28,.62) 0%, rgba(2,11,28,.40) 44%, rgba(2,11,28,0) 72%),
+    radial-gradient(62% 96% at 96% 16%, rgba(0,116,255,.72), rgba(0,116,255,0) 62%),
+    linear-gradient(106deg, #06265c 0%, #0a3277 52%, #0b3f96 100%);
   color:#fff;
 }
-.culture::before{
+.culture-panel::before{
   content:"";
   position:absolute;
   inset:0;
   z-index:-1;
-  background-image:radial-gradient(circle, rgba(255,255,255,.15) 1px, rgba(255,255,255,0) 1.5px);
+  background-image:radial-gradient(circle, rgba(255,255,255,.17) 1px, rgba(255,255,255,0) 1.5px);
   background-size:29px 29px;
-  -webkit-mask-image:radial-gradient(72% 78% at 84% 46%, #000 0%, rgba(0,0,0,0) 72%);
-  mask-image:radial-gradient(72% 78% at 84% 46%, #000 0%, rgba(0,0,0,0) 72%);
+  -webkit-mask-image:radial-gradient(66% 76% at 86% 34%, #000 0%, rgba(0,0,0,0) 74%);
+  mask-image:radial-gradient(66% 76% at 86% 34%, #000 0%, rgba(0,0,0,0) 74%);
 }
-/* Full-bleed word. At 104px it left two thirds of the band empty; the band is
-   the page's closing offer and should feel like one. */
 .culture-title{
   font-family:var(--display);
-  font-weight:300;
-  font-size:clamp(58px,13vw,188px);
-  line-height:1;
-  letter-spacing:-0.035em;
-  margin:0 0 clamp(34px,4vw,54px);
-  color:#fff;
+  font-weight:400;
+  font-size:clamp(25px,2.4vw,35px);
+  line-height:1.1;
+  letter-spacing:-0.02em;
+  margin:0 0 clamp(22px,2.4vw,32px);
+  color:var(--blue-lift);
 }
+/* The statement carries the section now, on a wider measure: at 34ch it sat
+   in a narrow strip down the left of a very wide band. */
 .culture-copy{
-  font-size:clamp(18px,1.9vw,27px);
-  line-height:1.5;
-  max-width:34ch;
-  margin:0 0 clamp(40px,4.6vw,64px);
-  color:rgba(255,255,255,.92);
+  font-family:var(--display);
+  font-weight:300;
+  /* Floor at 24px: that is the large-text threshold for regular weight, and
+     it keeps the 3:1 bar in force at every viewport rather than 4.5:1. */
+  font-size:clamp(24px,2.6vw,38px);
+  line-height:1.34;
+  letter-spacing:-0.018em;
+  max-width:40ch;
+  margin:0 0 clamp(38px,4.4vw,58px);
+  color:#fff;
 }
 .culture-copy strong{font-weight:400;}
 /* The seven letters of "happier", in order, in the brand's own values. These
@@ -698,6 +720,12 @@ footer{
   .culture-copy{max-width:none;}
 }
 @media (max-width:560px){
+  /* "join the solver movement" needs 290px on one line at the desktop size,
+     and the panel only offers 252px at 360px wide, so it was breaking onto
+     three lines inside the pill. The panel gives back some padding and the
+     button comes down a size. */
+  .culture-panel{padding:clamp(38px,9vw,48px) 22px clamp(42px,10vw,52px);}
+  .culture .cta-button{font-size:14.5px;padding:14px 22px;}
   /* Below this a term plus its operator no longer fits one row, so the grid
      unrolls to a single column and the operators sit between the lines. */
   .law-eqs{grid-template-columns:minmax(0,1fr);row-gap:12px;}
@@ -846,11 +874,13 @@ footer{
 
 <section class="culture">
   <div class="wrap">
-    <h2 class="culture-title">culture</h2>
-    <p class="culture-copy"><strong class="happier"><span>h</span><span>a</span><span>p</span><span>p</span><span>i</span><span>e</span><span>r</span></strong> is how we behave. Mistakes are encouraged. Solve-a-thons are how we hire and how we work: never the easiest first option, three to eight iterations, always.</p>
-    <a class="cta-button" href="#">join the solver movement
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
-    </a>
+    <div class="culture-panel">
+      <h2 class="culture-title">culture</h2>
+      <p class="culture-copy"><strong class="happier"><span>h</span><span>a</span><span>p</span><span>p</span><span>i</span><span>e</span><span>r</span></strong> is how we behave. Mistakes are encouraged. Solve-a-thons are how we hire and how we work: never the easiest first option, three to eight iterations, always.</p>
+      <a class="cta-button" href="#">join the solver movement
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+      </a>
+    </div>
   </div>
 </section>
 
