@@ -199,8 +199,12 @@ a:focus-visible, button:focus-visible{
 .lang-toggle svg{width:9px;height:9px;}
 
 /* ============ HERO ============
-   A loose field of points as texture, with a soft glow tracking the pointer.
-   The field itself is inert — the glow is the whole interaction. */
+   An engineering trace field: a faint blue grid with a slow scan, four
+   orthogonal routes converging on a single target ring, and packets running
+   the routes. It says what the page says — four processes working back to one
+   outcome — and it is drawn on canvas because the routes are measured from the
+   copy's own box at runtime rather than positioned by hand.
+   The pointer glow is unchanged. */
 .hero{
   position:relative;
   display:flex;
@@ -219,16 +223,11 @@ a:focus-visible, button:focus-visible{
   inset:0;
   z-index:0;
   pointer-events:none;
-  /* The field recedes under the copy so the texture never fights the
-     headline, and reaches full strength out to the right. */
-  -webkit-mask-image:linear-gradient(to right, rgba(0,0,0,.16) 0%, rgba(0,0,0,.3) 30%, #000 60%);
-  mask-image:linear-gradient(to right, rgba(0,0,0,.16) 0%, rgba(0,0,0,.3) 30%, #000 60%);
 }
-.hero-field svg{display:block;width:100%;height:100%;}
-.field-dot{
-  fill:var(--ink-40);
-  opacity:.28;
-}
+/* No CSS mask here: the drawing keeps itself clear of the copy, because it
+   knows where the copy is. A mask would fade the routes by viewport position
+   instead, which drifts out of register as the headline rewraps. */
+.hero-field canvas{display:block;width:100%;height:100%;}
 .hero-glow{
   position:absolute;
   width:520px;
@@ -1528,7 +1527,7 @@ footer{
 </nav>
 
 <header class="hero" id="heroSection">
-  <div class="hero-field" id="heroField" aria-hidden="true"></div>
+  <div class="hero-field" id="heroField" aria-hidden="true"><canvas id="heroTrace"></canvas></div>
   <span class="hero-glow" id="heroGlow" aria-hidden="true"></span>
   <div class="hero-fade" aria-hidden="true"></div>
   <div class="wrap">
@@ -2145,65 +2144,307 @@ keepListHeight('faqList', '.faq-item');
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(reserve);
 })();
 
-/* ============ HERO — a lit field under the cursor ============
-   A static field of loose points sits behind the copy; the only interaction
-   is a soft glow that follows the pointer. The points are not linked into a
-   squad here — that construct belongs to the Solver Squads page, and on this
-   page it read as a second idea competing with the headline. */
-function buildHeroField(host, section, glow){
-  if(!host || !section) return;
+/* ============ HERO — the trace field ============
+   Four routes step in from the left and converge on one target ring. Packets
+   run the routes; a scan column drifts across the grid. Nothing here is
+   decorative-only: the geometry is the page's argument, four processes working
+   back to a single outcome.
 
-  const NS = 'http://www.w3.org/2000/svg';
-  const SPACING = 46;
+   Alignment is measured, not assumed. The field's left edge comes from the
+   copy block's own right edge and the ring sits on the wrap's right gutter, so
+   the drawing stays clear of the headline at every width and rewraps with it.
+   Below the point where too little width is left, it fades out entirely. */
+(function(){
+  const host   = document.getElementById('heroField');
+  const canvas = document.getElementById('heroTrace');
+  const hero   = document.getElementById('heroSection');
+  const copy   = hero && hero.querySelector('.hero-copy');
+  const wrap   = hero && hero.querySelector('.wrap');
+  if(!host || !canvas || !hero || !copy || !wrap) return;
 
-  function build(){
-    const r = section.getBoundingClientRect();
-    const cols = Math.ceil(r.width / SPACING) + 1;
-    const rows = Math.ceil(r.height / SPACING) + 1;
-    const svg = document.createElementNS(NS, 'svg');
-    svg.setAttribute('viewBox', `0 0 ${r.width} ${r.height}`);
-    svg.setAttribute('preserveAspectRatio', 'none');
-    for(let y = 0; y < rows; y++){
-      for(let x = 0; x < cols; x++){
-        const c = document.createElementNS(NS, 'circle');
-        c.setAttribute('cx', x * SPACING);
-        c.setAttribute('cy', y * SPACING);
-        c.setAttribute('r', 2);
-        c.setAttribute('class', 'field-dot');
-        svg.appendChild(c);
-      }
+  const ctx = canvas.getContext('2d');
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const TAU = Math.PI * 2;
+  const BLUE = '0,100,255';
+  const INK  = '18,26,44';
+
+  /* Routes in field-box coordinates: x and y both 0-1, the ring at (1, .5).
+     Symmetric about the middle so the four arrivals read as one convergence
+     rather than a queue. */
+  const ROUTES = [
+    [[0,.08],[.22,.08],[.22,.26],[.50,.26],[.50,.50],[1,.50]],
+    [[0,.30],[.34,.30],[.34,.40],[.66,.40],[.66,.50],[1,.50]],
+    [[0,.70],[.34,.70],[.34,.60],[.66,.60],[.66,.50],[1,.50]],
+    [[0,.92],[.22,.92],[.22,.74],[.50,.74],[.50,.50],[1,.50]]
+  ];
+
+  let W = 1, H = 1, box = null, strength = 0, t0 = performance.now(), frame = null;
+
+  /* Rightmost edge of anything actually inked inside the copy: the line boxes
+     of its text plus the badge, which is an inline-block with padding. */
+  function contentRight(el){
+    let right = el.getBoundingClientRect().left;
+    const walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    const range = document.createRange();
+    for(let n = walk.nextNode(); n; n = walk.nextNode()){
+      if(!n.textContent.trim()) continue;
+      range.selectNodeContents(n);
+      for(const r of range.getClientRects()) right = Math.max(right, r.right);
     }
-    host.innerHTML = '';
-    host.appendChild(svg);
+    el.querySelectorAll('.page-badge').forEach(k =>{
+      right = Math.max(right, k.getBoundingClientRect().right);
+    });
+    return right;
   }
 
-  if(glow){
-    let pending = false, mx = 0, my = 0;
-    section.addEventListener('pointermove', e =>{
-      if(e.pointerType !== 'mouse') return;
-      const r = section.getBoundingClientRect();
-      mx = e.clientX - r.left;
-      my = e.clientY - r.top;
-      glow.classList.add('on');
-      if(!pending){
-        pending = true;
-        requestAnimationFrame(()=>{
-          pending = false;
-          glow.style.transform = `translate(${mx - 260}px, ${my - 260}px)`;
-        });
+  function layout(){
+    const hr = hero.getBoundingClientRect();
+    const cr = copy.getBoundingClientRect();
+    const wr = wrap.getBoundingClientRect();
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = Math.max(1, hr.width);
+    H = Math.max(1, hr.height);
+    canvas.width  = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    /* The copy BLOCK is 880px wide, but its longest line ends some 250px
+       short of that, so measuring the block put the field's left edge past the
+       right gutter and the whole thing switched itself off. Line boxes are the
+       real extent. */
+    const left  = contentRight(copy) - hr.left + Math.min(96, W * .05);
+    const bandH = Math.min(H * .66, 460);
+    /* The ring sits at the field's right end, and its outer crosshair reaches
+       R*1.92 past the centre. Reserve that, or the ticks get cut off by the
+       hero's overflow:hidden a few pixels short of the gutter. */
+    const right = wr.right - hr.left - 10;
+    const avail = right - left;
+    /* Under ~320px of clear width the routes have nowhere to run, so the
+       field bows out rather than crowding the copy. */
+    strength = Math.max(0, Math.min(1, (avail - 300) / 180));
+    const cy = cr.top - hr.top + cr.height / 2;
+    const w0 = Math.max(1, avail);
+    /* R is derived from the band, and the band from the box, so the reserve is
+       resolved here rather than in the ring itself. */
+    const R = Math.min(w0, bandH) * .13;
+    box = {
+      x: left,
+      y: Math.max(12, Math.min(H - bandH - 12, cy - bandH / 2)),
+      w: Math.max(1, w0 - R * 1.92),
+      h: bandH,
+      R
+    };
+  }
+
+  const px = pt => ({ x: box.x + pt[0] * box.w, y: box.y + pt[1] * box.h });
+
+  function metrics(route){
+    const pts = route.map(px);
+    const seg = [];
+    let total = 0;
+    for(let i = 1; i < pts.length; i++){
+      const d = Math.hypot(pts[i].x - pts[i-1].x, pts[i].y - pts[i-1].y);
+      seg.push(d); total += d;
+    }
+    return { pts, seg, total };
+  }
+
+  function at(m, u){
+    let d = Math.max(0, Math.min(1, u)) * m.total;
+    for(let i = 0; i < m.seg.length; i++){
+      if(d <= m.seg[i]){
+        const q = m.seg[i] ? d / m.seg[i] : 0;
+        return { x: m.pts[i].x + (m.pts[i+1].x - m.pts[i].x) * q,
+                 y: m.pts[i].y + (m.pts[i+1].y - m.pts[i].y) * q };
+      }
+      d -= m.seg[i];
+    }
+    const last = m.pts[m.pts.length - 1];
+    return { x: last.x, y: last.y };
+  }
+
+  /* Alpha ramp across the field: routes emerge from nothing at the left edge
+     so they never appear to be cut off by the copy. */
+  const fade = x => Math.max(0, Math.min(1, (x - box.x) / Math.min(130, box.w * .3)));
+
+  function grid(scanX){
+    const step = Math.max(44, Math.min(66, W / 20));
+    const x0 = box.x - Math.min(130, box.w * .3);   // where the ramp begins
+    ctx.lineWidth = 1;
+    for(let x = x0 - (x0 % step); x < W; x += step){
+      if(x < x0) continue;
+      const scan = Math.exp(-Math.pow(x - scanX, 2) / (step * step * 2.2));
+      ctx.strokeStyle = `rgba(${BLUE},${(.06 + scan * .15) * strength * fade(x)})`;
+      ctx.beginPath();
+      ctx.moveTo(Math.round(x) + .5, 0);
+      ctx.lineTo(Math.round(x) + .5, H);
+      ctx.stroke();
+    }
+    /* Horizontal lines run from the ramp to the right edge, and carry the ramp
+       as a gradient so they emerge with everything else. The copy sits on
+       clean paper — the reference is full-bleed, but this hero was never. */
+    for(let y = box.y % step; y < H; y += step){
+      const g = ctx.createLinearGradient(x0, 0, box.x, 0);
+      g.addColorStop(0, `rgba(${BLUE},0)`);
+      g.addColorStop(1, `rgba(${BLUE},${.055 * strength})`);
+      ctx.strokeStyle = g;
+      ctx.beginPath();
+      ctx.moveTo(x0, Math.round(y) + .5);
+      ctx.lineTo(box.x, Math.round(y) + .5);
+      ctx.stroke();
+      ctx.strokeStyle = `rgba(${BLUE},${.055 * strength})`;
+      ctx.beginPath();
+      ctx.moveTo(box.x, Math.round(y) + .5);
+      ctx.lineTo(W, Math.round(y) + .5);
+      ctx.stroke();
+    }
+  }
+
+  function junction(x, y, lit){
+    const r = 3.4;
+    ctx.fillStyle = lit
+      ? `rgba(${BLUE},${.92 * strength * fade(x)})`
+      : `rgba(${INK},${.22 * strength * fade(x)})`;
+    ctx.beginPath();
+    ctx.roundRect ? ctx.roundRect(x - r, y - r, r * 2, r * 2, 1.4)
+                  : ctx.rect(x - r, y - r, r * 2, r * 2);
+    ctx.fill();
+  }
+
+  function target(){
+    const c = { x: box.x + box.w, y: box.y + box.h * .5 };
+    const R = box.R;
+    const g = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, R * 4.4);
+    g.addColorStop(0, `rgba(${BLUE},${.10 * strength})`);
+    g.addColorStop(1, `rgba(${BLUE},0)`);
+    ctx.fillStyle = g;
+    ctx.fillRect(c.x - R * 4.4, c.y - R * 4.4, R * 8.8, R * 8.8);
+
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = `rgba(${BLUE},${.20 * strength})`;
+    ctx.beginPath(); ctx.arc(c.x, c.y, R * 1.5, 0, TAU); ctx.stroke();
+    ctx.lineWidth = 1.4;
+    ctx.strokeStyle = `rgba(${BLUE},${.62 * strength})`;
+    ctx.beginPath(); ctx.arc(c.x, c.y, R, 0, TAU); ctx.stroke();
+    ctx.fillStyle = `rgba(${BLUE},${.9 * strength})`;
+    ctx.beginPath(); ctx.arc(c.x, c.y, 2.6, 0, TAU); ctx.fill();
+
+    // crosshair ticks, the one flourish borrowed straight from the reference
+    ctx.strokeStyle = `rgba(${BLUE},${.3 * strength})`;
+    ctx.lineWidth = 1;
+    const t = R * 1.5, k = R * .42;
+    [[-1,0],[1,0],[0,-1],[0,1]].forEach(([dx,dy])=>{
+      ctx.beginPath();
+      ctx.moveTo(c.x + dx * t, c.y + dy * t);
+      ctx.lineTo(c.x + dx * (t + k), c.y + dy * (t + k));
+      ctx.stroke();
+    });
+    return c;
+  }
+
+  /* When the routes bow out there is no reason for the hero to be bare paper —
+     it had a dot field before this. The grid stays, full-bleed and very faint,
+     as quiet texture. */
+  function plainGrid(){
+    const step = Math.max(44, Math.min(66, W / 20));
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = `rgba(${BLUE},.05)`;
+    for(let x = 0; x < W; x += step){
+      ctx.beginPath();
+      ctx.moveTo(Math.round(x) + .5, 0);
+      ctx.lineTo(Math.round(x) + .5, H);
+      ctx.stroke();
+    }
+    for(let y = 0; y < H; y += step){
+      ctx.beginPath();
+      ctx.moveTo(0, Math.round(y) + .5);
+      ctx.lineTo(W, Math.round(y) + .5);
+      ctx.stroke();
+    }
+  }
+
+  function draw(now){
+    const time = (now - t0) / 1000;
+    ctx.clearRect(0, 0, W, H);
+    if(strength <= 0){ plainGrid(); return; }
+
+    const scanX = box.x + (0.5 + 0.5 * Math.sin(time * 0.16)) * box.w;
+    grid(scanX);
+    target();
+
+    ROUTES.forEach((route, i) => {
+      const m = metrics(route);
+
+      // the route itself, drawn as a run of short segments so each can carry
+      // its own alpha from the left-edge ramp
+      ctx.lineJoin = 'round';
+      ctx.lineCap  = 'round';
+      ctx.lineWidth = 1.2;
+      for(let k = 1; k < m.pts.length; k++){
+        const a = m.pts[k-1], b = m.pts[k];
+        ctx.strokeStyle = `rgba(${BLUE},${.32 * strength * fade((a.x + b.x) / 2)})`;
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+      }
+      m.pts.forEach((q, k) => junction(q.x, q.y, k === m.pts.length - 1));
+
+      // packets
+      for(let k = 0; k < 2; k++){
+        const u = (time * 0.075 + k * 0.5 + i * 0.17) % 1;
+        const q = at(m, u);
+        const a = Math.sin(Math.PI * u) * strength * fade(q.x);
+        if(a <= 0.01) continue;
+        const tail = at(m, Math.max(0, u - 0.035));
+        ctx.strokeStyle = `rgba(${BLUE},${a * .5})`;
+        ctx.lineWidth = 1.8;
+        ctx.beginPath(); ctx.moveTo(tail.x, tail.y); ctx.lineTo(q.x, q.y); ctx.stroke();
+        ctx.fillStyle = `rgba(${BLUE},${a * .95})`;
+        ctx.beginPath(); ctx.arc(q.x, q.y, 2.7, 0, TAU); ctx.fill();
       }
     });
-    section.addEventListener('pointerleave', ()=> glow.classList.remove('on'));
   }
 
-  build();
-  let t;
-  window.addEventListener('resize', ()=>{ clearTimeout(t); t = setTimeout(build, 160); });
-}
+  function tick(now){
+    draw(now);
+    frame = requestAnimationFrame(tick);
+  }
 
-buildHeroField(document.getElementById('heroField'),
-               document.getElementById('heroSection'),
-               document.getElementById('heroGlow'));
+  function start(){
+    layout();
+    if(frame){ cancelAnimationFrame(frame); frame = null; }
+    if(still.matches){ draw(t0); return; }   // one static frame
+    frame = requestAnimationFrame(tick);
+  }
+
+  start();
+  let rt;
+  window.addEventListener('resize', ()=>{ clearTimeout(rt); rt = setTimeout(start, 140); });
+  still.addEventListener?.('change', start);
+  // the headline rewraps once the display face lands, moving the field's edge
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(start);
+})();
+
+/* ============ HERO — the pointer glow ============ */
+(function(){
+  const hero = document.getElementById('heroSection');
+  const glow = document.getElementById('heroGlow');
+  if(!hero || !glow) return;
+  let pending = false, mx = 0, my = 0;
+  hero.addEventListener('pointermove', e =>{
+    if(e.pointerType !== 'mouse') return;
+    const r = hero.getBoundingClientRect();
+    mx = e.clientX - r.left;
+    my = e.clientY - r.top;
+    glow.classList.add('on');
+    if(!pending){
+      pending = true;
+      requestAnimationFrame(()=>{
+        pending = false;
+        glow.style.transform = `translate(${mx - 260}px, ${my - 260}px)`;
+      });
+    }
+  });
+  hero.addEventListener('pointerleave', ()=> glow.classList.remove('on'));
+})();
 
 /* ============ WHAT IT CHANGES — the line climbs as you scroll ============
    The path is measured from the nodes rather than assumed, so the indent step
