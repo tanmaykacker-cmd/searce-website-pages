@@ -474,6 +474,14 @@ a:focus-visible, button:focus-visible{
   background:var(--paper);
   border-bottom:1px solid var(--paper-line);
 }
+.assurances .section-head{margin-bottom:clamp(34px,3.6vw,50px);}
+/* The shared .section-title is set for a full section opener — 19ch and up to
+   60px — which broke this into three towering lines above a compact strip.
+   The four figures are the content here; the heading introduces them. */
+.assurances .section-title{
+  max-width:32ch;
+  font-size:clamp(25px,2.9vw,40px);
+}
 .assurances-grid{
   display:grid;
   grid-template-columns:repeat(4,minmax(0,1fr));
@@ -900,11 +908,15 @@ a:focus-visible, button:focus-visible{
 #mv4:checked ~ .stages .stage-4,
 #mv5:checked ~ .stages .stage-5,
 #mv6:checked ~ .stages .stage-6{
-  /* A column, so the gap left over by the shorter moves is distributed
-     between the body and the field cards instead of pooling at the bottom.
-     Every move ends with its sign-off on the floor of the panel. */
+  /* The pane has to match the height of the six-item list beside it, so the
+     shorter moves have slack to spend. space-between hands it to the six gaps
+     between the seven blocks — roughly 20px each — on top of the margins they
+     already carry. Growing the field cards instead left their contents
+     floating in the middle of a very tall box; spreading the rhythm reads as
+     generous spacing, and the longest move, which has no slack, is untouched. */
   display:flex;
   flex-direction:column;
+  justify-content:space-between;
 }
 .stage-top{
   display:flex;
@@ -952,23 +964,13 @@ a:focus-visible, button:focus-visible{
   margin:0 0 clamp(22px,2.4vw,32px);
   max-width:60ch;
 }
-/* The pane has to match the height of the six-item list beside it, so the
-   shorter moves have slack to spend. The field cards take it — they grow and
-   centre their contents — rather than it pooling as a gap. */
-.stage-fields{flex:1;margin-top:clamp(6px,1vw,14px);}
+.stage-fields{margin-top:clamp(6px,1vw,14px);}
 .stage-fields{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
   gap:clamp(12px,1.2vw,18px);
 }
-.field{
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  padding:clamp(18px,2vw,26px);
-  border-radius:12px;
-}
-.field-label{flex:none;}
+.field{padding:clamp(18px,2vw,26px);border-radius:12px;}
 .field-label{
   display:flex;
   align-items:center;
@@ -1880,6 +1882,10 @@ footer{
 
 <section class="assurances">
   <div class="wrap">
+    <div class="section-head">
+      <span class="section-eyebrow">proven impact</span>
+      <h2 class="section-title">Four numbers the method is accountable to.</h2>
+    </div>
     <div class="assurances-grid">
       <div class="assure">
         <div class="assure-top">
