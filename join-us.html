@@ -99,6 +99,10 @@ a:focus-visible, button:focus-visible{
   flex:1;
 }
 .nav-links > li{position:relative;}
+/* The row shrinks before it hides, and a shrunk item wrapped "how we solve"
+   onto two lines once careers was added. Labels hold one line; the gaps and
+   the CTA give up the space instead. */
+.nav-links > li > a{white-space:nowrap;}
 .nav-links a{
   display:flex;
   align-items:center;
@@ -184,96 +188,6 @@ a:focus-visible, button:focus-visible{
 }
 .lang-toggle svg{width:9px;height:9px;}
 
-/* ============ HERO ============
-   A loose field of points as texture, with a soft glow tracking the pointer.
-   The field itself is inert — the glow is the whole interaction. */
-.hero{
-  position:relative;
-  display:flex;
-  align-items:center;
-  /* The hero is the landing view: it and the masthead fill the viewport. The
-     masthead height is measured at runtime, since padding and the border make
-     it taller than its nominal row and it changes with the breakpoint. */
-  min-height:calc(100vh - var(--nav-h, 85px));
-  padding:clamp(72px,8vw,110px) 0 clamp(80px,8.5vw,120px);
-  overflow:hidden;
-  border-bottom:1px solid var(--paper-line);
-  isolation:isolate;
-}
-.hero-field{
-  position:absolute;
-  inset:0;
-  z-index:0;
-  pointer-events:none;
-  /* The field recedes under the copy so the texture never fights the
-     headline, and reaches full strength out to the right. */
-  -webkit-mask-image:linear-gradient(to right, rgba(0,0,0,.16) 0%, rgba(0,0,0,.3) 30%, #000 60%);
-  mask-image:linear-gradient(to right, rgba(0,0,0,.16) 0%, rgba(0,0,0,.3) 30%, #000 60%);
-}
-.hero-field svg{display:block;width:100%;height:100%;}
-.field-dot{
-  fill:var(--ink-40);
-  opacity:.28;
-}
-.hero-glow{
-  position:absolute;
-  width:520px;
-  height:520px;
-  left:0;top:0;
-  z-index:0;
-  pointer-events:none;
-  border-radius:50%;
-  background:radial-gradient(circle, rgba(0,100,255,.13) 0%, rgba(0,100,255,.05) 42%, rgba(0,100,255,0) 70%);
-  opacity:0;
-  transition:opacity .3s ease;
-}
-.hero-glow.on{opacity:1;}
-.hero-fade{
-  position:absolute;
-  inset:0;
-  z-index:0;
-  background:linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 58%, rgba(255,255,255,.92) 100%);
-  pointer-events:none;
-}
-/* As a flex item the wrap shrank to its content and the auto margins then
-   centred it; the hero is a left-aligned composition. */
-.hero .wrap{position:relative;z-index:1;width:100%;}
-.hero-copy{max-width:min(100%,880px);}
-.hero h1{
-  font-family:var(--display);
-  font-weight:300;
-  /* Sized so Forward-Deployed holds one row inside the copy measure. */
-  font-size:clamp(34px, 5.8vw, 84px);
-  line-height:1.02;
-  letter-spacing:-0.022em;
-  margin:0;
-}
-.hero h1 .line-ink{display:block;color:var(--ink);white-space:nowrap;}
-.hero h1 .line-blue{display:block;color:var(--blue);white-space:nowrap;}
-.hero-sub{
-  font-size:clamp(17px,1.6vw,21px);
-  line-height:1.6;
-  color:var(--ink-60);
-  max-width:44ch;
-  margin:28px 0 0;
-}
-
-/* The chip above the headline. Matched to the Solver Squads page so the two
-   sub-pages open identically; it was rendering as bare inline text here. */
-.page-badge{
-  display:inline-block;
-  background:var(--blue-06);
-  border:1px solid var(--blue-12);
-  color:var(--blue-strong);
-  font-family:var(--display);
-  font-weight:600;
-  font-size:12.5px;
-  letter-spacing:.1em;
-  text-transform:uppercase;
-  padding:9px 20px;
-  border-radius:8px;
-  margin-bottom:26px;
-}
 
 /* ============ SHARED SECTION UTILS ============
    Every section opens the same way: a small eyebrow, then one very large
@@ -508,7 +422,34 @@ footer{
    set as two lines of running text. It is now stated as a law: the terms on
    plates, the operators as blue marks between them, the result carrying the
    fill. Two rows, because the copy gives two. */
-.law{padding:clamp(96px,10vw,140px) 0;border-bottom:1px solid var(--paper-line);}
+/* One section, four blocks. These were four <section>s with their own padding
+   and rules between them, which read as four sections of a page; they are one
+   section of a page that has not been designed yet. */
+.solvers{padding:clamp(88px,9vw,132px) 0 clamp(96px,10vw,148px);}
+.solvers-open{margin-bottom:clamp(52px,5.6vw,84px);}
+.solvers-title{
+  font-family:var(--display);
+  font-weight:300;
+  font-size:clamp(34px,5vw,72px);
+  line-height:1.06;
+  letter-spacing:-0.028em;
+  color:var(--ink);
+  margin:0;
+  max-width:20ch;
+}
+.solvers-sub{
+  font-size:clamp(17px,1.6vw,21px);
+  line-height:1.6;
+  color:var(--ink-60);
+  max-width:52ch;
+  margin:clamp(20px,2.2vw,30px) 0 0;
+}
+/* The blocks are told apart by air, not by rules — the section already sits
+   between whatever comes before and the culture band. */
+.velocity-block{margin-top:clamp(72px,8vw,116px);}
+.paths-block{margin-top:clamp(72px,8vw,116px);}
+.velocity-block .section-eyebrow,
+.paths-block .section-eyebrow{margin-bottom:clamp(30px,3.4vw,46px);}
 .law-board{
   background:var(--blue-06);
   border:1px solid var(--blue-12);
@@ -567,13 +508,13 @@ footer{
    The trade a candidate is actually being offered, and the reason to read the
    page at all. It was a body-size line inside a bordered box; it is now the
    largest thing on the page after the headline, set as the comparison it is. */
-.velocity{padding:clamp(100px,11vw,150px) 0;border-bottom:1px solid var(--paper-line);}
+
 .trade{
   display:grid;
   grid-template-columns:1fr auto 1fr;
   align-items:center;
   gap:clamp(20px,3.4vw,56px);
-  margin-bottom:clamp(56px,6vw,84px);
+  margin-bottom:clamp(40px,4.4vw,60px);
 }
 .trade-side{text-align:center;}
 .trade-figure{
@@ -646,7 +587,7 @@ footer{
    Seven chips the size of tags, for the seven jobs someone might come here to
    do — the least prominent thing in the section and the most actionable. They
    are plates now, big enough to be read as a choice. */
-.paths{padding:clamp(100px,11vw,150px) 0;}
+
 .path-grid{
   display:grid;
   grid-template-columns:repeat(4,minmax(0,1fr));
@@ -730,15 +671,15 @@ footer{
   color:rgba(255,255,255,.92);
 }
 .culture-copy strong{font-weight:400;}
-/* The multi-colour "happier" is an existing brand device carried over from the
-   reference; it is the one place on these pages outside black, white and blue. */
-.happier span:nth-child(1){color:#8ea2c4;}
-.happier span:nth-child(2){color:#4285f4;}
-.happier span:nth-child(3){color:#ea4335;}
-.happier span:nth-child(4){color:#ea4335;}
-.happier span:nth-child(5){color:#fbbc04;}
-.happier span:nth-child(6){color:#34a853;}
-.happier span:nth-child(7){color:#8ea2c4;}
+/* The seven letters of "happier", in order, in the brand's own values. These
+   are the one place on these pages outside black, white and #0064ff. */
+.happier span:nth-child(1){color:#7D7D7D;}  /* h  gray      */
+.happier span:nth-child(2){color:#0064FF;}  /* a  blue      */
+.happier span:nth-child(3){color:#FFB414;}  /* p  yellow    */
+.happier span:nth-child(4){color:#FF2850;}  /* p  red       */
+.happier span:nth-child(5){color:#734BFF;}  /* i  purple    */
+.happier span:nth-child(6){color:#28C8E1;}  /* e  turquoise */
+.happier span:nth-child(7){color:#00DC96;}  /* r  green     */
 .culture .cta-button{background:#fff;color:var(--blue-strong);}
 .culture .cta-button:hover{background:var(--blue-lift);color:var(--blue-deep);}
 
@@ -801,7 +742,6 @@ footer{
       <img class="nav-logo" src="data:image/png;base64,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" alt="Searce">
     </a>
     <ul class="nav-links">
-      <li><a href="#">outcomes</a></li>
       <li class="has-dropdown">
         <a href="#">how we solve
           <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
@@ -821,11 +761,8 @@ footer{
           </a>
         </div>
       </li>
-      <li><a href="#">practices</a></li>
       <li><a href="index.html">problems</a></li>
-      <li><a href="#">industries</a></li>
-      <li><a href="#">insights</a></li>
-      <li><a href="#">company</a></li>
+      <li><a href="join-us.html" class="current" aria-current="page">careers</a></li>
     </ul>
     <div class="nav-right">
       <a class="nav-cta" href="#">bring us a problem <span aria-hidden="true">→</span></a>
@@ -837,28 +774,14 @@ footer{
 </nav>
 
 
-<header class="hero" id="heroSection">
-  <div class="hero-field" id="heroField" aria-hidden="true"></div>
-  <span class="hero-glow" id="heroGlow" aria-hidden="true"></span>
-  <div class="hero-fade" aria-hidden="true"></div>
+<section class="solvers">
   <div class="wrap">
-    <div class="hero-copy">
-      <span class="page-badge">Join us</span>
-      <h1>
-        <span class="line-ink">Solvers don't build</span>
-        <span class="line-blue">from ticket queues</span>
-      </h1>
-      <p class="hero-sub">They work where the problem lives, with the operators and leaders who own it, on outcomes that get measured and read out loud.</p>
-    </div>
-  </div>
-</header>
 
-<section class="law">
-  <div class="wrap">
-    <div class="section-head">
-      <span class="section-eyebrow">what a solver is</span>
-      <h2 class="section-title">Two halves, and neither one carries the other.</h2>
+    <div class="solvers-open">
+      <h2 class="solvers-title">Solvers don't build from ticket queues.</h2>
+      <p class="solvers-sub">They work where the problem lives, with the operators and leaders who own it, on outcomes that get measured and read out loud.</p>
     </div>
+
     <div class="law-board">
       <div class="law-eqs">
         <span class="term">real thinkers</span>
@@ -875,58 +798,49 @@ footer{
       </div>
       <p class="law-note">Multiplication, not addition. Either one at zero, and so is the answer.</p>
     </div>
-  </div>
-</section>
 
-<section class="velocity">
-  <div class="wrap">
-    <div class="section-head">
-      <span class="section-eyebrow">learning velocity</span>
-      <h2 class="section-title section-title-wide">Learning velocity is the deal.</h2>
-    </div>
-    <div class="trade">
-      <div class="trade-side trade-side--here">
-        <span class="trade-figure">1,000</span>
-        <span class="trade-label">days at Searce</span>
+    <div class="velocity-block">
+      <span class="section-eyebrow">learning velocity is the deal</span>
+      <div class="trade">
+        <div class="trade-side trade-side--here">
+          <span class="trade-figure">1,000</span>
+          <span class="trade-label">days at Searce</span>
+        </div>
+        <span class="trade-equals" aria-hidden="true">=</span>
+        <div class="trade-side">
+          <span class="trade-figure">10</span>
+          <span class="trade-label">years anywhere else</span>
+        </div>
       </div>
-      <span class="trade-equals" aria-hidden="true">=</span>
-      <div class="trade-side">
-        <span class="trade-figure">10</span>
-        <span class="trade-label">years anywhere else</span>
-      </div>
-    </div>
-    <div class="beats">
-      <div class="beat">
-        <span class="beat-when">monday</span>
-        <p class="beat-what">Learn it.</p>
-      </div>
-      <div class="beat">
-        <span class="beat-when">friday</span>
-        <p class="beat-what">Ship it.</p>
-      </div>
-      <div class="beat">
-        <span class="beat-when">quarter end</span>
-        <p class="beat-what">Present the outcome.</p>
+      <div class="beats">
+        <div class="beat">
+          <span class="beat-when">monday</span>
+          <p class="beat-what">Learn it.</p>
+        </div>
+        <div class="beat">
+          <span class="beat-when">friday</span>
+          <p class="beat-what">Ship it.</p>
+        </div>
+        <div class="beat">
+          <span class="beat-when">quarter end</span>
+          <p class="beat-what">Present the outcome.</p>
+        </div>
       </div>
     </div>
-  </div>
-</section>
 
-<section class="paths">
-  <div class="wrap">
-    <div class="section-head">
+    <div class="paths-block">
       <span class="section-eyebrow">the solver paths</span>
-      <h2 class="section-title">Seven ways in.</h2>
+      <div class="path-grid">
+        <a class="path path--linked" href="forward-deployed-solver-squads.html"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.3 7.6 8 9 4.7-1.4 8-4.5 8-9V6l-8-3Z"/></svg></span><span class="path-name">Forward-Deployed Solver</span></a>
+        <div class="path"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"/><path d="M12 18v3"/><path d="M4.5 7.5 7 9"/><path d="M17 15l2.5 1.5"/><path d="M4.5 16.5 7 15"/><path d="M17 9l2.5-1.5"/><path d="M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"/></svg></span><span class="path-name">AI Engineer</span></div>
+        <div class="path"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V11"/><path d="M10 20V5"/><path d="M16 20v-6"/><path d="M22 20H2"/></svg></span><span class="path-name">Platform Engineer</span></div>
+        <div class="path"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 21 8v8l-9 5-9-5V8l9-5Z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/></svg></span><span class="path-name">Data Engineer</span></div>
+        <div class="path"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 8 5 12l4 4"/><path d="M15 8l4 4-4 4"/></svg></span><span class="path-name">Software Engineer</span></div>
+        <div class="path"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z"/><path d="M8.5 12.5 11 15l4.5-5"/></svg></span><span class="path-name">Reliability Engineer</span></div>
+        <div class="path"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 4.5 19.5 8.5 8.5 19.5H4.5v-4L15.5 4.5Z"/><path d="M13.5 6.5l4 4"/></svg></span><span class="path-name">Experience Designer</span></div>
+      </div>
     </div>
-    <div class="path-grid">
-      <a class="path path--linked" href="forward-deployed-solver-squads.html"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.3 7.6 8 9 4.7-1.4 8-4.5 8-9V6l-8-3Z"/></svg></span><span class="path-name">Forward-Deployed Solver</span></a>
-      <div class="path"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"/><path d="M12 18v3"/><path d="M4.5 7.5 7 9"/><path d="M17 15l2.5 1.5"/><path d="M4.5 16.5 7 15"/><path d="M17 9l2.5-1.5"/><path d="M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"/></svg></span><span class="path-name">AI Engineer</span></div>
-      <div class="path"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V11"/><path d="M10 20V5"/><path d="M16 20v-6"/><path d="M22 20H2"/></svg></span><span class="path-name">Platform Engineer</span></div>
-      <div class="path"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 21 8v8l-9 5-9-5V8l9-5Z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/></svg></span><span class="path-name">Data Engineer</span></div>
-      <div class="path"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 8 5 12l4 4"/><path d="M15 8l4 4-4 4"/></svg></span><span class="path-name">Software Engineer</span></div>
-      <div class="path"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z"/><path d="M8.5 12.5 11 15l4.5-5"/></svg></span><span class="path-name">Reliability Engineer</span></div>
-      <div class="path"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 4.5 19.5 8.5 8.5 19.5H4.5v-4L15.5 4.5Z"/><path d="M13.5 6.5l4 4"/></svg></span><span class="path-name">Experience Designer</span></div>
-    </div>
+
   </div>
 </section>
 
@@ -974,65 +888,6 @@ footer{
   window.addEventListener("resize", ()=>{ clearTimeout(t); t = setTimeout(publish, 150); });
 })();
 
-/* ============ HERO — a lit field under the cursor ============
-   A static field of loose points sits behind the copy; the only interaction
-   is a soft glow that follows the pointer. The points are not linked into a
-   squad here — that construct belongs to the Solver Squads page, and on this
-   page it read as a second idea competing with the headline. */
-function buildHeroField(host, section, glow){
-  if(!host || !section) return;
-
-  const NS = 'http://www.w3.org/2000/svg';
-  const SPACING = 46;
-
-  function build(){
-    const r = section.getBoundingClientRect();
-    const cols = Math.ceil(r.width / SPACING) + 1;
-    const rows = Math.ceil(r.height / SPACING) + 1;
-    const svg = document.createElementNS(NS, 'svg');
-    svg.setAttribute('viewBox', `0 0 ${r.width} ${r.height}`);
-    svg.setAttribute('preserveAspectRatio', 'none');
-    for(let y = 0; y < rows; y++){
-      for(let x = 0; x < cols; x++){
-        const c = document.createElementNS(NS, 'circle');
-        c.setAttribute('cx', x * SPACING);
-        c.setAttribute('cy', y * SPACING);
-        c.setAttribute('r', 2);
-        c.setAttribute('class', 'field-dot');
-        svg.appendChild(c);
-      }
-    }
-    host.innerHTML = '';
-    host.appendChild(svg);
-  }
-
-  if(glow){
-    let pending = false, mx = 0, my = 0;
-    section.addEventListener('pointermove', e =>{
-      if(e.pointerType !== 'mouse') return;
-      const r = section.getBoundingClientRect();
-      mx = e.clientX - r.left;
-      my = e.clientY - r.top;
-      glow.classList.add('on');
-      if(!pending){
-        pending = true;
-        requestAnimationFrame(()=>{
-          pending = false;
-          glow.style.transform = `translate(${mx - 260}px, ${my - 260}px)`;
-        });
-      }
-    });
-    section.addEventListener('pointerleave', ()=> glow.classList.remove('on'));
-  }
-
-  build();
-  let t;
-  window.addEventListener('resize', ()=>{ clearTimeout(t); t = setTimeout(build, 160); });
-}
-
-buildHeroField(document.getElementById('heroField'),
-               document.getElementById('heroSection'),
-               document.getElementById('heroGlow'));
 </script>
 
 </body>
