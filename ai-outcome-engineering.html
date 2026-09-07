@@ -198,7 +198,6 @@ a:focus-visible, button:focus-visible{
 }
 .lang-toggle svg{width:9px;height:9px;}
 
-
 /* ============ HERO ============
    A loose field of points as texture, with a soft glow tracking the pointer.
    The field itself is inert — the glow is the whole interaction. */
@@ -378,7 +377,9 @@ a:focus-visible, button:focus-visible{
   text-transform:uppercase;
   line-height:1;
 }
-/* A faint square grid, the one texture the dark surfaces share. */
+/* A faint square grid. It is used on exactly one surface — the diagnosis
+   panel — where it reads as instrumentation. On three stacked dark sections it
+   read as wallpaper. */
 .grid-tex{
   position:absolute;
   inset:0;
@@ -460,20 +461,18 @@ a:focus-visible, button:focus-visible{
 .versus-out{font-size:15.5px;line-height:1.62;color:var(--ink);margin:0;text-wrap:pretty;}
 
 /* ============ ASSURANCES ============
-   The four numbers the page is accountable to, sitting straight after "what it
-   is" so the claim is quantified before it is explained. Reads as a spec strip
-   rather than a KPI dashboard: mono field label, one large figure, a name and
-   a line of definition.
+   The four numbers the page is accountable to. Light, and sitting under the
+   methodology rather than before the diagnosis: on a dark ground before it,
+   this made four dark sections in a row.
    The mock coloured each figure differently — green, cyan, white, amber. The
    system is one hue, so the four are separated by their labels and by a single
-   accented tile instead. */
+   accented tile instead.
+   Note --blue-strong, not --blue, for anything small on paper: #0064ff only
+   reaches 3.68:1 there and these labels are 11.5px. */
 .assurances{
-  position:relative;
-  isolation:isolate;
-  overflow:hidden;
-  padding:clamp(56px,5.6vw,84px) 0 clamp(60px,6vw,90px);
-  background:var(--blue-void);
-  border-bottom:1px solid rgba(255,255,255,.06);
+  padding:clamp(70px,7vw,104px) 0 clamp(76px,7.6vw,112px);
+  background:var(--paper);
+  border-bottom:1px solid var(--paper-line);
 }
 .assurances-grid{
   display:grid;
@@ -484,8 +483,12 @@ a:focus-visible, button:focus-visible{
   display:flex;
   flex-direction:column;
   padding:clamp(22px,2.4vw,32px);
+  border:1px solid var(--paper-line);
   border-radius:16px;
+  background:var(--paper);
+  transition:border-color .28s ease, background .28s ease;
 }
+.assure:hover{border-color:var(--blue-24);background:var(--blue-06);}
 .assure-top{
   display:flex;
   align-items:center;
@@ -493,7 +496,7 @@ a:focus-visible, button:focus-visible{
   gap:14px;
   margin-bottom:clamp(20px,2.2vw,30px);
 }
-.assure-kind{color:var(--blue-lift);}
+.assure-kind{color:var(--blue-strong);}
 .assure-dot{
   width:7px;height:7px;
   border-radius:50%;
@@ -506,30 +509,31 @@ a:focus-visible, button:focus-visible{
   font-size:clamp(34px,3.8vw,56px);
   line-height:1;
   letter-spacing:-0.032em;
-  color:#fff;
+  color:var(--ink);
   margin:0 0 clamp(14px,1.5vw,20px);
   font-variant-numeric:tabular-nums;
 }
 /* One tile carries the accent, the last one, because it is the promise the
    other three exist to support. */
 .assure--key{
-  border-color:var(--blue-hair-lit);
-  background:linear-gradient(160deg,rgba(0,100,255,.16),rgba(0,100,255,.03));
+  border-color:var(--blue-12);
+  background:var(--blue-06);
 }
-.assure--key .assure-figure{color:var(--blue-lift);}
+.assure--key:hover{border-color:var(--blue-24);}
+.assure--key .assure-figure{color:var(--blue-strong);}
 .assure-name{
   font-family:var(--display);
   font-weight:600;
   font-size:15.5px;
   line-height:1.26;
   letter-spacing:-0.01em;
-  color:#fff;
+  color:var(--ink);
   margin:0 0 10px;
 }
 .assure-note{
   font-size:13.5px;
   line-height:1.58;
-  color:rgba(255,255,255,.6);
+  color:var(--ink-60);
   margin:0;
 }
 
@@ -538,13 +542,11 @@ a:focus-visible, button:focus-visible{
    holding the pilot/production pair either side of a chasm badge, the five
    friction points as a row of five, and the precondition axiom underneath. */
 .unsolved{padding:clamp(84px,8.4vw,128px) 0 clamp(96px,9.6vw,144px);}
-.diag-head{
-  display:grid;
-  grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);
-  column-gap:clamp(36px,5vw,88px);
-  align-items:start;
-  margin-bottom:clamp(44px,4.6vw,68px);
-}
+/* The supporting paragraph that sat on the right is gone, so the headline is
+   no longer squeezed into a 1.55fr column: it runs to a proper measure at a
+   larger size. Its substance survives below, in the pilot and production
+   cards, which say the same thing with the detail attached. */
+.diag-head{margin-bottom:clamp(44px,4.6vw,68px);}
 .diag-eyebrow{
   display:block;
   color:var(--blue-lift);
@@ -553,17 +555,12 @@ a:focus-visible, button:focus-visible{
 .diag-title{
   font-family:var(--display);
   font-weight:600;
-  font-size:clamp(30px,3.7vw,54px);
-  line-height:1.14;
-  letter-spacing:-0.026em;
+  font-size:clamp(32px,4.3vw,64px);
+  line-height:1.1;
+  letter-spacing:-0.028em;
   color:#fff;
   margin:0;
-}
-.diag-note{
-  font-size:clamp(15.5px,1.35vw,17.5px);
-  line-height:1.62;
-  color:rgba(255,255,255,.68);
-  margin:clamp(8px,1vw,14px) 0 0;
+  max-width:24ch;
 }
 
 /* ---- the chasm: pilot | badge | production ---- */
@@ -882,7 +879,15 @@ a:focus-visible, button:focus-visible{
 .move-radio:focus-visible + .move{outline:2px solid var(--blue-lift);outline-offset:2px;}
 
 /* ---- the detail pane ---- */
-.stages{position:relative;min-width:0;align-self:stretch;}
+/* A grid, so the visible stage stretches to the height the reserve sets
+   rather than sitting at the top of it. */
+.stages{
+  position:relative;
+  min-width:0;
+  align-self:stretch;
+  display:grid;
+  align-items:stretch;
+}
 .stage{
   display:none;
   padding:clamp(24px,2.6vw,38px);
@@ -894,7 +899,13 @@ a:focus-visible, button:focus-visible{
 #mv3:checked ~ .stages .stage-3,
 #mv4:checked ~ .stages .stage-4,
 #mv5:checked ~ .stages .stage-5,
-#mv6:checked ~ .stages .stage-6{display:block;}
+#mv6:checked ~ .stages .stage-6{
+  /* A column, so the gap left over by the shorter moves is distributed
+     between the body and the field cards instead of pooling at the bottom.
+     Every move ends with its sign-off on the floor of the panel. */
+  display:flex;
+  flex-direction:column;
+}
 .stage-top{
   display:flex;
   align-items:center;
@@ -917,14 +928,13 @@ a:focus-visible, button:focus-visible{
   margin-left:auto;
   display:grid;
   place-items:center;
-  width:44px;height:44px;
-  border-radius:11px;
+  width:52px;height:52px;
+  border-radius:13px;
   border:1px solid var(--blue-hair-lit);
   color:var(--blue-lift);
-  font-family:var(--mono);
-  font-size:16px;
   flex:none;
 }
+.stage-glyph svg{width:24px;height:24px;}
 .stage-top + .hair{margin:clamp(20px,2.2vw,30px) 0;}
 .stage-name{
   font-family:var(--display);
@@ -936,17 +946,29 @@ a:focus-visible, button:focus-visible{
   margin:0 0 clamp(14px,1.5vw,20px);
 }
 .stage-body{
-  font-size:clamp(15px,1.35vw,17px);
-  line-height:1.64;
+  font-size:clamp(15.5px,1.4vw,18px);
+  line-height:1.68;
   color:rgba(255,255,255,.74);
   margin:0 0 clamp(22px,2.4vw,32px);
+  max-width:60ch;
 }
+/* The pane has to match the height of the six-item list beside it, so the
+   shorter moves have slack to spend. The field cards take it — they grow and
+   centre their contents — rather than it pooling as a gap. */
+.stage-fields{flex:1;margin-top:clamp(6px,1vw,14px);}
 .stage-fields{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
   gap:clamp(12px,1.2vw,18px);
 }
-.field{padding:clamp(16px,1.7vw,22px);border-radius:12px;}
+.field{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:clamp(18px,2vw,26px);
+  border-radius:12px;
+}
+.field-label{flex:none;}
 .field-label{
   display:flex;
   align-items:center;
@@ -957,16 +979,32 @@ a:focus-visible, button:focus-visible{
 .field-value{
   font-family:var(--display);
   font-weight:500;
-  font-size:14.5px;
-  line-height:1.42;
+  font-size:15.5px;
+  line-height:1.44;
   letter-spacing:-0.008em;
   color:#fff;
   margin:0;
 }
+/* Position in the sequence, along the floor of the pane. The left-hand list
+   says which move is open; this says how far through the state machine it is,
+   and it uses the width the sign-off leaves. It also replaces the rule that
+   used to sit here — two dividers stacked was one too many. */
+.stage-rail{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:5px;
+  margin-top:clamp(20px,2.2vw,30px);
+}
+.stage-rail span{
+  height:3px;
+  border-radius:2px;
+  background:rgba(139,186,255,.14);
+}
+.stage-rail span.done{background:var(--blue-strong);}
+.stage-rail span.now{background:var(--blue);box-shadow:0 0 10px rgba(0,100,255,.6);}
 .stage-foot{
   display:flex;
   align-items:center;
-  justify-content:space-between;
   gap:clamp(16px,2vw,28px);
   flex-wrap:wrap;
   margin-top:clamp(20px,2.2vw,30px);
@@ -979,19 +1017,6 @@ a:focus-visible, button:focus-visible{
   min-width:0;
 }
 .signoff span:last-child{text-transform:none;letter-spacing:.04em;}
-.stage-go{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  font-family:var(--display);
-  font-weight:600;
-  font-size:14.5px;
-  color:var(--blue-lift);
-  white-space:nowrap;
-  transition:color .22s ease, gap .22s ease;
-}
-.stage-go:hover{color:#fff;gap:12px;}
-.stage-go svg{width:15px;height:15px;}
 
 /* ============ THE METRIC LADDER ============
    Five gaps across one rail. The engineered ones are filled; the commercial
@@ -1427,7 +1452,6 @@ footer{
   .assurances-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
 }
 @media (max-width:900px){
-  .diag-head{grid-template-columns:minmax(0,1fr);row-gap:clamp(18px,3vw,26px);}
   /* The badge sits between the flanks rather than beside them once they stack,
      so it takes its own row and the label reads as a divider. */
   .chasm{grid-template-columns:minmax(0,1fr);}
@@ -1440,7 +1464,6 @@ footer{
   .friction-grid,
   .stage-fields{grid-template-columns:minmax(0,1fr);}
   .stage-glyph{margin-left:0;}
-  .stage-foot{align-items:flex-start;flex-direction:column;gap:14px;}
   .move{grid-template-columns:auto minmax(0,1fr);}
   .move-chev{display:none;}
 }
@@ -1551,60 +1574,12 @@ footer{
   </div>
 </section>
 
-<section class="assurances">
-  <span class="grid-tex" aria-hidden="true"></span>
-  <div class="wrap">
-    <div class="assurances-grid">
-      <div class="assure card-dark">
-        <div class="assure-top">
-          <span class="assure-kind mono">precondition sla</span>
-          <span class="assure-dot" aria-hidden="true"></span>
-        </div>
-        <p class="assure-figure">100%</p>
-        <h3 class="assure-name">Locked Baseline Precondition</h3>
-        <p class="assure-note">No build begins without cryptographically signed pre-deployment telemetry.</p>
-      </div>
-      <div class="assure card-dark">
-        <div class="assure-top">
-          <span class="assure-kind mono">speed attainment</span>
-          <span class="assure-dot" aria-hidden="true"></span>
-        </div>
-        <p class="assure-figure">70.2%</p>
-        <h3 class="assure-name">Avg. Cycle Velocity Gain</h3>
-        <p class="assure-note">Measured latency reduction across multi-tier enterprise ship-to-cash pipelines.</p>
-      </div>
-      <div class="assure card-dark">
-        <div class="assure-top">
-          <span class="assure-kind mono">global coverage</span>
-          <span class="assure-dot" aria-hidden="true"></span>
-        </div>
-        <p class="assure-figure">11 Hubs</p>
-        <h3 class="assure-name">Forward-Deployed Squads</h3>
-        <p class="assure-note">Sovereign cloud &amp; autonomous agent centres operating across 11 nations.</p>
-      </div>
-      <div class="assure card-dark assure--key">
-        <div class="assure-top">
-          <span class="assure-kind mono">roi accountability</span>
-          <span class="assure-dot" aria-hidden="true"></span>
-        </div>
-        <p class="assure-figure">$0 Pilot</p>
-        <h3 class="assure-name">Verified Attributed ROI</h3>
-        <p class="assure-note">Zero throwaway sandboxes; every dollar tied directly to a shifted operational number.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
 <section class="unsolved band-dark">
-  <span class="grid-tex" aria-hidden="true"></span>
   <div class="wrap">
 
     <div class="diag-head">
-      <div>
-        <span class="diag-eyebrow mono">systems diagnosis</span>
-        <h2 class="diag-title">Most enterprises have AI in production somewhere. Far fewer can attribute a change in their financial results to it.</h2>
-      </div>
-      <p class="diag-note">Pilots are optimised for demonstration. Production is optimised for reliability, exception handling, integration and human trust. The distance between them is not a modelling problem.</p>
+      <span class="diag-eyebrow mono">systems diagnosis</span>
+      <h2 class="diag-title">Most enterprises have AI in production somewhere. Far fewer can attribute a change in their financial results to it.</h2>
     </div>
 
     <div class="panel">
@@ -1688,7 +1663,6 @@ footer{
 </section>
 
 <section class="involves">
-  <span class="grid-tex" aria-hidden="true"></span>
   <div class="wrap">
 
     <div class="method-head">
@@ -1758,7 +1732,7 @@ footer{
           <div class="stage-top">
             <span class="stage-badge">stage 01</span>
             <span class="stage-gate mono">gate: pre-build charter</span>
-            <span class="stage-glyph" aria-hidden="true">&#9873;</span>
+            <span class="stage-glyph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v18"/><path d="M6 4h11l-2.2 3.5L17 11H6"/></svg></span>
           </div>
           <hr class="hair">
           <h3 class="stage-name">Starting from the number</h3>
@@ -1773,17 +1747,16 @@ footer{
               <p class="field-value">ERP ledgers, CRM pipeline snapshots, and billing journals</p>
             </div>
           </div>
-          <hr class="hair" style="margin-top:clamp(20px,2.2vw,30px)">
+          <div class="stage-rail" aria-hidden="true"><span class="now"></span><span class=""></span><span class=""></span><span class=""></span><span class=""></span><span class=""></span></div>
           <div class="stage-foot">
             <span class="signoff mono"><span class="pip" aria-hidden="true"></span><span>Sign-off: Client CFO/CTO countersignature required</span></span>
-            <a class="stage-go" href="#">Initiate this move <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></a>
           </div>
         </div>
         <div class="stage stage-2">
           <div class="stage-top">
             <span class="stage-badge">stage 02</span>
             <span class="stage-gate mono">gate: process reality mapping</span>
-            <span class="stage-glyph" aria-hidden="true">&#11041;</span>
+            <span class="stage-glyph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 20 7.5v9L12 21 4 16.5v-9L12 3Z"/><path d="M4 7.5 12 12l8-4.5"/><path d="M12 12v9"/></svg></span>
           </div>
           <hr class="hair">
           <h3 class="stage-name">Working backwards into the process</h3>
@@ -1798,17 +1771,16 @@ footer{
               <p class="field-value">Kafka queues, Datadog traces, and SAP/Salesforce audit logs</p>
             </div>
           </div>
-          <hr class="hair" style="margin-top:clamp(20px,2.2vw,30px)">
+          <div class="stage-rail" aria-hidden="true"><span class="done"></span><span class="now"></span><span class=""></span><span class=""></span><span class=""></span><span class=""></span></div>
           <div class="stage-foot">
             <span class="signoff mono"><span class="pip" aria-hidden="true"></span><span>Sign-off: Algorithmic path reconciliation against log stores</span></span>
-            <a class="stage-go" href="#">Initiate this move <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></a>
           </div>
         </div>
         <div class="stage stage-3">
           <div class="stage-top">
             <span class="stage-badge">stage 03</span>
             <span class="stage-gate mono">gate: metric attribution</span>
-            <span class="stage-glyph" aria-hidden="true">&#8673;</span>
+            <span class="stage-glyph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V5"/><path d="M6.5 10.5 12 5l5.5 5.5"/></svg></span>
           </div>
           <hr class="hair">
           <h3 class="stage-name">Building the metric ladder</h3>
@@ -1823,17 +1795,16 @@ footer{
               <p class="field-value">Step-level execution timers, human review handoff logs</p>
             </div>
           </div>
-          <hr class="hair" style="margin-top:clamp(20px,2.2vw,30px)">
+          <div class="stage-rail" aria-hidden="true"><span class="done"></span><span class="done"></span><span class="now"></span><span class=""></span><span class=""></span><span class=""></span></div>
           <div class="stage-foot">
             <span class="signoff mono"><span class="pip" aria-hidden="true"></span><span>Sign-off: Mechanical attribution consensus with VP Operations</span></span>
-            <a class="stage-go" href="#">Initiate this move <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></a>
           </div>
         </div>
         <div class="stage stage-4">
           <div class="stage-top">
             <span class="stage-badge">stage 04</span>
             <span class="stage-gate mono">gate: immutable seal</span>
-            <span class="stage-glyph" aria-hidden="true">&#128274;</span>
+            <span class="stage-glyph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 11h12v9H6z"/><path d="M9 11V8a3 3 0 0 1 6 0v3"/><path d="M12 15v2"/></svg></span>
           </div>
           <hr class="hair">
           <h3 class="stage-name">Locking the baseline</h3>
@@ -1848,17 +1819,16 @@ footer{
               <p class="field-value">90-day unedited database historical snapshots</p>
             </div>
           </div>
-          <hr class="hair" style="margin-top:clamp(20px,2.2vw,30px)">
+          <div class="stage-rail" aria-hidden="true"><span class="done"></span><span class="done"></span><span class="done"></span><span class="now"></span><span class=""></span><span class=""></span></div>
           <div class="stage-foot">
             <span class="signoff mono"><span class="pip" aria-hidden="true"></span><span>Sign-off: Cryptographic hash lock signed by joint leadership</span></span>
-            <a class="stage-go" href="#">Initiate this move <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></a>
           </div>
         </div>
         <div class="stage stage-5">
           <div class="stage-top">
             <span class="stage-badge">stage 05</span>
             <span class="stage-gate mono">gate: production deployment</span>
-            <span class="stage-glyph" aria-hidden="true">&#9881;</span>
+            <span class="stage-glyph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9.2a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 0 0 0-5.6Z"/><path d="M12 2.8v2.4M12 18.8v2.4M4.5 7.1l2 1.2M17.5 15.7l2 1.2M4.5 16.9l2-1.2M17.5 8.3l2-1.2"/></svg></span>
           </div>
           <hr class="hair">
           <h3 class="stage-name">Engineering the change</h3>
@@ -1873,17 +1843,16 @@ footer{
               <p class="field-value">Real-time inference latencies, throughput counters, token telemetry</p>
             </div>
           </div>
-          <hr class="hair" style="margin-top:clamp(20px,2.2vw,30px)">
+          <div class="stage-rail" aria-hidden="true"><span class="done"></span><span class="done"></span><span class="done"></span><span class="done"></span><span class="now"></span><span class=""></span></div>
           <div class="stage-foot">
             <span class="signoff mono"><span class="pip" aria-hidden="true"></span><span>Sign-off: Continuous integration validation in live pipeline</span></span>
-            <a class="stage-go" href="#">Initiate this move <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></a>
           </div>
         </div>
         <div class="stage stage-6">
           <div class="stage-top">
             <span class="stage-badge">stage 06</span>
             <span class="stage-gate mono">gate: joint outcome audit</span>
-            <span class="stage-glyph" aria-hidden="true">&#10022;</span>
+            <span class="stage-glyph" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M3 12h18"/><path d="M6.4 6.4l11.2 11.2"/><path d="M17.6 6.4 6.4 17.6"/></svg></span>
           </div>
           <hr class="hair">
           <h3 class="stage-name">Verifying the reading</h3>
@@ -1898,15 +1867,57 @@ footer{
               <p class="field-value">Post-deployment live data stream delta comparisons</p>
             </div>
           </div>
-          <hr class="hair" style="margin-top:clamp(20px,2.2vw,30px)">
+          <div class="stage-rail" aria-hidden="true"><span class="done"></span><span class="done"></span><span class="done"></span><span class="done"></span><span class="done"></span><span class="now"></span></div>
           <div class="stage-foot">
             <span class="signoff mono"><span class="pip" aria-hidden="true"></span><span>Sign-off: Co-signed Executive Board Attestation</span></span>
-            <a class="stage-go" href="#">Initiate this move <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></a>
           </div>
         </div>
       </div>
     </fieldset>
 
+  </div>
+</section>
+
+<section class="assurances">
+  <div class="wrap">
+    <div class="assurances-grid">
+      <div class="assure">
+        <div class="assure-top">
+          <span class="assure-kind mono">precondition sla</span>
+          <span class="assure-dot" aria-hidden="true"></span>
+        </div>
+        <p class="assure-figure">100%</p>
+        <h3 class="assure-name">Locked Baseline Precondition</h3>
+        <p class="assure-note">No build begins without cryptographically signed pre-deployment telemetry.</p>
+      </div>
+      <div class="assure">
+        <div class="assure-top">
+          <span class="assure-kind mono">speed attainment</span>
+          <span class="assure-dot" aria-hidden="true"></span>
+        </div>
+        <p class="assure-figure">70.2%</p>
+        <h3 class="assure-name">Avg. Cycle Velocity Gain</h3>
+        <p class="assure-note">Measured latency reduction across multi-tier enterprise ship-to-cash pipelines.</p>
+      </div>
+      <div class="assure">
+        <div class="assure-top">
+          <span class="assure-kind mono">global coverage</span>
+          <span class="assure-dot" aria-hidden="true"></span>
+        </div>
+        <p class="assure-figure">11 Hubs</p>
+        <h3 class="assure-name">Forward-Deployed Squads</h3>
+        <p class="assure-note">Sovereign cloud &amp; autonomous agent centres operating across 11 nations.</p>
+      </div>
+      <div class="assure assure--key">
+        <div class="assure-top">
+          <span class="assure-kind mono">roi accountability</span>
+          <span class="assure-dot" aria-hidden="true"></span>
+        </div>
+        <p class="assure-figure">$0 Pilot</p>
+        <h3 class="assure-name">Verified Attributed ROI</h3>
+        <p class="assure-note">Zero throwaway sandboxes; every dollar tied directly to a shifted operational number.</p>
+      </div>
+    </div>
   </div>
 </section>
 
