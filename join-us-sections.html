@@ -1,0 +1,510 @@
+<!-- =========================================================================
+     SEARCE join-us — the two redesigned sections, ready to drop in.
+
+     1. Paste the <style> block into the host page's head, or into its
+        stylesheet with the <style> tags removed.
+     2. Paste the markup where the two old sections were.
+
+     If the host page already has its own page container, delete the two
+     .sc-wrap divs and let that container wrap these sections instead.
+     ========================================================================= -->
+
+<style>
+/* ===========================================================================
+   SEARCE — join us: the "solvers" and "culture" sections.
+
+   Everything is scoped under .sc-join and every class carries an sc- prefix,
+   so this block takes nothing from the host page's stylesheet and cannot leak
+   into it. The only outside dependency is Poppins, named in --sc-display; if
+   the host page already loads it there is nothing else to do, and if it does
+   not the stack falls back to the system UI face.
+
+   The one thing scoping cannot defend against is an !important rule on the
+   host page aimed at a bare element (h2, p, a). If the sections look wrong
+   after pasting, that is the first thing to check.
+   =========================================================================== */
+.sc-join{
+  /* black / white / #0064ff and their tints and tones only — the seven
+     happier letters further down are the single exception */
+  --sc-ink:#000000;
+  --sc-ink-60:#54555a;
+  --sc-ink-40:#84868c;
+  --sc-paper:#ffffff;
+  --sc-paper-line:#e4e6ea;
+  --sc-blue:#0064ff;
+  --sc-blue-strong:#004ecc;
+  --sc-blue-deep:#00337f;
+  --sc-blue-lift:#8bbaff;
+  --sc-blue-06:#eef4ff;
+  --sc-blue-12:#dbe9ff;
+  --sc-blue-24:#b3d0ff;
+  --sc-display:'Poppins', system-ui, sans-serif;
+
+  font-family:'Google Sans Flex Variable','Google Sans Text','Google Sans', system-ui, -apple-system, sans-serif;
+  color:var(--sc-ink);
+  background:var(--sc-paper);
+  text-align:left;
+}
+.sc-join *{box-sizing:border-box;}
+.sc-join p{margin:0;}
+.sc-join a{color:inherit;text-decoration:none;}
+.sc-join h2{margin:0;}
+
+.sc-join .sc-wrap{
+  max-width:1280px;
+  margin:0 auto;
+  padding:0 40px;
+}
+
+.sc-join .sc-section-eyebrow{
+  display:block;
+  font-family:var(--sc-display);
+  font-weight:600;
+  font-size:12.5px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--sc-blue);
+  margin-bottom:22px;
+}
+/* Outlined rounded-square tile holding the glyph, and one card in the group
+   carrying the accent, both taken from the reference. */
+.sc-join .sc-icon-tile{
+  display:grid;
+  place-items:center;
+  width:46px;height:46px;
+  border-radius:13px;
+  border:1.5px solid var(--sc-blue-24);
+  color:var(--sc-blue);
+  margin-bottom:22px;
+}
+.sc-icon-tile svg{width:22px;height:22px;}
+
+.sc-join .sc-cta-button{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  background:var(--sc-ink);
+  color:#fff;
+  font-family:var(--sc-display);
+  font-weight:500;
+  font-size:16px;
+  padding:16px 30px;
+  border-radius:999px;
+  transition:background .2s ease, transform .2s ease, color .2s ease;
+}
+.sc-cta-button svg{width:14px;height:14px;}
+
+/* ============ THE LAW ============
+   The multiplication is the strongest idea in this section's copy and it was
+   set as two lines of running text. It is now stated as a law: the terms on
+   plates, the operators as blue marks between them, the result carrying the
+   fill. Two rows, because the copy gives two. */
+/* One section, four blocks. These were four <section>s with their own padding
+   and rules between them, which read as four sections of a page; they are one
+   section of a page that has not been designed yet. */
+.sc-solvers{padding:clamp(88px,9vw,132px) 0 clamp(96px,10vw,148px);}
+.sc-solvers-open{margin-bottom:clamp(52px,5.6vw,84px);}
+.sc-join .sc-solvers-title{
+  font-family:var(--sc-display);
+  font-weight:300;
+  font-size:clamp(34px,5vw,72px);
+  line-height:1.06;
+  letter-spacing:-0.028em;
+  color:var(--sc-ink);
+  margin:0;
+  max-width:20ch;
+}
+.sc-join .sc-solvers-sub{
+  font-size:clamp(17px,1.6vw,21px);
+  line-height:1.6;
+  color:var(--sc-ink-60);
+  max-width:52ch;
+  margin:clamp(20px,2.2vw,30px) 0 0;
+}
+/* The blocks are told apart by air, not by rules — the section already sits
+   between whatever comes before and the culture band. */
+.sc-velocity-block{margin-top:clamp(72px,8vw,116px);}
+.sc-paths-block{margin-top:clamp(72px,8vw,116px);}
+.sc-velocity-block .sc-section-eyebrow,
+.sc-paths-block .sc-section-eyebrow{margin-bottom:clamp(30px,3.4vw,46px);}
+.sc-join .sc-law-board{
+  background:var(--sc-blue-06);
+  border:1px solid var(--sc-blue-12);
+  border-radius:26px;
+  padding:clamp(34px,4.4vw,64px) clamp(24px,4vw,64px);
+}
+/* Both equations live in one five-column grid so the two multiplication signs
+   sit in the same column and the two equals signs in the next, which is what
+   makes the pair read as a derivation instead of two centred sentences. */
+.sc-join .sc-law-eqs{
+  display:grid;
+  grid-template-columns:auto auto auto auto auto;
+  justify-content:center;
+  align-items:center;
+  column-gap:clamp(10px,1.4vw,20px);
+  row-gap:clamp(18px,2.2vw,30px);
+}
+.sc-law-eqs .sc-term{text-align:right;}
+.sc-law-eqs .sc-term-answer{justify-self:start;text-align:left;}
+.sc-join .sc-term{
+  font-family:var(--sc-display);
+  font-weight:400;
+  font-size:clamp(21px,2.5vw,40px);
+  line-height:1.1;
+  letter-spacing:-0.02em;
+  color:var(--sc-ink);
+  white-space:nowrap;
+}
+.sc-join .sc-op{
+  font-family:var(--sc-display);
+  font-weight:300;
+  font-size:clamp(19px,2.2vw,34px);
+  line-height:1;
+  color:var(--sc-blue);
+  padding:0 clamp(2px,.5vw,8px);
+}
+/* The answer, not another term. --blue-strong rather than --blue: white on the
+   brighter fill only reaches 3.6:1 and this sits below the large-text size. */
+.sc-join .sc-term-answer{
+  background:var(--sc-blue-strong);
+  color:#fff;
+  padding:clamp(8px,.9vw,14px) clamp(16px,1.8vw,28px);
+  border-radius:14px;
+}
+.sc-join .sc-law-note{
+  margin:clamp(28px,3vw,42px) 0 0;
+  padding-top:clamp(22px,2.4vw,32px);
+  border-top:1px solid var(--sc-blue-12);
+  text-align:center;
+  font-size:clamp(15.5px,1.4vw,18px);
+  line-height:1.6;
+  color:var(--sc-ink);
+}
+
+/* ============ VELOCITY ============
+   The trade a candidate is actually being offered, and the reason to read the
+   page at all. It was a body-size line inside a bordered box; it is now the
+   largest thing on the page after the headline, set as the comparison it is. */
+
+.sc-join .sc-trade{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  gap:clamp(20px,3.4vw,56px);
+  margin-bottom:clamp(40px,4.4vw,60px);
+}
+.sc-trade-side{text-align:center;}
+.sc-join .sc-trade-figure{
+  display:block;
+  font-family:var(--sc-display);
+  font-weight:300;
+  font-size:clamp(54px,9vw,132px);
+  line-height:.92;
+  letter-spacing:-0.045em;
+  font-variant-numeric:tabular-nums;
+  color:var(--sc-ink);
+}
+.sc-trade-side--here .sc-trade-figure{color:var(--sc-blue);}
+.sc-join .sc-trade-label{
+  display:block;
+  margin-top:clamp(10px,1.2vw,18px);
+  font-family:var(--sc-display);
+  font-weight:500;
+  font-size:clamp(14px,1.35vw,18px);
+  letter-spacing:.02em;
+  color:var(--sc-ink-60);
+}
+/* Sized against the figures either side of it, not against body copy: at
+   60px it read as a hairline pair next to a 132px numeral. */
+.sc-join .sc-trade-equals{
+  font-family:var(--sc-display);
+  font-weight:300;
+  font-size:clamp(40px,5.4vw,84px);
+  line-height:1;
+  color:var(--sc-blue-24);
+}
+/* Three beats of one week, so "learning velocity" has a shape rather than
+   being asserted. The arrows are the copy's own sequence, not added meaning. */
+.sc-join .sc-beats{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:1px;
+  background:var(--sc-paper-line);
+  border:1px solid var(--sc-paper-line);
+  border-radius:20px;
+  overflow:hidden;
+}
+.sc-join .sc-beat{
+  background:var(--sc-paper);
+  padding:clamp(26px,2.8vw,38px) clamp(22px,2.4vw,32px);
+  transition:background .25s ease;
+}
+.sc-beat:hover{background:var(--sc-blue-06);}
+.sc-join .sc-beat-when{
+  display:block;
+  font-family:var(--sc-display);
+  font-weight:600;
+  font-size:11.5px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--sc-blue);
+  margin-bottom:14px;
+}
+.sc-join .sc-beat-what{
+  font-family:var(--sc-display);
+  font-weight:400;
+  font-size:clamp(18px,1.7vw,24px);
+  line-height:1.22;
+  letter-spacing:-0.016em;
+  color:var(--sc-ink);
+  margin:0;
+}
+
+/* ============ THE SOLVER PATHS ============
+   Seven chips the size of tags, for the seven jobs someone might come here to
+   do — the least prominent thing in the section and the most actionable. They
+   are plates now, big enough to be read as a choice. */
+
+.sc-join .sc-path-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:clamp(14px,1.6vw,22px);
+}
+.sc-join .sc-path{
+  display:block;
+  text-decoration:none;
+  background:var(--sc-paper);
+  border:1px solid var(--sc-paper-line);
+  border-radius:20px;
+  padding:clamp(24px,2.4vw,32px);
+  min-height:148px;
+  transition:border-color .28s ease, transform .28s ease, box-shadow .28s ease;
+}
+.sc-join .sc-path:hover{
+  border-color:var(--sc-blue);
+  transform:translateY(-4px);
+  box-shadow:0 16px 44px rgba(0,100,255,.13);
+}
+.sc-path:hover .sc-icon-tile{background:var(--sc-blue);border-color:var(--sc-blue);color:#fff;}
+/* Larger than the shared tile: these cards are 280px wide and the 46px
+   default sat lost in one. */
+.sc-join .sc-path .sc-icon-tile{
+  width:54px;height:54px;border-radius:15px;
+  margin-bottom:clamp(18px,2vw,26px);
+}
+.sc-path .sc-icon-tile svg{width:25px;height:25px;}
+.sc-join .sc-path-name{
+  display:block;
+  font-family:var(--sc-display);
+  font-weight:500;
+  font-size:clamp(17px,1.55vw,20px);
+  line-height:1.25;
+  letter-spacing:-0.012em;
+  color:var(--sc-ink);
+}
+/* The one path with a page of its own behind it. */
+.sc-join .sc-path--linked .sc-path-name::after{
+  content:" \2192";
+  color:var(--sc-blue);
+}
+
+/* ============ CULTURE ============
+   The invitation. A full-bleed near-black slab with "culture" set at 188px
+   read as a monument rather than a welcome, so three things changed: the band
+   is an inset rounded panel like the equation board instead of a slab running
+   off both edges; the light is lifted well off black and gathers on the right,
+   away from the copy; and the hierarchy is inverted — the sentence about how
+   people behave is the largest thing here now, and the heading is back to
+   being a heading. */
+.sc-culture{padding:0 0 clamp(96px,10vw,140px);}
+.sc-join .sc-culture-panel{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  border-radius:clamp(20px,2.4vw,34px);
+  padding:clamp(48px,6vw,92px) clamp(30px,4.6vw,76px) clamp(52px,6.4vw,96px);
+  /* Lifted off #020c1d: the darkest corner is now a blue that reads as blue.
+     White copy still measures far past 4.5:1 against it. */
+  background:
+    /* A veil over the copy column. Two of the happier letters (#0064FF and
+       #734BFF) are light enough that they cannot reach 3:1 against the lifted
+       blue on their own, and their values are fixed, so the backdrop behind
+       the text is darkened instead. The light still gathers on the right,
+       where nothing has to be read. */
+    linear-gradient(94deg, rgba(2,11,28,.62) 0%, rgba(2,11,28,.40) 44%, rgba(2,11,28,0) 72%),
+    radial-gradient(62% 96% at 96% 16%, rgba(0,116,255,.72), rgba(0,116,255,0) 62%),
+    linear-gradient(106deg, #06265c 0%, #0a3277 52%, #0b3f96 100%);
+  color:#fff;
+}
+.sc-join .sc-culture-panel::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background-image:radial-gradient(circle, rgba(255,255,255,.17) 1px, rgba(255,255,255,0) 1.5px);
+  background-size:29px 29px;
+  -webkit-mask-image:radial-gradient(66% 76% at 86% 34%, #000 0%, rgba(0,0,0,0) 74%);
+  mask-image:radial-gradient(66% 76% at 86% 34%, #000 0%, rgba(0,0,0,0) 74%);
+}
+.sc-join .sc-culture-title{
+  font-family:var(--sc-display);
+  font-weight:400;
+  font-size:clamp(25px,2.4vw,35px);
+  line-height:1.1;
+  letter-spacing:-0.02em;
+  margin:0 0 clamp(22px,2.4vw,32px);
+  color:var(--sc-blue-lift);
+}
+/* The statement carries the section now, on a wider measure: at 34ch it sat
+   in a narrow strip down the left of a very wide band. */
+.sc-join .sc-culture-copy{
+  font-family:var(--sc-display);
+  font-weight:300;
+  /* Floor at 24px: that is the large-text threshold for regular weight, and
+     it keeps the 3:1 bar in force at every viewport rather than 4.5:1. */
+  font-size:clamp(24px,2.6vw,38px);
+  line-height:1.34;
+  letter-spacing:-0.018em;
+  max-width:40ch;
+  margin:0 0 clamp(38px,4.4vw,58px);
+  color:#fff;
+}
+.sc-culture-copy strong{font-weight:400;}
+/* The seven letters of "happier", in order, in the brand's own values. These
+   are the one place on these pages outside black, white and #0064ff. */
+.sc-happier span:nth-child(1){color:#7D7D7D;}  /* h  gray      */
+.sc-happier span:nth-child(2){color:#0064FF;}  /* a  blue      */
+.sc-happier span:nth-child(3){color:#FFB414;}  /* p  yellow    */
+.sc-happier span:nth-child(4){color:#FF2850;}  /* p  red       */
+.sc-happier span:nth-child(5){color:#734BFF;}  /* i  purple    */
+.sc-happier span:nth-child(6){color:#28C8E1;}  /* e  turquoise */
+.sc-happier span:nth-child(7){color:#00DC96;}  /* r  green     */
+.sc-culture .sc-cta-button{background:#fff;color:var(--sc-blue-strong);}
+.sc-culture .sc-cta-button:hover{background:var(--sc-blue-lift);color:var(--sc-blue-deep);}
+
+
+/* ============ RESPONSIVE ============ */
+/* ============ JOIN-US RESPONSIVE ============ */
+@media (max-width:1080px){
+  .sc-path-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+}
+@media (max-width:860px){
+  /* The equals sign has no column of its own once the two sides stack. */
+  .sc-trade{grid-template-columns:minmax(0,1fr);gap:clamp(14px,3vw,24px);}
+  /* A span in a single-column grid sits at the start of its row, so the pivot
+     pinned to the left margin once the two sides stacked. */
+  .sc-trade-equals{font-size:clamp(24px,5vw,34px);justify-self:center;}
+  .sc-beats{grid-template-columns:minmax(0,1fr);}
+  .sc-path-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .sc-culture-copy{max-width:none;}
+}
+@media (max-width:560px){
+  /* "join the solver movement" needs 290px on one line at the desktop size,
+     and the panel only offers 252px at 360px wide, so it was breaking onto
+     three lines inside the pill. The panel gives back some padding and the
+     button comes down a size. */
+  .sc-culture-panel{padding:clamp(38px,9vw,48px) 22px clamp(42px,10vw,52px);}
+  .sc-culture .sc-cta-button{font-size:14.5px;padding:14px 22px;}
+  /* Below this a term plus its operator no longer fits one row, so the grid
+     unrolls to a single column and the operators sit between the lines. */
+  .sc-law-eqs{grid-template-columns:minmax(0,1fr);row-gap:12px;}
+  /* Every child needs centring, operators included: a grid item sits at the
+     start of its row, so the signs hung off the left margin. */
+  .sc-law-eqs > *{justify-self:center;text-align:center;}
+  /* Needs the same two-class specificity as the rule that pushes the answer
+     plate to the start of its column on wide layouts, or it stays left. */
+  .sc-law-eqs .sc-term-answer{justify-self:center;text-align:center;}
+  /* The sixth child opens the second equation. Without this the answer of the
+     first ran straight into it at the same row gap, and the two read as one
+     six-line stack. */
+  .sc-law-eqs > *:nth-child(6){margin-top:clamp(22px,5vw,32px);}
+  .sc-term,.sc-op{white-space:normal;}
+  .sc-path-grid{grid-template-columns:minmax(0,1fr);}
+  .sc-path{min-height:0;}
+}
+
+</style>
+
+<div class="sc-join">
+<section class="sc-solvers">
+  <div class="sc-wrap">
+
+    <div class="sc-solvers-open">
+      <h2 class="sc-solvers-title">Solvers don't build from ticket queues.</h2>
+      <p class="sc-solvers-sub">They work where the problem lives, with the operators and leaders who own it, on outcomes that get measured and read out loud.</p>
+    </div>
+
+    <div class="sc-law-board">
+      <div class="sc-law-eqs">
+        <span class="sc-term">real thinkers</span>
+        <span class="sc-op" aria-hidden="true">&#215;</span>
+        <span class="sc-term">real doers</span>
+        <span class="sc-op" aria-hidden="true">=</span>
+        <span class="sc-term sc-term-answer">real solvers</span>
+
+        <span class="sc-term">strategy</span>
+        <span class="sc-op" aria-hidden="true">&#215;</span>
+        <span class="sc-term">execution</span>
+        <span class="sc-op" aria-hidden="true">=</span>
+        <span class="sc-term sc-term-answer">solving</span>
+      </div>
+      <p class="sc-law-note">Multiplication, not addition. Either one at zero, and so is the answer.</p>
+    </div>
+
+    <div class="sc-velocity-block">
+      <span class="sc-section-eyebrow">learning velocity is the deal</span>
+      <div class="sc-trade">
+        <div class="sc-trade-side sc-trade-side--here">
+          <span class="sc-trade-figure">1,000</span>
+          <span class="sc-trade-label">days at Searce</span>
+        </div>
+        <span class="sc-trade-equals" aria-hidden="true">=</span>
+        <div class="sc-trade-side">
+          <span class="sc-trade-figure">10</span>
+          <span class="sc-trade-label">years anywhere else</span>
+        </div>
+      </div>
+      <div class="sc-beats">
+        <div class="sc-beat">
+          <span class="sc-beat-when">monday</span>
+          <p class="sc-beat-what">Learn it.</p>
+        </div>
+        <div class="sc-beat">
+          <span class="sc-beat-when">friday</span>
+          <p class="sc-beat-what">Ship it.</p>
+        </div>
+        <div class="sc-beat">
+          <span class="sc-beat-when">quarter end</span>
+          <p class="sc-beat-what">Present the outcome.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="sc-paths-block">
+      <span class="sc-section-eyebrow">the solver paths</span>
+      <div class="sc-path-grid">
+        <a class="sc-path sc-path--linked" href="forward-deployed-solver-squads.html"><span class="sc-icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.3 7.6 8 9 4.7-1.4 8-4.5 8-9V6l-8-3Z"/></svg></span><span class="sc-path-name">Forward-Deployed Solver</span></a>
+        <div class="sc-path"><span class="sc-icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"/><path d="M12 18v3"/><path d="M4.5 7.5 7 9"/><path d="M17 15l2.5 1.5"/><path d="M4.5 16.5 7 15"/><path d="M17 9l2.5-1.5"/><path d="M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"/></svg></span><span class="sc-path-name">AI Engineer</span></div>
+        <div class="sc-path"><span class="sc-icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V11"/><path d="M10 20V5"/><path d="M16 20v-6"/><path d="M22 20H2"/></svg></span><span class="sc-path-name">Platform Engineer</span></div>
+        <div class="sc-path"><span class="sc-icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 21 8v8l-9 5-9-5V8l9-5Z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/></svg></span><span class="sc-path-name">Data Engineer</span></div>
+        <div class="sc-path"><span class="sc-icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 8 5 12l4 4"/><path d="M15 8l4 4-4 4"/></svg></span><span class="sc-path-name">Software Engineer</span></div>
+        <div class="sc-path"><span class="sc-icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z"/><path d="M8.5 12.5 11 15l4.5-5"/></svg></span><span class="sc-path-name">Reliability Engineer</span></div>
+        <div class="sc-path"><span class="sc-icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15.5 4.5 19.5 8.5 8.5 19.5H4.5v-4L15.5 4.5Z"/><path d="M13.5 6.5l4 4"/></svg></span><span class="sc-path-name">Experience Designer</span></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="sc-culture">
+  <div class="sc-wrap">
+    <div class="sc-culture-panel">
+      <h2 class="sc-culture-title">culture</h2>
+      <p class="sc-culture-copy"><strong class="sc-happier"><span>h</span><span>a</span><span>p</span><span>p</span><span>i</span><span>e</span><span>r</span></strong> is how we behave. Mistakes are encouraged. Solve-a-thons are how we hire and how we work: never the easiest first option, three to eight iterations, always.</p>
+      <a class="sc-cta-button" href="#">join the solver movement
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+</div>
