@@ -632,7 +632,9 @@ h1,h2,h3,h4,h5,h6,strong,b{font-weight:500;}
 }
 .assure-figure{
   font-family:var(--display);
-  font-weight:500;
+  /* 300, the same as the heading above them: at 56px, medium still reads as
+     the heaviest thing on the page. */
+  font-weight:300;
   font-size:clamp(34px,3.8vw,56px);
   line-height:1;
   letter-spacing:-0.032em;
@@ -1118,6 +1120,9 @@ h1,h2,h3,h4,h5,h6,strong,b{font-weight:500;}
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
   gap:clamp(12px,1.2vw,18px);
+  /* The row reserves the tallest pair across the six stages, so the cards
+     stretch into it rather than leaving a gap under themselves. */
+  align-content:stretch;
 }
 .field{padding:clamp(18px,2vw,26px);border-radius:12px;}
 .field-label{
@@ -1343,18 +1348,44 @@ h1,h2,h3,h4,h5,h6,strong,b{font-weight:500;}
   background:rgba(139,186,255,.45);
 }
 
-.spine-foot{
-  display:flex;
-  gap:clamp(16px,2.4vw,36px);
-  flex-wrap:wrap;
-  margin-top:clamp(20px,2.4vw,30px);
-  padding-top:clamp(16px,1.8vw,22px);
-  border-top:1px solid rgba(255,255,255,.1);
-  font-size:13.5px;
-  color:rgba(255,255,255,.6);
+/* What the map is for. Three equal containers under the panel, on the same
+   grid as it, rather than a row of text along its floor. */
+.spine-values{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:clamp(12px,1.4vw,20px);
+  margin-top:clamp(12px,1.4vw,20px);
 }
-.spine-metric{display:inline-flex;align-items:center;gap:8px;}
-.spine-metric i{font-style:normal;color:var(--blue-lift);}
+.sv{
+  display:flex;
+  align-items:center;
+  gap:13px;
+  padding:clamp(18px,2vw,26px) clamp(18px,2vw,28px);
+  border:1px solid rgba(255,255,255,.13);
+  border-radius:16px;
+  background:rgba(255,255,255,.03);
+  transition:border-color .26s ease, background .26s ease;
+}
+.sv:hover{border-color:rgba(139,186,255,.34);background:rgba(0,100,255,.09);}
+.sv-dir{
+  display:grid;
+  place-items:center;
+  width:34px;height:34px;
+  border-radius:10px;
+  border:1px solid rgba(139,186,255,.28);
+  color:var(--blue-lift);
+  font-size:16px;
+  line-height:1;
+  flex:none;
+}
+.sv-name{
+  font-family:var(--display);
+  font-weight:400;
+  font-size:clamp(14px,1.25vw,16.5px);
+  line-height:1.3;
+  letter-spacing:-0.012em;
+  color:rgba(255,255,255,.86);
+}
 
 @media (max-width:1080px){
   .matrix{grid-template-columns:repeat(2,minmax(0,1fr));}
@@ -1370,6 +1401,9 @@ h1,h2,h3,h4,h5,h6,strong,b{font-weight:500;}
 @media (max-width:860px){
   .spine-body{grid-template-columns:minmax(0,116px) minmax(0,1fr);}
   .spine-key-note{display:none;}
+}
+@media (max-width:760px){
+  .spine-values{grid-template-columns:minmax(0,1fr);}
 }
 @media (max-width:620px){
   .spine{--lane:46px;}
@@ -1643,6 +1677,9 @@ footer{
   .assurances-grid,
   .friction-grid,
   .stage-fields{grid-template-columns:minmax(0,1fr);}
+  /* Stacked, the two field cards split the row's reserved height; 1fr keeps
+     them the same size as each other. */
+  .stage-fields{grid-auto-rows:1fr;}
   .stage-glyph{margin-left:0;}
   .move{grid-template-columns:auto minmax(0,1fr);}
   .move-chev{display:none;}
@@ -2196,10 +2233,20 @@ footer{
           <span class="spine-head" id="spineHead" aria-hidden="true"></span>
         </div>
       </div>
-      <div class="spine-foot">
-        <span class="spine-metric"><i aria-hidden="true">&uarr;</i>invoice accuracy</span>
-        <span class="spine-metric"><i aria-hidden="true">&darr;</i>days sales outstanding</span>
-        <span class="spine-metric"><i aria-hidden="true">&darr;</i>exception resolution time</span>
+    </div>
+
+    <div class="spine-values">
+      <div class="sv">
+        <span class="sv-dir" aria-hidden="true">&uarr;</span>
+        <span class="sv-name">invoice accuracy</span>
+      </div>
+      <div class="sv">
+        <span class="sv-dir" aria-hidden="true">&darr;</span>
+        <span class="sv-name">days sales outstanding</span>
+      </div>
+      <div class="sv">
+        <span class="sv-dir" aria-hidden="true">&darr;</span>
+        <span class="sv-name">exception resolution time</span>
       </div>
     </div>
   </div>
@@ -2326,26 +2373,45 @@ keepListHeight('faqList', '.faq-item');
 
 /* ============ METHODOLOGY — the pane holds its own height ============
    Only one stage is displayed at a time and they are not the same length, so
-   selecting a longer move would otherwise shunt everything below it. The pane
-   reserves its tallest state, measured once per layout. */
+   selecting a longer move would otherwise shunt everything below it.
+
+   Reserving the pane's tallest state is not enough on its own: the stages
+   have a two-line heading here and a one-line heading there, a five-line
+   body here and a three-line body there, so the field cards below them
+   landed at a different height and a different place on every selection.
+   Each block therefore reserves the tallest version of *itself* across all
+   six stages. With every block the same height, the total is the same too,
+   space-between hands out the same slack, and nothing moves between
+   selections. */
 (function(){
   const box = document.getElementById('stageBox');
   if(!box) return;
   const stages = [...box.querySelectorAll('.stage')];
   if(!stages.length) return;
+  const rows = stages.map(st => [...st.children]);
 
   function reserve(){
     box.style.minHeight = '';
-    const shown = stages.filter(st => getComputedStyle(st).display !== 'none');
-    let tallest = 0;
-    stages.forEach(st =>{
-      // measure every stage laid out, not just the selected one
-      st.style.display = 'block';
-      tallest = Math.max(tallest, st.getBoundingClientRect().height);
-      st.style.display = '';
-    });
-    shown.forEach(st => st.style.display = '');
-    box.style.minHeight = Math.ceil(tallest) + 'px';
+    rows.forEach(r => r.forEach(el => el.style.minHeight = ''));
+
+    // lay every stage out the way the selected one is laid out, so the
+    // measurements are the heights these blocks will actually take
+    stages.forEach(st =>{ st.style.display = 'flex'; st.style.flexDirection = 'column'; });
+
+    const n = Math.max(...rows.map(r => r.length));
+    const tall = [];
+    for(let i = 0; i < n; i++){
+      let m = 0;
+      rows.forEach(r =>{ if(r[i]) m = Math.max(m, r[i].getBoundingClientRect().height); });
+      tall.push(Math.ceil(m));
+    }
+    rows.forEach(r => r.forEach((el, i) =>{ if(tall[i] > 0) el.style.minHeight = tall[i] + 'px'; }));
+
+    // now that the blocks are reserved every stage is the same height; read it
+    let total = 0;
+    stages.forEach(st => total = Math.max(total, st.getBoundingClientRect().height));
+    stages.forEach(st =>{ st.style.display = ''; st.style.flexDirection = ''; });
+    box.style.minHeight = Math.ceil(total) + 'px';
   }
 
   reserve();
