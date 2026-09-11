@@ -2457,17 +2457,20 @@ keepListHeight('faqList', '.faq-item');
   /* Grid cells, ring at (0,0), negative columns to the left. Each route runs
      h,v,h,v,h and totals 14 cells; the closing run is 4 cells for all four,
      which is what makes the merge simultaneous. */
+  /* The two inner routes are a single long run in from the left edge; the two
+     outer ones stair down to meet them. Every route is twenty cells and every
+     one closes with the same four-cell run into the ring, so nothing touches
+     anything else until the junction at column -4. That junction is the first
+     connection in the drawing, and four cells short of the ring it falls in
+     the clear space between the end of the copy and the circle. */
   const ROUTES = [
-    [[-9,-4],[-7,-4],[-7,-3],[-5,-3],[-5,-1],[-3,-1],[-3,0],[0,0]],
-    [[-11,-2],[-8,-2],[-8,-1],[-5,-1],[-5,0],[-3,0],[0,0]],
-    [[-11,2],[-8,2],[-8,1],[-5,1],[-5,0],[-3,0],[0,0]],
-    [[-9,4],[-7,4],[-7,3],[-5,3],[-5,1],[-3,1],[-3,0],[0,0]]
+    [[-15,-5],[-11,-5],[-11,-2],[-4,-2],[-4,0],[0,0]],
+    [[-19,-1],[-4,-1],[-4,0],[0,0]],
+    [[-19,1],[-4,1],[-4,0],[0,0]],
+    [[-15,5],[-11,5],[-11,2],[-4,2],[-4,0],[0,0]]
   ];
-  /* COLS is the routes' own horizontal reach, which the step is solved for so
-     the cluster sits clear of the copy. The background grid is drawn across
-     the whole hero regardless, on the same step. */
-  const COLS = 11, ROWS = 9;
-  const MERGE_U = (13 - 3) / 13;       // where all four arrive together
+  const COLS = 19, ROWS = 10;          // extent the grid step is solved for
+  const MERGE_U = (20 - 4) / 20;       // where all four arrive together
 
   /* The loop, in seconds. HOLD is the beat where only the ring is up; DRAW is
      the wipe out from it; LIVE is chosen to hold exactly two traversals at
@@ -2525,19 +2528,18 @@ keepListHeight('faqList', '.faq-item');
     const bandH = Math.min(H * .92, 780);
     const cy    = cr.top - hr.top + cr.height / 2;
 
-    /* The routes start where the copy ends, not at the hero's left edge:
-       spanning the whole width put most of the drawing behind the headline.
-       The background grid still runs the full width, so the field reads as
-       one surface; only the traces are pushed right.
+    /* The field is the width of the hero: the routes come in from the left
+       edge, pass under the copy and land on the ring by the right gutter.
+       The routes' own geometry, not the layout, is what keeps the drawing
+       legible — they do not touch until four cells short of the ring.
        The ring's outer crosshair reaches 1.92R past its centre, so reserve
-       that or the ticks are clipped by the hero's overflow:hidden. And R
-       depends on the step, which depends on where the ring lands, so it is
-       solved rather than assumed. */
+       that or the ticks are clipped by the hero's overflow:hidden. R depends
+       on the step, which depends on where the ring lands, so it is solved
+       rather than assumed. */
     const avail = wr.right - hr.left - 10;
-    const left  = contentRight(copy) - hr.left + Math.min(72, W * .05);
     R = 0;
     for(let i = 0; i < 6; i++){
-      step = Math.max(18, Math.min((avail - R * 1.92 - left) / COLS, bandH / ROWS));
+      step = Math.max(18, Math.min((avail - R * 1.92) / COLS, bandH / ROWS));
       R = step * 1.35;
     }
     /* The field fades out where the copy needs the room, not by viewport
@@ -2558,7 +2560,7 @@ keepListHeight('faqList', '.faq-item');
   const fade = x =>{
     const l = fieldLeft();
     const q = Math.max(0, Math.min(1, (x - l) / Math.max(1, ring.x - l)));
-    return (0.42 + 0.58 * q * Math.sqrt(q)) * Math.max(0, Math.min(1, x / (step * 1.2)));
+    return (0.24 + 0.76 * q * Math.sqrt(q)) * Math.max(0, Math.min(1, x / (step * 1.2)));
   };
   /* Everything left of the reveal edge is not there yet; a long ramp at the
      edge keeps the wipe from looking like a hard cut. */
