@@ -251,7 +251,7 @@ h1,h2,h3,h4,h5,h6,strong,b{font-weight:500;}
   position:absolute;
   inset:0 auto 0 0;
   z-index:0;
-  width:clamp(300px,58%,860px);
+  width:clamp(280px,48%,720px);
   background:linear-gradient(97deg,
     rgba(255,255,255,.9) 0%,
     rgba(255,255,255,.84) 42%,
@@ -1472,14 +1472,15 @@ h1,h2,h3,h4,h5,h6,strong,b{font-weight:500;}
 }
 .closing-kicker{
   font-family:var(--display);
-  font-weight:400;
+  /* 300, like every section heading. */
+  font-weight:300;
   font-size:clamp(30px,4.4vw,54px);
   line-height:1.25;
   letter-spacing:-0.015em;
   margin:0 0 46px;
 }
 .closing-kicker .k-ink{color:#fff;}
-.closing-kicker .k-blue{color:var(--blue-lift);font-weight:500;}
+.closing-kicker .k-blue{color:var(--blue-lift);}
 .closing-outcome .cta-button{
   background:#fff;
   color:var(--ink);
@@ -2457,13 +2458,16 @@ keepListHeight('faqList', '.faq-item');
      h,v,h,v,h and totals 14 cells; the closing run is 4 cells for all four,
      which is what makes the merge simultaneous. */
   const ROUTES = [
-    [[-16,-4],[-13,-4],[-13,-3],[-10,-3],[-10,-1],[-6,-1],[-6,0],[0,0]],
-    [[-18,-2],[-14,-2],[-14,-1],[-9,-1],[-9,0],[-6,0],[0,0]],
-    [[-18,2],[-14,2],[-14,1],[-9,1],[-9,0],[-6,0],[0,0]],
-    [[-16,4],[-13,4],[-13,3],[-10,3],[-10,1],[-6,1],[-6,0],[0,0]]
+    [[-9,-4],[-7,-4],[-7,-3],[-5,-3],[-5,-1],[-3,-1],[-3,0],[0,0]],
+    [[-11,-2],[-8,-2],[-8,-1],[-5,-1],[-5,0],[-3,0],[0,0]],
+    [[-11,2],[-8,2],[-8,1],[-5,1],[-5,0],[-3,0],[0,0]],
+    [[-9,4],[-7,4],[-7,3],[-5,3],[-5,1],[-3,1],[-3,0],[0,0]]
   ];
-  const COLS = 20, ROWS = 10;          // extent the grid step is solved for
-  const MERGE_U = (20 - 6) / 20;       // where all four arrive together
+  /* COLS is the routes' own horizontal reach, which the step is solved for so
+     the cluster sits clear of the copy. The background grid is drawn across
+     the whole hero regardless, on the same step. */
+  const COLS = 11, ROWS = 9;
+  const MERGE_U = (13 - 3) / 13;       // where all four arrive together
 
   /* The loop, in seconds. HOLD is the beat where only the ring is up; DRAW is
      the wipe out from it; LIVE is chosen to hold exactly two traversals at
@@ -2521,15 +2525,19 @@ keepListHeight('faqList', '.faq-item');
     const bandH = Math.min(H * .92, 780);
     const cy    = cr.top - hr.top + cr.height / 2;
 
-    /* The field is the width of the hero now, not the gap to the right of the
-       copy: it starts at the left edge, passes under the plate and lands on
-       the ring by the right gutter. One step has to fit the routes both ways
-       round, and the ring's outer crosshair reaches 1.92R past its centre, so
-       reserve that or the ticks are clipped by the hero's overflow:hidden. */
+    /* The routes start where the copy ends, not at the hero's left edge:
+       spanning the whole width put most of the drawing behind the headline.
+       The background grid still runs the full width, so the field reads as
+       one surface; only the traces are pushed right.
+       The ring's outer crosshair reaches 1.92R past its centre, so reserve
+       that or the ticks are clipped by the hero's overflow:hidden. And R
+       depends on the step, which depends on where the ring lands, so it is
+       solved rather than assumed. */
     const avail = wr.right - hr.left - 10;
+    const left  = contentRight(copy) - hr.left + Math.min(72, W * .05);
     R = 0;
-    for(let i = 0; i < 4; i++){
-      step = Math.max(18, Math.min((avail - R * 1.92) / COLS, bandH / ROWS));
+    for(let i = 0; i < 6; i++){
+      step = Math.max(18, Math.min((avail - R * 1.92 - left) / COLS, bandH / ROWS));
       R = step * 1.35;
     }
     /* The field fades out where the copy needs the room, not by viewport
@@ -2543,13 +2551,14 @@ keepListHeight('faqList', '.faq-item');
 
   const px = c => ({ x: ring.x + c[0] * step, y: ring.y + c[1] * step });
   const fieldLeft = () => Math.max(0, ring.x - COLS * step);
-  /* The field belongs to the right-hand side: it is barely there at the hero's
-     left edge, where it sits under the copy plate, and full strength by the
-     ring. Squared, so the left half really does recede rather than just
-     dimming evenly. */
+  /* The field belongs to the right-hand side: quiet where it passes behind
+     the copy, full strength by the ring. The ramp is measured from the
+     routes' own left edge, so the traces come up to strength across their
+     span rather than across the whole hero. */
   const fade = x =>{
-    const q = Math.max(0, Math.min(1, x / Math.max(1, ring.x)));
-    return (0.26 + 0.74 * q * Math.sqrt(q)) * Math.max(0, Math.min(1, x / (step * 1.2)));
+    const l = fieldLeft();
+    const q = Math.max(0, Math.min(1, (x - l) / Math.max(1, ring.x - l)));
+    return (0.42 + 0.58 * q * Math.sqrt(q)) * Math.max(0, Math.min(1, x / (step * 1.2)));
   };
   /* Everything left of the reveal edge is not there yet; a long ramp at the
      edge keeps the wipe from looking like a hard cut. */
