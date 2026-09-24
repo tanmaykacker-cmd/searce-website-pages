@@ -1392,11 +1392,12 @@ h1,h2,h3,h4,h5,h6,strong,b{font-weight:500;}
   font-size:clamp(11.5px,1vw,13px);
   line-height:1.35;
   color:rgba(255,255,255,.85);
-  /* break-word rather than anywhere, so a break is the last resort and lands
-     with a hyphen instead of splitting "application" into "applicatio n". */
-  overflow-wrap:break-word;
-  -webkit-hyphens:auto;
-  hyphens:auto;
+  /* Lines break only between words, never inside one: "valida- tion" reads
+     as two words. The breakpoints below drop a line of the axis before its
+     longest word outgrows the column, rather than let it split. */
+  overflow-wrap:normal;
+  -webkit-hyphens:none;
+  hyphens:none;
 }
 .sx.is-live .sx-name{color:#fff;}
 .sx-agent{
@@ -1405,7 +1406,7 @@ h1,h2,h3,h4,h5,h6,strong,b{font-weight:500;}
   letter-spacing:.06em;
   line-height:1.3;
   color:var(--blue-lift);
-  overflow-wrap:break-word;
+  overflow-wrap:normal;
 }
 
 /* What the map is for. Three equal containers under the panel, on the same
@@ -1458,13 +1459,24 @@ h1,h2,h3,h4,h5,h6,strong,b{font-weight:500;}
   .mx-foot{flex-wrap:wrap;}
   .mx-bound{text-align:left;}
 }
+/* The axis narrows in steps, each taken before a word would have to split.
+   The widest words set the widths: "validation" and "remittance" on the
+   agent line, "management" in the names. The card names both as the
+   playhead arrives, so each step loses only the overview, never the
+   reading. */
+@media (max-width:1180px){
+  .sx{--gutter:8px;}
+}
+@media (max-width:1080px){
+  .sx-agent{display:none;}
+}
+@media (max-width:1040px){
+  /* The numbered ticks and the live rule carry on as the axis. */
+  .sx-name{display:none;}
+}
 @media (max-width:860px){
   .spine-body{grid-template-columns:minmax(0,116px) minmax(0,1fr);}
   .spine-key-note{display:none;}
-  /* The agent line is the first thing to go when the column narrows: the
-     card still names it as the playhead arrives. */
-  .sx{--gutter:8px;}
-  .sx-agent{display:none;}
 }
 @media (max-width:760px){
   .spine-values{grid-template-columns:minmax(0,1fr);}
