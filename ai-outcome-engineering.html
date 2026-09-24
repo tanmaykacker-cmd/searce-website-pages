@@ -119,7 +119,10 @@ h1,h2,h3,h4,h5,h6,strong,b{font-weight:500;}
    onto two lines once careers was added. Labels hold one line; the gaps and
    the CTA give up the space instead. */
 .nav-links > li > a{white-space:nowrap;}
-.nav-links a{
+/* Only the top row. The dropdown's links sit inside .nav-links too, and a
+   flex row with no side padding laid each title beside its line instead of
+   over it. */
+.nav-links > li > a{
   display:flex;
   align-items:center;
   gap:5px;
@@ -1799,13 +1802,9 @@ footer{
             <span class="mega-title">AI Outcome Engineering</span>
             <span class="mega-sub">Starting with outcomes, not models</span>
           </a>
-          <a class="mega-item" href="forward-deployed-solver-squads.html">
+          <a class="mega-item" href="fde.html">
             <span class="mega-title">Forward-Deployed Solver Squads</span>
             <span class="mega-sub">Cohesive teams inside your problem</span>
-          </a>
-          <a class="mega-item" href="#">
-            <span class="mega-title">evlos</span>
-            <span class="mega-sub">The method behind a decade of outcomes</span>
           </a>
         </div>
       </li>

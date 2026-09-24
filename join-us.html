@@ -103,7 +103,10 @@ a:focus-visible, button:focus-visible{
    onto two lines once careers was added. Labels hold one line; the gaps and
    the CTA give up the space instead. */
 .nav-links > li > a{white-space:nowrap;}
-.nav-links a{
+/* Only the top row. The dropdown's links sit inside .nav-links too, and a
+   flex row with no side padding laid each title beside its line instead of
+   over it. */
+.nav-links > li > a{
   display:flex;
   align-items:center;
   gap:5px;
@@ -718,13 +721,9 @@ footer{
             <span class="mega-title">AI Outcome Engineering</span>
             <span class="mega-sub">Starting with outcomes, not models</span>
           </a>
-          <a class="mega-item" href="forward-deployed-solver-squads.html">
+          <a class="mega-item" href="fde.html">
             <span class="mega-title">Forward-Deployed Solver Squads</span>
             <span class="mega-sub">Cohesive teams inside your problem</span>
-          </a>
-          <a class="mega-item" href="#">
-            <span class="mega-title">evlos</span>
-            <span class="mega-sub">The method behind a decade of outcomes</span>
           </a>
         </div>
       </li>
@@ -786,7 +785,7 @@ footer{
     <div class="paths-block">
       <span class="section-eyebrow">the solver paths</span>
       <div class="path-grid">
-        <a class="path path--linked" href="forward-deployed-solver-squads.html"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.3 7.6 8 9 4.7-1.4 8-4.5 8-9V6l-8-3Z"/></svg></span><span class="path-name">Forward-Deployed Solver</span></a>
+        <a class="path path--linked" href="fde.html"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 4.5 3.3 7.6 8 9 4.7-1.4 8-4.5 8-9V6l-8-3Z"/></svg></span><span class="path-name">Forward-Deployed Solver</span></a>
         <div class="path"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3"/><path d="M12 18v3"/><path d="M4.5 7.5 7 9"/><path d="M17 15l2.5 1.5"/><path d="M4.5 16.5 7 15"/><path d="M17 9l2.5-1.5"/><path d="M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z"/></svg></span><span class="path-name">AI Engineer</span></div>
         <div class="path"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V11"/><path d="M10 20V5"/><path d="M16 20v-6"/><path d="M22 20H2"/></svg></span><span class="path-name">Platform Engineer</span></div>
         <div class="path"><span class="icon-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 21 8v8l-9 5-9-5V8l9-5Z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/></svg></span><span class="path-name">Data Engineer</span></div>
