@@ -45,16 +45,9 @@
   --nav-h:84px;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-/* Lenis drives the scroll on wide screens; CSS smooth-scroll there would
-   animate every scrollTo it issues, so it only applies without Lenis. */
-html:not(.lenis){scroll-behavior:smooth;}
-/* lenis@1.3.26 dist/lenis.css */
-html.lenis,html.lenis body{height:auto;}
-.lenis:not(.lenis-autoToggle).lenis-stopped{overflow:clip;}
-.lenis [data-lenis-prevent],.lenis [data-lenis-prevent-wheel],.lenis [data-lenis-prevent-touch],
-.lenis [data-lenis-prevent-vertical],.lenis [data-lenis-prevent-horizontal]{overscroll-behavior:contain;}
-.lenis.lenis-smooth iframe{pointer-events:none;}
-.lenis.lenis-autoToggle{transition-property:overflow;transition-duration:1ms;transition-behavior:allow-discrete;}
+/* No scroll-behavior:smooth. It would also animate the scroll ScrollTrigger
+   makes to measure on refresh (fonts, load, resize), which then measures
+   mid-glide and misplaces every trigger. In-page links glide from JS. */
 body{
   background:var(--paper);
   color:var(--ink);
@@ -85,8 +78,12 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--blue);outline-offse
   position:sticky;
   top:0;
   z-index:200;
+  /* No backdrop-filter. A blurred backdrop under a sticky bar is re-read
+     and re-blurred on every scrolled frame, across the full width — about
+     1ms of compositor time per frame here, most of the page's draw cost,
+     and far more on phone GPUs. At 92% white only 8% shows through, so
+     the blur was near-invisible. (The other pages still carry it.) */
   background:rgba(255,255,255,0.92);
-  backdrop-filter:blur(10px);
   border-bottom:1px solid var(--paper-line);
 }
 .nav .wrap{
@@ -221,6 +218,26 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--blue);outline-offse
 }
 .fde-sec > .wrap{position:relative;z-index:2;width:100%;}
 
+/* Pinning. On wide screens the scroll script wraps each animated section
+   in a track: the section sticks at the top while the track's run-out
+   (--run, the scroll distance) passes beneath it. Sticky is held by the
+   compositor on the scrolling thread, so a section lands and leaves with
+   no snap and scrolling stays native. The track must never take overflow,
+   contain or transform, or sticky stops working. */
+.fde-track{position:relative;}
+.fde-track > section{position:sticky;top:0;}
+.fde-track::after{content:"";display:block;height:var(--run);}
+
+/* Layers only where something animates. Below 1025 (and for reduced
+   motion) every section is static, so promoting these would only spend
+   GPU memory and compositing time on a phone. */
+@media (min-width:1025px) and (prefers-reduced-motion:no-preference){
+  .fde-shift .fan-conv,.fde-shift .fan-div{will-change:clip-path;}
+  .fde-card,.fde-panel,.fde-band,.fde-bcard,.fde-mcard{will-change:transform,opacity;}
+  .fde-build-copy{will-change:transform,opacity,filter;}
+  .own-rail-fill{will-change:transform;}
+}
+
 /* section eyebrow — Figma sets this on nearly every fold */
 .fde-eyebrow{
   font-family:var(--body);font-weight:500;
@@ -325,8 +342,6 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--blue);outline-offse
   opacity:.62;
 }
 /* each half is revealed top-down by its own clip front */
-.fde-shift .fan-conv,
-.fde-shift .fan-div{will-change:clip-path;}
 /* and fades out toward its vanishing point, as the reference does */
 .fde-shift .fan-conv{
   -webkit-mask-image:linear-gradient(to bottom,#000 2%,#000 46%,rgba(0,0,0,0) 88%);
@@ -336,8 +351,11 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--blue);outline-offse
   -webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,0) 8%,#000 52%,#000 98%);
           mask-image:linear-gradient(to bottom,rgba(0,0,0,0) 8%,#000 52%,#000 98%);
 }
+/* the rays take their colour from the svg, so the timeline tweens one
+   `color` rather than writing a stroke onto all 82 lines every frame */
+.fde-shift .fan{color:#123a7d;}
 .fde-shift .fan line{
-  stroke:#123a7d;stroke-width:1.1;vector-effect:non-scaling-stroke;
+  stroke:currentColor;stroke-width:1.1;vector-effect:non-scaling-stroke;
 }
 /* fold 2 funnels in; fold 3 opens out. */
 .js .fde-shift .fan-conv{clip-path:inset(0 0 100% 0);}
@@ -414,10 +432,14 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--blue);outline-offse
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:22px;padding:32px 24px;
   border-radius:36px;
-  background:linear-gradient(160deg, rgba(0,100,255,0.21), rgba(0,100,255,0.42));
+  /* The glass sits on an opaque base of the ground's own colour rather
+     than a backdrop-filter. The blur's only visible job was to keep the
+     faint grid from reading through the card; blurred, that ground is
+     just this navy. A backdrop-filter re-blurs on every frame the card or
+     its backdrop moves — every scrolled frame, in a pinned section — and
+     was most of this section's compositor cost. */
+  background:linear-gradient(160deg, rgba(0,100,255,0.21), rgba(0,100,255,0.42)), #000a19;
   border:1px solid rgba(216,231,255,0.55);
-  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
-  will-change:transform,opacity;
   transition:background .38s ease, border-color .38s ease, box-shadow .38s ease;
 }
 .fde-card svg{width:108px;height:108px;display:block;stroke:var(--blue);fill:none;}
@@ -488,7 +510,6 @@ html:not(.js) .fde-card{position:relative;margin-bottom:16px;}
   border-radius:22px;padding:18px 22px 22px;
   border:1px solid rgba(255,255,255,0.45);
   background:rgba(255,255,255,0.05);
-  will-change:transform,opacity;
 }
 .fde-panel-label{
   font-family:var(--body);font-weight:500;
@@ -528,7 +549,7 @@ html:not(.js) .fde-panel{position:relative;inset:auto;margin-bottom:14px;}
 .fde-band{
   display:flex;flex-direction:column;justify-content:center;
   padding:0 clamp(24px,3.4vw,48px);
-  color:#fff;will-change:transform,opacity;
+  color:#fff;
 }
 .fde-band:nth-child(1){background:color-mix(in srgb, var(--blue) 80%, #fff);}
 .fde-band:nth-child(2){background:var(--blue);}
@@ -579,8 +600,10 @@ html:not(.js) .fde-panel{position:relative;inset:auto;margin-bottom:14px;}
   position:absolute;left:14px;right:14px;top:-1px;height:1.5px;
   background:rgba(35,35,36,0.22);
 }
+/* fills by scaleX, not width: a transform never triggers layout */
 .own-rail-fill{
-  position:absolute;left:14px;top:-1px;height:1.5px;width:0;
+  position:absolute;left:14px;right:14px;top:-1px;height:1.5px;
+  transform:scaleX(0);transform-origin:0 50%;
   background:var(--blue);
 }
 .own-cap{
@@ -637,7 +660,7 @@ html:not(.js) .fde-panel{position:relative;inset:auto;margin-bottom:14px;}
   color:#fff;overflow:hidden;
 }
 .fde-build-stage{position:relative;min-height:62vh;display:flex;align-items:center;}
-.fde-build-copy{position:relative;z-index:2;will-change:transform,opacity,filter;}
+.fde-build-copy{position:relative;z-index:2;}
 .fde-build h2{
   font-family:var(--body);font-weight:400;
   font-size:clamp(28px,3.6vw,52px);line-height:1.34;letter-spacing:-0.02em;
@@ -663,7 +686,6 @@ html:not(.js) .fde-panel{position:relative;inset:auto;margin-bottom:14px;}
   border-radius:28px;padding:30px 30px 34px;
   background:linear-gradient(155deg, rgba(16,72,186,0.96), rgba(8,40,116,0.96));
   border:1px solid rgba(140,185,255,0.55);
-  will-change:transform,opacity;
 }
 .fde-bcard-label{
   font-family:var(--body);font-weight:500;
@@ -780,7 +802,6 @@ html:not(.js) .fde-rung-fill{transform:scaleX(1);}
 .fde-mcard{
   background:var(--blue);color:#fff;
   border-radius:18px;padding:34px 36px 40px;
-  will-change:transform,opacity;
 }
 .fde-mcard svg{width:42px;height:42px;stroke:#fff;fill:none;stroke-width:1.6;margin-bottom:34px;display:block;}
 .fde-mcard h3{
@@ -839,9 +860,11 @@ html:not(.js) .fde-phase-label span + span{display:none;}
 
 /* ======= §12 — global by design =======
    Figma 427321013. No scroll animation specified; the frame ships
-   as designed. The dotted world map is the design's own asset,
-   cropped from the frame export and alpha-stripped, rather than an
-   approximation drawn in code. */
+   as designed. The dotted world map references assets/fde-world-dots.svg,
+   a stylized dot-map approximation (not a crop of the Figma export --
+   that asset was never present in this repo or its history, so the
+   image 404'd on every load). Generated as an inline-color SVG since an
+   <img>-loaded asset can't inherit the page's CSS custom properties. */
 .fde-global{background:var(--paper);}
 .fde-global h2{
   font-family:var(--body);font-weight:400;
@@ -1680,7 +1703,7 @@ footer{background:#071028;padding:72px 0 0;}
       <p class="fde-eyebrow">Global by design</p>
       <h2 id="fde-global-h">Onsite where the problem lives. Follow-the-sun where the build never sleeps.</h2>
       <p class="fde-global-note">Allocation adjusts quarterly to match your delivery lifecycle: scale up</p>
-      <img class="fde-map" src="assets/fde-world-dots.png" width="1050" height="535" loading="lazy" decoding="async" alt="Searce delivery locations plotted across North America, Europe, the Middle East, South and South-East Asia, and Australia.">
+      <img class="fde-map" src="assets/fde-world-dots.svg" width="1050" height="535" loading="lazy" decoding="async" alt="Searce delivery locations plotted across North America, Europe, the Middle East, South and South-East Asia, and Australia.">
     </div>
   </div>
 </section>
@@ -1733,7 +1756,7 @@ footer{background:#071028;padding:72px 0 0;}
 
 
 <!-- ================= §14 — closing CTA ================= -->
-<section class="fde-close" aria-labelledby="fde-close-h">
+<section class="fde-close" id="fde-close" aria-labelledby="fde-close-h">
   <div class="wrap">
     <p class="fde-close-eyebrow">Forward-Deployed Solver Squads</p>
     <h2 id="fde-close-h">Ships squads.<span class="l2">Counts outcomes.</span></h2>
@@ -1812,7 +1835,6 @@ footer{background:#071028;padding:72px 0 0;}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js" integrity="sha384-jqpi9VmOdhyLoLURgjCn7EpnG9BbnHW57ibIZoeaIU+erWDH3k8fQQg0xH2ySjnw" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 /* ---------------------------------------------------------------
    Hero dot field — a STATIC slanted lattice matching Figma's
@@ -1843,6 +1865,15 @@ footer{background:#071028;padding:72px 0 0;}
 
   var dpr = 1, W = 0, H = 0, dots = [], raf = 0, running = false;
   var sprite = null, SPRITE_R = 64;   // pre-rendered soft dot, drawn scaled
+  // Far-ring colours, built once. Composing an rgba() string per ring per
+  // frame (three toFixed calls, then a colour parse) was about half the
+  // draw's cost; alpha goes through globalAlpha instead. 64 steps of `on`
+  // renders identically to the continuous value (max 1/255 difference).
+  var LV = 64, RING = [];
+  for (var q = 0; q <= LV; q++) {
+    var o = q / LV;
+    RING.push('rgb(' + Math.round(95 + 75 * o) + ',' + Math.round(150 + 70 * o) + ',255)');
+  }
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   // Building a radial gradient per dot per frame pegs the CPU. The soft
@@ -1881,12 +1912,18 @@ footer{background:#071028;padding:72px 0 0;}
   }
 
   function resize() {
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var nd = Math.min(window.devicePixelRatio || 1, 2);
     var rect = cv.getBoundingClientRect();
-    W = Math.max(1, rect.width); H = Math.max(1, rect.height);
+    var nw = Math.max(1, rect.width), nh = Math.max(1, rect.height);
+    // Setting canvas.width reallocates and clears the buffer, and phones
+    // fire resize while their toolbars slide during a scroll — so only
+    // rebuild when the box or the pixel ratio really changed.
+    if (nw === W && nh === H && nd === dpr) return false;
+    W = nw; H = nh; dpr = nd;
     cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     build();
+    return true;
   }
 
   function draw(tMs) {
@@ -1917,15 +1954,15 @@ footer{background:#071028;padding:72px 0 0;}
         var rr = r * 2.1;
         ctx.globalAlpha = Math.min(1, a * 0.9);
         ctx.drawImage(sprite, d.x - rr, d.y - rr, rr * 2, rr * 2);
-        ctx.globalAlpha = 1;
       } else {
         // far field is in focus: a crisp small ring
-        ctx.strokeStyle = 'rgba(' + (95 + 75 * on).toFixed(0) + ','
-                        + (150 + 70 * on).toFixed(0) + ',255,' + a.toFixed(4) + ')';
+        ctx.globalAlpha = a;
+        ctx.strokeStyle = RING[Math.round(on * LV)];
         ctx.lineWidth = Math.max(0.7, r * 0.42);
         ctx.beginPath(); ctx.arc(d.x, d.y, r, 0, 6.2832); ctx.stroke();
       }
     }
+    ctx.globalAlpha = 1;
   }
 
   function frame(t) { draw(t); raf = requestAnimationFrame(frame); }
@@ -1952,14 +1989,30 @@ footer{background:#071028;padding:72px 0 0;}
   window.addEventListener('resize', function () {
     clearTimeout(rt);
     rt = setTimeout(function () {
-      resize();
-      if (reduce.matches) draw(WAVE_SECONDS * 250);
+      if (resize() && reduce.matches) draw(WAVE_SECONDS * 250);
     }, 150);
   });
 })();
 
 </script>
 <script>
+/* In-page links glide here rather than through CSS scroll-behavior
+   (see the note at the top of the stylesheet). */
+(function () {
+  var still = window.matchMedia('(prefers-reduced-motion: reduce)');
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="#"]');
+    var id = a && a.getAttribute('href').slice(1);
+    var t = id && document.getElementById(id);
+    if (!t) return;
+    // leave modified clicks alone (new tab, new window, download)
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    t.scrollIntoView({ behavior: still.matches ? 'auto' : 'smooth' });
+    history.pushState(null, '', '#' + id);
+  });
+})();
+
 /* ---------------------------------------------------------------
    FDE scroll animation. Every section below is ONE scrubbed
    ScrollTrigger timeline, never a pair of forward/reverse tweens —
@@ -1977,26 +2030,36 @@ footer{background:#071028;padding:72px 0 0;}
   // stack and show their resolved state instead.
   var FINAL = reduce || narrow;
 
-  // Smooth scroll. Native wheel scrolling runs off the main thread and
-  // arrives in whole notches, while pins are applied from JS a frame
-  // later, so every section landed on its pin with a visible snap and
-  // then froze while its scrub caught up. Lenis moves the page from the
-  // GSAP ticker instead: scroll, pins and scrubs advance in the same
-  // frame, on one eased curve. No Lenis where nothing is pinned, and
-  // none for reduced motion.
-  var smooth = !FINAL && !!window.Lenis;
-  if (smooth) {
-    var lenis = new Lenis({ anchors: true });
-    lenis.on('scroll', ScrollTrigger.update);
-    gsap.ticker.add(function (t) { lenis.raf(t * 1000); });
-    gsap.ticker.lagSmoothing(0);
+  // A tablet's toolbar sliding in and out resizes the viewport's height
+  // mid-scroll; that is not worth re-measuring every trigger for.
+  ScrollTrigger.config({ ignoreMobileResize: true });
+
+  // Pinning without ScrollTrigger's pin. A JS pin toggles position:fixed
+  // from the main thread, a frame behind the compositor that is actually
+  // scrolling the page, so each section snapped as it landed — and hiding
+  // that took a smooth-scroll layer that kept the page gliding ~1s after
+  // the input stopped. Instead each section sits in a track and sticks
+  // with CSS (see .fde-track): the compositor holds it in the same frame
+  // it scrolls, scrolling stays native, and ScrollTrigger only scrubs.
+  //
+  // run: how long the section stays stuck, as a % of the viewport height
+  // (the old pin's '+=N%'). The end is read off the track itself on every
+  // refresh, so it is exactly the stuck stretch even if a section outgrows
+  // the viewport.
+  var SCRUB = 0.25;   // a short catch-up: smooths notched wheels, never trails far
+  function hold(sec, run) {
+    var track = document.createElement('div');
+    track.className = 'fde-track';
+    track.style.setProperty('--run', run + 'vh');
+    sec.parentNode.insertBefore(track, sec);
+    track.appendChild(sec);
+    return {
+      trigger: track,
+      start: 'top top',
+      end: function () { return '+=' + (track.offsetHeight - sec.offsetHeight); },
+      scrub: SCRUB
+    };
   }
-  // With Lenis the scroll is already eased, so scrubs lock to it rather
-  // than trailing a further second behind the pin. Lenis leaves touch
-  // native, so a touch-first screen still needs the pin brought forward;
-  // for wheel input that early pin was the snap itself.
-  var SCRUB = smooth ? true : 1;
-  var AHEAD = smooth && !window.matchMedia('(pointer: coarse)').matches ? 0 : 1;
 
 
   /* ----- §2+§3 : lines top->middle, then the ground turns over ----- */
@@ -2004,7 +2067,6 @@ footer{background:#071028;padding:72px 0 0;}
     var sec = document.getElementById('fde-shift');
     if (!sec) return;
     var fan   = sec.querySelector('.fan');
-    var lines = sec.querySelectorAll('.fan line');
     var conv  = sec.querySelector('.fan-conv');
     var divg  = sec.querySelector('.fan-div');
     var blue  = sec.querySelector('.fde-shift-blue');
@@ -2015,7 +2077,7 @@ footer{background:#071028;padding:72px 0 0;}
 
     if (FINAL) {
       gsap.set([conv, divg], { clipPath: 'inset(0 0 0% 0)' });
-      gsap.set(lines, { stroke: '#ffffff' });
+      gsap.set(fan, { color: '#ffffff' });
       gsap.set(conv, { opacity: 0 });
       gsap.set(blue, { opacity: 1 });
       gsap.set(a, { opacity: 0 });
@@ -2024,14 +2086,7 @@ footer{background:#071028;padding:72px 0 0;}
     }
 
     var tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: sec,
-        start: 'top top',
-        end: '+=235%',          // two Figma folds' worth of scroll
-        pin: true,
-        anticipatePin: AHEAD,
-        scrub: SCRUB
-      }
+      scrollTrigger: hold(sec, 235)   // two Figma folds' worth of scroll
     });
 
     // phase A — the converging rays draw all the way down fold 2
@@ -2041,7 +2096,7 @@ footer{background:#071028;padding:72px 0 0;}
     // draw from the top of fold 3 right through to its foot
     tl.to(divg, { clipPath: 'inset(0 0 0% 0)', ease: 'none', duration: 0.95 }, 1.45)
       .to(conv, { opacity: 0, ease: 'none', duration: 0.45 }, 1.1)
-      .to(lines, { stroke: '#ffffff', ease: 'none', duration: 0.7 }, 1)
+      .to(fan,   { color: '#ffffff', ease: 'none', duration: 0.7 }, 1)
       .to(blue,  { opacity: 1, ease: 'none', duration: 0.7 }, 1)
       .to(a,     { opacity: 0, y: -18, ease: 'none', duration: 0.45 }, 1)
       .to(b,     { opacity: 1, y: 0, ease: 'none', duration: 0.55 }, 1.25)
@@ -2082,12 +2137,7 @@ footer{background:#071028;padding:72px 0 0;}
 
     var state = { a: 0 };
     var upd = function () { place(state.a); };
-    var tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: sec, start: 'top top', end: '+=' + (N * 88) + '%',
-        pin: true, anticipatePin: AHEAD, scrub: SCRUB
-      }
-    });
+    var tl = gsap.timeline({ scrollTrigger: hold(sec, N * 88) });
     // a long gentle glide, then a short beat to read — the previous
     // split (long dwell, quick move) read as stop-start rather than smooth.
     // The beat follows each arrival rather than preceding each move, so
@@ -2125,8 +2175,7 @@ footer{background:#071028;padding:72px 0 0;}
     var st = { a: 0 };
     var upd = function () { place(st.a); };
     var tl = gsap.timeline({
-      scrollTrigger: { trigger: sec, start: 'top top', end: '+=185%',
-                       pin: true, anticipatePin: AHEAD, scrub: SCRUB }
+      scrollTrigger: hold(sec, 185)
     });
     // §4's rhythm: glide from the moment of pinning, read after arriving.
     // A leading dwell here froze the whole frame for ~500px of scroll.
@@ -2149,8 +2198,7 @@ footer{background:#071028;padding:72px 0 0;}
 
     gsap.set(bands, { xPercent: 120, opacity: 0 });
     gsap.timeline({
-      scrollTrigger: { trigger: sec, start: 'top top', end: '+=130%',
-                       pin: true, anticipatePin: AHEAD, scrub: SCRUB }
+      scrollTrigger: hold(sec, 130)
     }).to(bands, {
       xPercent: 0, opacity: 1, ease: 'none', duration: 1,
       stagger: { amount: 0.66, from: 'start' }
@@ -2186,7 +2234,7 @@ footer{background:#071028;padding:72px 0 0;}
       // phase 2 (.5 -> 1): rail finishes as the bottom half closes
       var p1 = Math.min(p, 0.5) / 0.5;
       var p2 = Math.max(p - 0.5, 0) / 0.5;
-      fill.style.width = 'calc((100% - 28px) * ' + (0.5 * p1 + 0.5 * p2).toFixed(4) + ')';
+      fill.style.transform = 'scaleX(' + (0.5 * p1 + 0.5 * p2).toFixed(4) + ')';
       // Each half finishes its sweep a little before its phase ends. Scrub
       // lag means a reader who stops scrolling lands fractionally short of
       // 1.0, and without this slack that leaves a visible wedge gap.
@@ -2204,8 +2252,7 @@ footer{background:#071028;padding:72px 0 0;}
 
     var st = { p: 0 };
     gsap.timeline({
-      scrollTrigger: { trigger: sec, start: 'top top', end: '+=190%',
-                       pin: true, anticipatePin: AHEAD, scrub: SCRUB }
+      scrollTrigger: hold(sec, 190)
     }).to(st, { p: 1, ease: 'none', duration: 1,
                 onUpdate: function () { render(st.p); } });
   })();
@@ -2233,12 +2280,18 @@ footer{background:#071028;padding:72px 0 0;}
       wrap.appendChild(s); spans.push(s);
     });
 
+    // Only the one or two words at the highlight front change on a given
+    // frame; writing every word's colour every frame restyled the whole
+    // sentence for nothing.
+    var shown = [];
     function lit(p) {                       // p 0..1 across the sentence
       var n = spans.length;
       spans.forEach(function (s, i) {
         var t = (p * n) - i;                // >1 fully lit, <0 dark
-        var a = 0.20 + 0.80 * Math.max(0, Math.min(1, t));
-        s.style.color = 'rgba(255,255,255,' + a.toFixed(3) + ')';
+        var a = (0.20 + 0.80 * Math.max(0, Math.min(1, t))).toFixed(3);
+        if (shown[i] === a) return;
+        shown[i] = a;
+        s.style.color = 'rgba(255,255,255,' + a + ')';
       });
     }
 
@@ -2255,8 +2308,7 @@ footer{background:#071028;padding:72px 0 0;}
 
     var st = { p: 0 };
     var tl = gsap.timeline({
-      scrollTrigger: { trigger: sec, start: 'top top', end: '+=260%',
-                       pin: true, anticipatePin: AHEAD, scrub: SCRUB }
+      scrollTrigger: hold(sec, 260)
     });
     // phase 1 — progressive highlight
     tl.to(st, { p: 1, ease: 'none', duration: 1,
@@ -2318,15 +2370,15 @@ footer{background:#071028;padding:72px 0 0;}
     layout();
     window.addEventListener('load', layout);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
-    window.addEventListener('resize', function () { setTimeout(layout, 120); });
+    var lt;                                 // one re-measure per resize burst
+    window.addEventListener('resize', function () { clearTimeout(lt); lt = setTimeout(layout, 120); });
 
     if (FINAL) { render(1); return; }
     render(0);
 
     var st = { p: 0 };
     gsap.timeline({
-      scrollTrigger: { trigger: sec, start: 'top top', end: '+=120%',
-                       pin: true, anticipatePin: AHEAD, scrub: SCRUB }
+      scrollTrigger: hold(sec, 120)
     }).to(st, { p: 1, ease: 'none', duration: 1,
                 onUpdate: function () { render(st.p); } });
   })();
@@ -2343,8 +2395,7 @@ footer{background:#071028;padding:72px 0 0;}
     gsap.set(cards, { xPercent: 150, opacity: 0 });
 
     gsap.timeline({
-      scrollTrigger: { trigger: sec, start: 'top top', end: '+=120%',
-                       pin: true, anticipatePin: AHEAD, scrub: SCRUB }
+      scrollTrigger: hold(sec, 120)
     }).to(cards, { xPercent: 0, opacity: 1, ease: 'none', duration: 1,
                    stagger: { amount: 0.55 } });
   })();
@@ -2389,34 +2440,56 @@ footer{background:#071028;padding:72px 0 0;}
     }
 
     function resize() {
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      var nd = Math.min(window.devicePixelRatio || 1, 2);
       var b = cv.getBoundingClientRect();
-      W = Math.max(1, b.width); H = Math.max(1, b.height);
+      var nw = Math.max(1, b.width), nh = Math.max(1, b.height);
+      // reallocating the buffer clears it; skip when nothing changed
+      if (nw === W && nh === H && nd === dpr) return false;
+      W = nw; H = nh; dpr = nd;
       cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       build();
+      paintStill();
+      return true;
     }
 
     function ease(t) { return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2; }
 
+    // outer dots start moving first, so the field reads as collapsing
+    function localOf(d, p) { return (p - (1 - d.dn) * 0.34) / 0.66; }
+
+    // The square's own dots never move, fade or resize, so they are drawn
+    // once into an offscreen buffer of the same pixel size and copied in
+    // each frame — about 1,400 of the ~3,000 fills gone, pixel for pixel
+    // the same (one colour, so drawing them first changes nothing).
+    var still = document.createElement('canvas');
+    function paintStill() {
+      still.width = cv.width; still.height = cv.height;
+      var c = still.getContext('2d');
+      c.setTransform(dpr, 0, 0, dpr, 0, 0);
+      c.fillStyle = '#0064ff';
+      for (var i = 0; i < dots.length; i++) {
+        if (!dots[i].keep) continue;
+        c.beginPath(); c.arc(dots[i].x, dots[i].y, R, 0, 6.2832); c.fill();
+      }
+    }
+
     function render(p) {
-      // the field can be resized by pinning without a window resize event;
-      // if the box no longer matches the buffer, re-measure before drawing
-      var b = cv.getBoundingClientRect();
-      if (Math.abs(b.width - W) > 1 || Math.abs(b.height - H) > 1) resize();
       ctx.clearRect(0, 0, W, H);
+      ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.drawImage(still, 0, 0);
+      ctx.restore();
       ctx.fillStyle = '#0064ff';
       for (var i = 0; i < dots.length; i++) {
         var d = dots[i];
-        // outer dots start moving first, so the field reads as collapsing
-        var local = (p - (1 - d.dn) * 0.34) / 0.66;
-        local = ease(Math.max(0, Math.min(1, local)));
-        var x = d.x + (d.tx - d.x) * local;
-        var y = d.y + (d.ty - d.y) * local;
-        var r = d.keep ? R : R * (1 - local);
+        if (d.keep) continue;
+        var local = ease(Math.max(0, Math.min(1, localOf(d, p))));
+        var r = R * (1 - local);
         if (r < 0.15) continue;
-        ctx.globalAlpha = d.keep ? 1 : Math.max(0, 1 - local * 0.9);
-        ctx.beginPath(); ctx.arc(x, y, r, 0, 6.2832); ctx.fill();
+        ctx.globalAlpha = Math.max(0, 1 - local * 0.9);
+        ctx.beginPath();
+        ctx.arc(d.x + (d.tx - d.x) * local, d.y + (d.ty - d.y) * local, r, 0, 6.2832);
+        ctx.fill();
       }
       ctx.globalAlpha = 1;
       gsap.set(launch, { opacity: 1 - Math.min(1, p / 0.45) });
@@ -2424,30 +2497,34 @@ footer{background:#071028;padding:72px 0 0;}
     }
 
     var lastP = 0;
-    function remeasure() { resize(); render(lastP); }
+    function remeasure() { if (resize()) render(lastP); }
 
     resize();
-    // the first measure can land before fonts and layout settle, which
-    // would freeze the field at a fraction of its real height
+    // The first measure can land before fonts and layout settle, which
+    // would freeze the field at a fraction of its real height. A
+    // ResizeObserver catches every later change to the box — fonts, load,
+    // window resizes — so render() never has to measure layout per frame.
     window.addEventListener('load', remeasure);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(remeasure);
-    setTimeout(remeasure, 350);
+    if ('ResizeObserver' in window) new ResizeObserver(remeasure).observe(cv);
 
     if (FINAL) { lastP = 1; render(1); }
     else {
       render(0);
       var st = { p: 0 };
       gsap.timeline({
-        scrollTrigger: { trigger: sec, start: 'top top', end: '+=170%',
-                         pin: true, anticipatePin: AHEAD, scrub: SCRUB }
+        scrollTrigger: hold(sec, 170)
       }).to(st, { p: 1, ease: 'none', duration: 1,
                   onUpdate: function () { lastP = st.p; render(st.p); } });
     }
-    var rt;
-    window.addEventListener('resize', function () {
-      clearTimeout(rt);
-      rt = setTimeout(remeasure, 150);   // ScrollTrigger refreshes itself on resize
-    });
+    // without ResizeObserver, fall back to window resizes
+    if (!('ResizeObserver' in window)) {
+      var rt;
+      window.addEventListener('resize', function () {
+        clearTimeout(rt);
+        rt = setTimeout(remeasure, 150);
+      });
+    }
   })();
 
 
